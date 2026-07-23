@@ -34,7 +34,12 @@ export const AdmissionsForm = () => {
     { value: 'exec-leadership', label: 'Executive Leadership Certificate' }
   ];
 
-  const fetchedPrograms = programsData?.data?.data?.map(p => ({ value: p.title || p._id, label: p.title })) || [];
+  const rawPrograms = Array.isArray(programsData?.data?.data?.programs) 
+    ? programsData.data.data.programs 
+    : Array.isArray(programsData?.data?.data) 
+      ? programsData.data.data 
+      : [];
+  const fetchedPrograms = rawPrograms.map(p => ({ value: p.title || p._id, label: p.title }));
   const programs = fetchedPrograms.length > 0 ? fetchedPrograms : fallbackPrograms;
   const currentSchema = stepSchemas[currentStep];
 

@@ -16,10 +16,6 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { initSocket } from "./utils/socket.js";
 import { registerAllEventHandlers } from "./events/index.js";
 import { corsOptions, securityHeaders, globalLimiter, timeoutHandler } from "./middlewares/security.js";
-import { setupAdmissionListeners } from './services/admissionListeners.js';
-import { setupFinancialListeners } from './services/financialListeners.js';
-import { setupStudentListeners } from './services/studentListeners.js';
-import { setupNotificationSubscribers } from './services/NotificationSubscribers.js';
 
 // Routes
 import { authRoutes } from './routes/authRoutes.js';
@@ -44,7 +40,14 @@ import activityRoutes from "./routes/activityRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import mediaRoutes from "./routes/mediaRoutes.js";
+import roleRoutes from "./routes/roleRoutes.js";
+import leadRoutes from "./routes/leadRoutes.js";
+import emailCampaignRoutes from "./routes/emailCampaignRoutes.js";
+import backupRoutes from "./routes/backupRoutes.js";
 import { configureCloudinary } from "./config/cloudinary.js";
+
+import { seedEnterpriseCMS } from "./scripts/seedEnterpriseCMS.js";
 
 // Load environment variables
 dotenv.config();
@@ -52,8 +55,10 @@ dotenv.config();
 // Initialize Cloudinary
 configureCloudinary();
 
-// Initialize Database Connection
-connectDB();
+// Initialize Database Connection & Auto-Seed CMS
+connectDB().then(() => {
+  seedEnterpriseCMS();
+});
 
 const app = express();
 
@@ -133,6 +138,11 @@ app.use("/api/v1/activity", activityRoutes);
 app.use("/api/v1/search", searchRoutes);
 app.use("/api/v1/certificates", certificateRoutes);
 app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/media", mediaRoutes);
+app.use("/api/v1/roles", roleRoutes);
+app.use("/api/v1/leads", leadRoutes);
+app.use("/api/v1/campaigns", emailCampaignRoutes);
+app.use("/api/v1/backups", backupRoutes);
 
 // 404 Fallback for undefined API routes
 app.all('*', (req, res, next) => {

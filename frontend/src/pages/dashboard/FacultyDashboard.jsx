@@ -64,7 +64,7 @@ export const FacultyDashboard = () => {
                   <div className="flex items-center gap-3"><Activity className="w-5 h-5 opacity-90" /> Command Center</div>
                   <ChevronRight className="w-4 h-4 opacity-70" />
                 </Link>
-                <Link to="#" onClick={(e) => { e.preventDefault(); alert("Courses module coming soon") }} className="flex items-center justify-between px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 font-medium transition-all group">
+                <Link to="/programs" className="flex items-center justify-between px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 font-medium transition-all group">
                   <div className="flex items-center gap-3"><BookOpen className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" /> My Courses</div>
                 </Link>
                 <div className="mt-4 pt-4 border-t border-gray-100">

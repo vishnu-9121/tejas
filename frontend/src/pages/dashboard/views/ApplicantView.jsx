@@ -76,7 +76,7 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
               <div className="bg-primary-600 h-1.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${profileScore}%` }}></div>
             </div>
             {profileScore < 100 && (
-              <p onClick={() => alert("Profile Settings coming soon!")} className="text-xs text-primary-600 font-medium mt-3 hover:underline cursor-pointer">Complete profile now &rarr;</p>
+              <p onClick={() => navigate('/dashboard')} className="text-xs text-primary-600 font-medium mt-3 hover:underline cursor-pointer">Complete profile now &rarr;</p>
             )}
           </div>
         </motion.div>

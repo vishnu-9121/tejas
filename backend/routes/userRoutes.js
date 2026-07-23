@@ -13,6 +13,7 @@ router.post('/me/bookmark-event', userController.toggleBookmarkEvent);
 
 // Admin user & role management routes
 router.get('/', authorize('admin', 'super_admin'), userController.getAllUsers);
+router.post('/', authorize('admin', 'super_admin'), userController.createUserAdmin);
 router.put('/:userId/role', authorize('admin', 'super_admin'), userController.updateUserRole);
 
 export default router;

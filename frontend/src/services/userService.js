@@ -19,5 +19,20 @@ export const userService = {
   toggleBookmarkEvent: async (eventId) => {
     const response = await api.post('/users/me/bookmark-event', { eventId });
     return response.data;
+  },
+
+  getUsers: async (params) => {
+    const response = await api.get('/users', { params });
+    return response.data;
+  },
+
+  createUser: async (data) => {
+    const response = await api.post('/users', data);
+    return response.data;
+  },
+
+  updateUserRole: async (userId, role) => {
+    const response = await api.put(`/users/${userId}/role`, { role });
+    return response.data;
   }
 };

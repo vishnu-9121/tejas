@@ -15,7 +15,7 @@ export function BlogsSection() {
     queryKey: ['public-blogs'],
     queryFn: () => blogService.getBlogs({ limit: 3, status: 'published' }),
   });
-  const blogs = blogsData?.data?.data?.length > 0 ? blogsData.data.data : DUMMY_BLOGS;
+  const blogs = blogsData?.data?.blogs || blogsData?.data?.data || DUMMY_BLOGS;
   return (
     <section className="bg-neutral-50 py-16 md:py-24 border-b border-neutral-100">
       <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-20 flex flex-col items-center">
@@ -47,10 +47,10 @@ export function BlogsSection() {
         <Button
           variant="secondary"
           size="md"
-          onClick={() => window.location.href = "/blog"}
+          onClick={() => window.location.href = "/insights"}
           className="mt-12 font-semibold"
         >
-          Read Our Blog
+          Explore All Insights
         </Button>
       </div>
     </section>

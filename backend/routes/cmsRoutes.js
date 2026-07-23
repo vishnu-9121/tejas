@@ -9,7 +9,7 @@ import {
   getSettings, 
   updateSettings 
 } from '../controllers/cmsController.js';
-import { protect, restrictTo } from '../middleware/authMiddleware.js';
+import { protect, restrictTo } from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -36,4 +36,5 @@ router.put('/pages/:id/draft', saveDraft);
 router.post('/pages/:id/publish', publishPage);
 router.post('/pages/:id/rollback', rollbackPage);
 
+export { router as cmsRoutes };
 export default router;

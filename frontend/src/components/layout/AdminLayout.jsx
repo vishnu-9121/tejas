@@ -4,8 +4,8 @@ import {
   LayoutDashboard, Users, BookOpen, GraduationCap, 
   Calendar, FileText, Image as ImageIcon, Settings, 
   Menu, X, LogOut, Mail, MessageSquare, 
-  Globe, Bell, Search, HelpCircle, Navigation, Briefcase, Map, Shield,
-  MousePointerClick, MessageCircle, BarChart3
+  Globe, Bell, Search, HelpCircle, Navigation, Briefcase, Map, Shield, ShieldCheck,
+  MousePointerClick, MessageCircle, BarChart3, UserCheck, HardDrive, Database
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Button } from '../ui/Button';
@@ -33,6 +33,7 @@ export const AdminLayout = () => {
     {
       title: 'Content Management',
       items: [
+        { name: 'Media Library', path: '/admin/cms/media', icon: ImageIcon },
         { name: 'Homepage CMS', path: '/admin/cms/homepage', icon: Globe },
         { name: 'About Page CMS', path: '/admin/cms/about', icon: FileText },
         { name: 'Campus CMS', path: '/admin/cms/campus', icon: Map },
@@ -50,6 +51,8 @@ export const AdminLayout = () => {
       items: [
         { name: 'SEO Manager', path: '/admin/cms/seo', icon: Search },
         { name: 'Website Settings', path: '/admin/cms/settings', icon: Settings },
+        { name: 'Roles & Permissions', path: '/admin/roles', icon: ShieldCheck },
+        { name: 'System Backups', path: '/admin/backups', icon: Database },
         { name: 'Notifications', path: '/admin/cms/notifications', icon: Bell },
         { name: 'Global FAQs', path: '/admin/cms/faq', icon: HelpCircle },
         { name: 'Navigation CMS', path: '/admin/cms/navigation', icon: Navigation },
@@ -61,6 +64,9 @@ export const AdminLayout = () => {
     {
       title: 'People & Admissions',
       items: [
+        { name: 'Users & Roles', path: '/admin/students', icon: Users },
+        { name: 'CRM Leads', path: '/admin/leads', icon: UserCheck },
+        { name: 'Email Broadcasts', path: '/admin/campaigns', icon: Mail },
         { name: 'Admissions', path: '/admin/admissions', icon: GraduationCap },
         { name: 'Mentors', path: '/admin/mentors', icon: Users },
         { name: 'Newsletter', path: '/admin/newsletter', icon: Mail },

@@ -96,6 +96,12 @@ const AnalyticsDashboard = React.lazy(() => import('./pages/admin/AnalyticsDashb
 const FacultyAnalytics = React.lazy(() => import('./pages/admin/FacultyAnalytics'));
 const ManagementAnalytics = React.lazy(() => import('./pages/admin/ManagementAnalytics'));
 const AuditLogConsole = React.lazy(() => import('./pages/admin/AuditLogConsole'));
+const ManageMediaLibrary = React.lazy(() => import('./pages/admin/cms/ManageMediaLibrary'));
+const ManageCMSPages = React.lazy(() => import('./pages/admin/cms/ManageCMSPages'));
+const ManageRolesPermissions = React.lazy(() => import('./pages/admin/ManageRolesPermissions'));
+const ManageLeadsCRM = React.lazy(() => import('./pages/admin/ManageLeadsCRM'));
+const ManageEmailCampaigns = React.lazy(() => import('./pages/admin/ManageEmailCampaigns'));
+const ManageBackups = React.lazy(() => import('./pages/admin/ManageBackups'));
 
 const PublicLayout = () => {
   return (
@@ -149,12 +155,18 @@ function App() {
         
         {/* CMS Engine Routes */}
         <Route path="cms" element={<CMSLayout />}>
-          <Route path="pages" element={<div className="p-4 text-gray-500 font-bold">Pages List goes here... (Select a page to edit)</div>} />
+          <Route index element={<ManageCMSPages />} />
+          <Route path="pages" element={<ManageCMSPages />} />
           <Route path="pages/:slug" element={<PageEditor />} />
-          <Route path="settings" element={<div className="p-4 text-gray-500 font-bold">Global Settings Editor goes here...</div>} />
-          <Route path="media" element={<div className="p-4 text-gray-500 font-bold">Media Library goes here...</div>} />
-          <Route path="history" element={<div className="p-4 text-gray-500 font-bold">Audit History goes here...</div>} />
+          <Route path="settings" element={<ManageSettings />} />
+          <Route path="media" element={<ManageMediaLibrary />} />
+          <Route path="history" element={<AuditLogConsole />} />
         </Route>
+
+        <Route path="roles" element={<ManageRolesPermissions />} />
+        <Route path="leads" element={<ManageLeadsCRM />} />
+        <Route path="campaigns" element={<ManageEmailCampaigns />} />
+        <Route path="backups" element={<ManageBackups />} />
 
         <Route path="students" element={<ManageStudents />} />
         <Route path="students/:id" element={<StudentProfile />} />

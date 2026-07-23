@@ -1,5 +1,5 @@
 import AuditLog from '../models/AuditLog.js';
-import { io } from '../server.js';
+import { getIO } from '../utils/socket.js';
 
 /**
  * EnterpriseAuditService — Centralized logging engine for security, administrative,
@@ -40,6 +40,7 @@ export const EnterpriseAuditService = {
       });
 
       // Stream to WebSocket real-time subscribers (Admin Command Center & Security Logs View)
+      const io = getIO();
       if (io) {
         io.to('admin_room').emit('NEW_AUDIT_LOG', logEntry);
       }

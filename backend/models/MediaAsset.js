@@ -5,6 +5,11 @@ const mediaAssetSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      index: true,
+    },
+    originalName: {
+      type: String,
+      default: '',
     },
     url: {
       type: String,
@@ -16,6 +21,7 @@ const mediaAssetSchema = new mongoose.Schema(
     },
     size: {
       type: Number, // in bytes
+      default: 0,
     },
     dimensions: {
       width: Number,
@@ -25,18 +31,38 @@ const mediaAssetSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    caption: {
+      type: String,
+      default: '',
+    },
+    tags: [{
+      type: String,
+      trim: true,
+    }],
     folder: {
       type: String,
-      default: '/',
+      default: 'General',
+      index: true,
+    },
+    usageCount: {
+      type: Number,
+      default: 0,
     },
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
     }
   },
   {
     timestamps: true,
   }
 );
+
+mediaAssetSchema.index({ name: 'text', altText: 'text', tags: 'text' });
 
 export const MediaAsset = mongoose.model('MediaAsset', mediaAssetSchema);

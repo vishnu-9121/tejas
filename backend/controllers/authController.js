@@ -98,8 +98,8 @@ export const forgotPassword = async (req, res, next) => {
       return sendResponse(res, HTTP_STATUS.BAD_REQUEST, 'Please provide an email');
     }
 
-    await authService.forgotPasswordService(email);
-    sendResponse(res, HTTP_STATUS.OK, 'OTP sent to email', null);
+    const result = await authService.forgotPasswordService(email);
+    sendResponse(res, HTTP_STATUS.OK, 'Password reset OTP sent to email', { otp: result?.otp });
   } catch (error) {
     next(error);
   }

@@ -2,7 +2,7 @@ import { ContentPage } from '../models/ContentPage.js';
 import { ContentVersion } from '../models/ContentVersion.js';
 import { GlobalSettings } from '../models/GlobalSettings.js';
 import { EnterpriseAuditService } from '../services/EnterpriseAuditService.js';
-import { io } from '../server.js';
+import { getIO } from '../utils/socket.js';
 import mongoose from 'mongoose';
 
 /**
@@ -144,6 +144,7 @@ export const publishPage = async (req, res) => {
     await page.save();
 
     // 3. Trigger WebSocket Invalidation for frontend users to instantly see changes
+    const io = getIO();
     if (io) {
       io.emit('CMS_PAGE_UPDATED', { slug: page.slug });
     }
@@ -176,6 +177,7 @@ export const rollbackPage = async (req, res) => {
     page.status = 'published';
     await page.save();
 
+    const io = getIO();
     if (io) io.emit('CMS_PAGE_UPDATED', { slug: page.slug });
 
     EnterpriseAuditService.logCMSChange(req.user, 'rolled_back', page.slug, { rolledBackToVersion: versionId }, req);
@@ -214,6 +216,7 @@ export const updateSettings = async (req, res) => {
       updatedBy: req.user.id
     }, { new: true, upsert: true });
 
+    const io = getIO();
     if (io) io.emit('CMS_SETTINGS_UPDATED');
 
     res.status(200).json({ success: true, data: settings });

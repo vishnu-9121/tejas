@@ -28,23 +28,32 @@ const footerLinks = [
 ];
 
 export const Footer = () => {
-  const { data: settingsData } = useQuery({
-    queryKey: ['cms', 'global_settings'],
-    queryFn: () => cmsService.getCmsData('global_settings'),
-    staleTime: 5 * 60 * 1000,
+  const { data: footerData } = useQuery({
+    queryKey: ['cms', 'footer'],
+    queryFn: () => cmsService.getCMSData('footer'),
+    staleTime: 60 * 1000,
   });
 
-  const contactInfo = settingsData?.data?.data?.contactInfo || {
-    address: '123 Education Boulevard, Tech City, 10001',
-    phone: '+1 (555) 123-4567',
-    email: 'info@tejasacademy.edu'
+  const { data: settingsData } = useQuery({
+    queryKey: ['cms', 'site_settings'],
+    queryFn: () => cmsService.getCMSData('site_settings'),
+    staleTime: 60 * 1000,
+  });
+
+  const liveFooter = footerData?.data?.data || {};
+  const liveSettings = settingsData?.data?.data || {};
+
+  const contactInfo = {
+    address: liveSettings.physicalAddress || 'Beside L.K Towers,Roy Nagar,Gannavaram,Vijayawada,Andhra Pradesh,India,521101 - 521101',
+    phone: liveSettings.contactPhone || '+91 8331051327',
+    email: liveSettings.contactEmail || 'tejasacademyofexcellence@gmail.com'
   };
 
-  const socialLinks = settingsData?.data?.data?.socialLinks || {
-    facebook: '#',
-    twitter: '#',
-    instagram: '#',
-    linkedin: '#'
+  const socialLinks = liveSettings.socialLinks || {
+    linkedin: 'https://linkedin.com/school/tejas-academy',
+    twitter: 'https://twitter.com/tejas_academy',
+    instagram: 'https://instagram.com/tejas_academy',
+    youtube: 'https://youtube.com/c/tejasacademy'
   };
 
   return (

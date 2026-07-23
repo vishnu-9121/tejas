@@ -31,13 +31,13 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['super_admin', 'admin', 'operations_manager', 'mentor', 'student', 'parent', 'recruiter', 'guest'],
-      default: 'guest',
+      enum: ['super_admin', 'admin', 'operations_manager', 'mentor', 'faculty', 'student', 'parent', 'recruiter', 'guest'],
+      default: 'student',
     },
     lifecycleStage: {
       type: String,
       enum: ['guest', 'lead', 'applicant', 'admitted', 'active_learner', 'alumni'],
-      default: 'guest',
+      default: 'applicant',
     },
     passwordHistory: [{
       type: String

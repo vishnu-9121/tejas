@@ -1,6 +1,6 @@
 import { Notification } from '../models/Notification.js';
 import AuditLog from '../models/AuditLog.js';
-import { io } from '../server.js';
+import { getIO } from '../utils/socket.js';
 
 export const NotificationService = {
   /**
@@ -21,6 +21,7 @@ export const NotificationService = {
         });
 
         // 2. Real-time WebSocket Push
+        const io = getIO();
         if (io) {
           io.to(recipientId.toString()).emit('NEW_NOTIFICATION', notification);
         }

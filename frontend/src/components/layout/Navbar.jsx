@@ -25,12 +25,12 @@ export const Navbar = () => {
   const { user, logout } = useAuthStore();
 
   const { data: navData } = useQuery({
-    queryKey: ['cms', 'global_navigation'],
-    queryFn: () => cmsService.getCmsData('global_navigation'),
-    staleTime: 5 * 60 * 1000, // Cache for 5 mins
+    queryKey: ['cms', 'navigation'],
+    queryFn: () => cmsService.getCMSData('navigation'),
+    staleTime: 60 * 1000,
   });
 
-  const headerLinks = fallbackNavLinks; // Force using the updated working links
+  const headerLinks = navData?.data?.data?.links || fallbackNavLinks;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);

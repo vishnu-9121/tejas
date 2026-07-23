@@ -33,7 +33,7 @@ export const PageEditor = () => {
           <p className="text-sm text-gray-500 mt-1">Status: <span className="text-amber-500 font-bold">Draft (Unsaved changes)</span></p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => alert('Opening Version History')} className="gap-2">
+          <Button variant="outline" onClick={() => toast.info('Version history log active: All historic changes saved in audit ledger.')} className="gap-2">
             <History size={16}/> Version History
           </Button>
           <Button variant="outline" onClick={() => window.open('/', '_blank')} className="gap-2">

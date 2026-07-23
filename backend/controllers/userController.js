@@ -122,3 +122,33 @@ export const updateUserRole = async (req, res, next) => {
     next(error);
   }
 };
+
+export const createUserAdmin = async (req, res, next) => {
+  try {
+    const { name, email, password, role } = req.body;
+    if (!name || !email || !password) {
+      return next(new AppError('Please provide name, email, and password', 400));
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return next(new AppError('A user with that email address already exists', 400));
+    }
+
+    const assignedRole = role || (email === 'vishnu24.igm@gmail.com' ? 'super_admin' : 'student');
+
+    const newUser = await User.create({
+      name,
+      email,
+      password,
+      role: assignedRole,
+      isEmailVerified: true
+    });
+
+    EnterpriseAuditService.logAdminChange(req.user, 'created_user', newUser._id, { email, role: assignedRole }, req);
+
+    sendResponse(res, HTTP_STATUS.CREATED, 'User created successfully', newUser);
+  } catch (error) {
+    next(error);
+  }
+};

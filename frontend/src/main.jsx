@@ -8,6 +8,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import App from './App.jsx';
 import { SocketProvider } from './contexts/SocketContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 
 const queryClient = new QueryClient();
 import './index.css';
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <QueryClientProvider client={queryClient}>
             <ErrorBoundary>
               <SocketProvider>
-                <App />
+                <ThemeProvider>
+                  <App />
+                </ThemeProvider>
               </SocketProvider>
             </ErrorBoundary>
             <Toaster position="top-right" richColors />
