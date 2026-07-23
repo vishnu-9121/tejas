@@ -1,0 +1,11 @@
+{"level":"error","message":"Error connecting to MongoDB: Instance failed to start within 10000ms","timestamp":"2026-07-19 17:35:32"}
+{"level":"error","message":"Error connecting to MongoDB: Instance failed to start within 10000ms","timestamp":"2026-07-19 17:36:07"}
+{"level":"error","message":"Error connecting to MongoDB: querySrv ECONNREFUSED _mongodb._tcp.tejas.ngtohnb.mongodb.net","timestamp":"2026-07-19 17:36:55"}
+{"level":"error","message":"Error connecting to MongoDB: Instance failed to start within 10000ms","timestamp":"2026-07-19 17:38:00"}
+{"level":"error","message":"Error connecting to MongoDB: Instance failed to start within 10000ms","timestamp":"2026-07-19 17:38:48"}
+{"level":"error","message":"Error connecting to MongoDB: Instance failed to start within 10000ms","timestamp":"2026-07-19 17:49:49"}
+{"level":"error","message":"Error connecting to MongoDB: Instance failed to start within 10000ms","timestamp":"2026-07-19 19:28:06"}
+{"level":"error","message":"Error connecting to MongoDB: querySrv ECONNREFUSED _mongodb._tcp.tejas.ngtohnb.mongodb.net","timestamp":"2026-07-19 19:30:32"}
+{"level":"error","message":"Error connecting to MongoDB: E11000 duplicate key error collection: tejas.programs index: slug_1 dup key: { slug: null }","timestamp":"2026-07-19 19:33:04"}
+{"level":"error","message":"Error connecting to MongoDB: E11000 duplicate key error collection: tejas.events index: slug_1 dup key: { slug: null }","timestamp":"2026-07-19 19:34:03"}
+{"level":"error","message":"Error connecting to MongoDB: Blog validation failed: coverImage: Path `coverImage` is required.","timestamp":"2026-07-19 19:34:27"}

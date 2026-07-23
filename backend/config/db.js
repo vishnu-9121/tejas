@@ -1,0 +1,148 @@
+import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { logger } from '../utils/logger.js';
+import { User } from '../models/User.js';
+import { Program } from '../models/Program.js';
+import { Event } from '../models/Event.js';
+import Blog from '../models/Blog.js';
+
+let mongod = null;
+
+// Mock Programs
+const mockPrograms = [
+  {
+    title: 'Post Graduate Program in Management',
+    slug: 'post-graduate-program-in-management',
+    category: 'Postgraduate',
+    description: 'A transformative 2-year program designed to build future global leaders with strong ethical foundations.',
+    duration: '2 Years',
+    fees: 1500000,
+    eligibility: 'Bachelor’s degree with minimum 50% aggregate.',
+    intake: 120,
+    curriculum: [
+      { semester: 'Semester 1', courses: ['Managerial Economics', 'Financial Accounting'] },
+      { semester: 'Semester 2', courses: ['Marketing Management', 'Operations Management'] },
+    ],
+  },
+  {
+    title: 'BBA in Human Excellence',
+    slug: 'bba-in-human-excellence',
+    category: 'Undergraduate',
+    description: 'A unique undergraduate program focusing on holistic development, character building, and modern business practices.',
+    duration: '3 Years',
+    fees: 800000,
+    eligibility: '10+2 from a recognized board with minimum 60%.',
+    intake: 60,
+    curriculum: [
+      { semester: 'Semester 1', courses: ['Principles of Management', 'Business Communication'] },
+      { semester: 'Semester 2', courses: ['Organizational Behavior', 'Human Values & Ethics'] },
+    ],
+  },
+];
+
+const mockEvents = [
+  {
+    title: 'Global Leadership Summit 2026',
+    slug: 'global-leadership-summit-2026',
+    category: 'Leadership',
+    date: new Date('2026-08-15'),
+    time: '09:00 AM - 05:00 PM',
+    location: 'Main Auditorium, Tejas Campus',
+    description: 'Join industry leaders and our esteemed faculty for a full day of insights into the future of global business.',
+    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87',
+  },
+  {
+    title: 'Startup Pitch Fest',
+    slug: 'startup-pitch-fest',
+    category: 'Career',
+    date: new Date('2026-09-10'),
+    time: '10:00 AM - 02:00 PM',
+    location: 'Innovation Hub',
+    description: 'Students present their startup ideas to a panel of venture capitalists and angel investors.',
+    image: 'https://images.unsplash.com/photo-1475721025505-200780281bbf',
+  }
+];
+
+const mockBlogs = [
+  {
+    title: 'The Future of Ethical Leadership',
+    slug: 'the-future-of-ethical-leadership',
+    content: 'In today’s fast-paced world, ethical leadership is more important than ever. Leaders are facing unprecedented challenges...',
+    category: 'Leadership',
+    tags: ['ethics', 'management', 'future'],
+    coverImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978',
+    status: 'Published',
+    publishedAt: new Date(),
+  },
+  {
+    title: 'Navigating the Digital Transformation',
+    slug: 'navigating-the-digital-transformation',
+    content: 'Digital transformation is no longer a buzzword; it is a necessity for survival in the corporate landscape...',
+    category: 'Technology',
+    tags: ['digital', 'transformation', 'strategy'],
+    coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa',
+    status: 'Published',
+    publishedAt: new Date(),
+  }
+];
+
+export const connectDB = async () => {
+  try {
+    let mongoUri = process.env.MONGODB_URI;
+
+    // Check if URI is missing or just the placeholder string
+    if (!mongoUri || mongoUri.includes('your_mongodb_connection_string_here')) {
+      logger.info('Starting in-memory MongoDB server for local testing (this may take a minute on first run)...');
+      mongod = await MongoMemoryServer.create({ instance: { startupTimeout: 120000 } });
+      mongoUri = mongod.getUri();
+    } else {
+      logger.info('Attempting MongoDB connection...');
+    }
+
+    const conn = await mongoose.connect(mongoUri);
+    logger.info(`MongoDB Connected successfully: ${conn.connection.host}`);
+
+    // Auto-seed Super Admin
+    const adminExists = await User.findOne({ email: 'vishnu24.igm@gmail.com' });
+    if (!adminExists) {
+      await User.create({
+        name: 'Super Admin',
+        email: 'vishnu24.igm@gmail.com',
+        password: 'vishnu@9121', // will be hashed by pre-save hook
+        role: 'super_admin',
+        isVerified: true
+      });
+      logger.info('[+] Auto-Seeded Super Admin: vishnu24.igm@gmail.com');
+    }
+
+    // Auto-seed Programs
+    const programCount = await Program.countDocuments();
+    if (programCount === 0) {
+      await Program.insertMany(mockPrograms);
+      logger.info('[+] Auto-Seeded Mock Programs');
+    }
+
+    // Auto-seed Events
+    const eventCount = await Event.countDocuments();
+    if (eventCount === 0) {
+      await Event.insertMany(mockEvents);
+      logger.info('[+] Auto-Seeded Mock Events');
+    }
+
+    // Auto-seed Blogs
+    const blogCount = await Blog.countDocuments();
+    if (blogCount === 0) {
+      // Find the admin user to attach as author
+      const adminUser = await User.findOne({ role: 'super_admin' });
+      if (adminUser) {
+        const blogsWithAuthor = mockBlogs.map(b => ({ ...b, author: adminUser._id }));
+        await Blog.insertMany(blogsWithAuthor);
+        logger.info('[+] Auto-Seeded Mock Blogs');
+      }
+    }
+
+  } catch (error) {
+    logger.error(`Error connecting to MongoDB: ${error.message}`);
+    process.exit(1);
+  }
+};
