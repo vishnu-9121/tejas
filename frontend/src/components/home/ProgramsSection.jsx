@@ -4,12 +4,18 @@ import { Button } from "../ui/Button";
 import { useQuery } from '@tanstack/react-query';
 import { programService } from '@/services/programService';
 
-const CATEGORIES = ["All", "Leadership", "Entrepreneurship", "Communication", "Human Excellence"];
+const CATEGORIES = ["All", "Free Programs", "Undergraduate", "Postgraduate", "Executive", "Certifications"];
+
+const FREE_PROGRAMS_ITEMS = [
+  { _id: "fp-1", title: "Foundations of Generative AI & Prompting", category: "Free Programs", description: "Learn Large Language Models, prompt patterns, and AI engineering productivity.", image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&q=80&w=800", slug: "free-generative-ai" },
+  { _id: "fp-2", title: "Executive Leadership & Strategy Masterclass", category: "Free Programs", description: "Frameworks for strategic decision making, negotiation, and high-performance team culture.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", slug: "free-executive-leadership" },
+  { _id: "fp-3", title: "Full-Stack Web Architecture Bootcamp", category: "Free Programs", description: "Build scalable modern web applications using React, Node.js, and Cloud APIs.", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800", slug: "free-web-bootcamp" }
+];
 
 const DUMMY_PROGRAMS = [
-  { _id: "1", title: "Global Leadership Certificate", category: "Leadership", description: "Develop advanced leadership skills for the modern world.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", slug: "global-leadership" },
-  { _id: "2", title: "Startup Engineering", category: "Entrepreneurship", description: "From idea to execution: building scalable startups.", image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800", slug: "startup-engineering" },
-  { _id: "3", title: "Mastering Communication", category: "Communication", description: "Learn to articulate vision and lead teams effectively.", image: "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&q=80&w=800", slug: "mastering-communication" }
+  { _id: "1", title: "Global Leadership Certificate", category: "Executive", description: "Develop advanced leadership skills for the modern world.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", slug: "global-leadership" },
+  { _id: "2", title: "Startup Engineering", category: "Undergraduate", description: "From idea to execution: building scalable startups.", image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800", slug: "startup-engineering" },
+  { _id: "3", title: "Mastering Communication", category: "Certifications", description: "Learn to articulate vision and lead teams effectively.", image: "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&q=80&w=800", slug: "mastering-communication" }
 ];
 
 export function ProgramsSection() {
@@ -24,12 +30,13 @@ export function ProgramsSection() {
     queryFn: () => programService.getPrograms({ limit: 6, status: 'published' }),
   });
 
-  const programs = programsData?.data?.data?.length > 0 ? programsData.data.data : DUMMY_PROGRAMS;
+  const basePrograms = programsData?.data?.data?.length > 0 ? programsData.data.data : DUMMY_PROGRAMS;
+  const allCombinedPrograms = useMemo(() => [...basePrograms, ...FREE_PROGRAMS_ITEMS], [basePrograms]);
 
   const filteredPrograms = useMemo(() => {
-    if (selectedCategory === "All") return programs;
-    return programs.filter((p) => p.category?.toLowerCase() === selectedCategory.toLowerCase());
-  }, [selectedCategory, programs]);
+    if (selectedCategory === "All") return basePrograms;
+    return allCombinedPrograms.filter((p) => p.category?.toLowerCase() === selectedCategory.toLowerCase());
+  }, [selectedCategory, basePrograms, allCombinedPrograms]);
 
   return (
     <section className="bg-neutral-0 py-16 md:py-24 border-b border-neutral-100">

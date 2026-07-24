@@ -5,6 +5,7 @@ import { Search } from 'lucide-react';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useQuery } from '@tanstack/react-query';
 import { blogService } from '@/services/blogService';
+import { FinalCTA } from '@/components/home/FinalCTA';
 
 const DUMMY_BLOGS = [
   { _id: "1", title: "The Future of AI in Education", excerpt: "How artificial intelligence is reshaping the learning landscape.", coverImage: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", slug: "future-of-ai", author: { firstName: "Dr.", lastName: "Smith" }, publishedAt: new Date().toISOString(), readTime: 5, category: "Technology" },
@@ -69,6 +70,13 @@ export const Blog = () => {
           No articles found matching your criteria.
         </div>
       )}
+
+      {/* Newsletter Subscription Block at the End of Tejas Insights */}
+      <div className="mt-20 -mx-4 sm:-mx-6 lg:-mx-8">
+        <FinalCTA />
+      </div>
     </div>
   );
 };
+
+export default Blog;

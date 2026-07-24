@@ -3,13 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { cmsService } from '@/services/cmsService';
 
-const DEFAULT_NOTIFICATIONS = [
-  { id: 1, name: 'Priya D.', city: 'Mumbai', action: 'applied for B.Tech AI', time: '2 mins ago' },
-  { id: 2, name: 'Rahul K.', city: 'Bangalore', action: 'downloaded the Career Guide', time: '5 mins ago' },
-  { id: 3, name: 'Sneha M.', city: 'Delhi', action: 'registered for the Scholarship Test', time: '12 mins ago' },
-  { id: 4, name: 'Aman S.', city: 'Hyderabad', action: 'booked an advisor call', time: '1 hour ago' },
-];
-
 export const SocialProofToasts = () => {
   const [currentToast, setCurrentToast] = useState(null);
 
@@ -18,9 +11,11 @@ export const SocialProofToasts = () => {
     queryFn: () => cmsService.getCMSData('global_social_proof'),
   });
 
+  // Strict compliance: Default to inactive if no real backend data exists.
+  // Never show simulated, fake, or mock user activity notifications.
   const config = cmsData?.data?.data || {
-    isActive: true,
-    notifications: DEFAULT_NOTIFICATIONS,
+    isActive: false,
+    notifications: [],
   };
 
   useEffect(() => {

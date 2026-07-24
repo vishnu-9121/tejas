@@ -12,6 +12,7 @@ router.post('/login', authLimiter, loginValidator, login);
 router.post('/google', authLimiter, googleLogin);
 router.post('/forgot-password', authLimiter, forgotPassword);
 router.post('/reset-password', authLimiter, resetPassword);
+router.post('/reset-password/:token', authLimiter, resetPassword);
 router.post('/refresh', refresh);
 
 // Protected Auth Routes

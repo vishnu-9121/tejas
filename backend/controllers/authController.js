@@ -8,7 +8,7 @@ import { EnterpriseAuditService } from '../services/EnterpriseAuditService.js';
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 };
 
@@ -82,7 +82,7 @@ export const logout = async (req, res, next) => {
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
     });
     
     sendResponse(res, HTTP_STATUS.OK, 'Logged out successfully', null);
@@ -107,12 +107,15 @@ export const forgotPassword = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
   try {
-    const { otp, password } = req.body;
-    if (!otp || !password) {
-      return sendResponse(res, HTTP_STATUS.BAD_REQUEST, 'Please provide OTP and new password');
+    const { otp, token, password, newPassword } = req.body;
+    const resetToken = req.params.token || token || otp;
+    const finalPassword = password || newPassword;
+
+    if (!resetToken || !finalPassword) {
+      return sendResponse(res, HTTP_STATUS.BAD_REQUEST, 'Please provide reset token/OTP and new password');
     }
 
-    await authService.resetPasswordService(otp, password);
+    await authService.resetPasswordService(resetToken, finalPassword);
     sendResponse(res, HTTP_STATUS.OK, 'Password reset successful, please login with your new password', null);
   } catch (error) {
     next(error);

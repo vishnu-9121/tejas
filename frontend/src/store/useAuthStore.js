@@ -21,7 +21,7 @@ export const useAuthStore = create(
     }),
     {
       name: 'auth-storage', // name of item in the storage (must be unique)
-      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }), // Only persist user details and auth status. Token is kept in memory.
+      partialize: (state) => ({ user: state.user, accessToken: state.accessToken, isAuthenticated: state.isAuthenticated }),
     }
   )
 );

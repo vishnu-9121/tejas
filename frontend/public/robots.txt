@@ -1,0 +1,7 @@
+# Robots.txt for Tejas Academy of Excellence (https://unlocktejas.com)
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://unlocktejas.com/sitemap.xml

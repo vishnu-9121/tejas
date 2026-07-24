@@ -10,7 +10,7 @@ import {
 import { useSocket } from '../../contexts/SocketContext';
 import axios from 'axios';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const API = import.meta.env.VITE_API_URL || '/api/v1';
 
 const typeConfig = {
   info:            { bg: 'bg-blue-50',   border: 'border-blue-100',   icon: Activity,       iconBg: 'bg-blue-100',   iconColor: 'text-blue-600' },

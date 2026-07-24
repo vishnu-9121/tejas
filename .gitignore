@@ -2,6 +2,15 @@
 
 # dependencies
 /node_modules
+**/node_modules
+.env
+dist/
+build/
+.next/
+
+*.log
+backend/logs/
+
 /.pnp
 .pnp.*
 .yarn/*

@@ -34,25 +34,31 @@ export function Hero() {
       </div>
 
       <div className="max-w-[1200px] w-full mx-auto flex flex-col items-center text-center gap-6 md:gap-8 relative z-10">
-        {/* Quality indicator */}
+        {/* Mobile-Friendly Brand Identity Badge */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-800 bg-primary-800/40 backdrop-blur-xs shadow-sm"
+          className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-amber-400/30 bg-white/15 backdrop-blur-md shadow-xl"
         >
-          <Trophy className="w-4 h-4 text-accent-400" />
-          <span className="text-xxs md:text-xs font-semibold uppercase tracking-widest text-primary-200">
-            India's Premium Center for Excellence
+          <img src="/logo.png" alt="Tejas Academy Logo" className="w-5 h-5 object-contain" />
+          <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-amber-300">
+            Tejas Academy of Excellence
           </span>
         </motion.div>
+
+        {/* Quality Indicator */}
+        <div className="flex items-center gap-2 text-primary-200 text-xs font-semibold uppercase tracking-widest">
+          <Trophy className="w-4 h-4 text-accent-400" />
+          <span>India's Premier Center for Excellence</span>
+        </div>
 
         {/* Headline */}
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-semibold leading-tight max-w-4xl"
+          className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight max-w-4xl tracking-tight text-white"
         >
           {heroData.title}
         </motion.h1>
@@ -62,7 +68,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="text-base sm:text-lg md:text-xl text-primary-100/90 leading-relaxed max-w-2xl"
+          className="text-sm sm:text-lg md:text-xl text-primary-100/90 leading-relaxed max-w-2xl"
         >
           {heroData.subtitle}
         </motion.p>
@@ -72,7 +78,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.6 }}
-          className="flex flex-col sm:flex-row items-center gap-4 mt-4 w-full sm:w-auto"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-2 w-full sm:w-auto"
         >
           {heroData.primaryCta?.text && (
             <Button
@@ -89,10 +95,10 @@ export function Hero() {
           {heroData.secondaryCta?.text && (
             <Button
               size="lg"
-              variant="outline"
+              variant="secondary"
               as={Link}
               to={heroData.secondaryCta.link || '/programs'}
-              className="w-full sm:w-auto text-neutral-0 border-neutral-0/30 hover:bg-primary-800 hover:border-neutral-0 font-semibold hover:scale-105 transition-transform"
+              className="w-full sm:w-auto font-semibold"
             >
               {heroData.secondaryCta.text}
             </Button>

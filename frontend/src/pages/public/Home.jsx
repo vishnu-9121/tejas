@@ -59,7 +59,7 @@ export default function Home() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['cms-page', 'home'],
     queryFn: async () => {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/cms/pages/home/public`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || '/api/v1'}/cms/pages/home/public`);
       return res.data;
     },
     retry: 1

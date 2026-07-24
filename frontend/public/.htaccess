@@ -1,0 +1,23 @@
+# cPanel Single Page Application (SPA) Apache Rewrite Rules
+# Tejas Academy React Frontend
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Allow direct access to backend API requests
+  RewriteRule ^api/ - [L]
+
+  # Direct access to actual existing static files & folders
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirect all other single page app routes to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Browser Caching & Gzip Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>

@@ -4,11 +4,18 @@ import { Button } from '../components/ui/Button';
 import { Search, Filter, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { programService } from '@/services/programService';
+import { CareerCounselor } from '@/components/academics/CareerCounselor';
 
 const DUMMY_PROGRAMS = [
   { _id: "1", title: "Global Leadership Certificate", category: "Leadership", description: "Develop advanced leadership skills for the modern world.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", slug: "global-leadership" },
   { _id: "2", title: "Startup Engineering", category: "Entrepreneurship", description: "From idea to execution: building scalable startups.", image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800", slug: "startup-engineering" },
   { _id: "3", title: "Mastering Communication", category: "Communication", description: "Learn to articulate vision and lead teams effectively.", image: "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&q=80&w=800", slug: "mastering-communication" }
+];
+
+const FREE_PROGRAMS_ITEMS = [
+  { _id: "fp-1", title: "Foundations of Generative AI & Prompting", category: "Free Programs", description: "Learn Large Language Models, prompt patterns, and AI engineering productivity.", image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&q=80&w=800", slug: "free-generative-ai" },
+  { _id: "fp-2", title: "Executive Leadership & Strategy Masterclass", category: "Free Programs", description: "Frameworks for strategic decision making, negotiation, and high-performance team culture.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", slug: "free-executive-leadership" },
+  { _id: "fp-3", title: "Full-Stack Web Architecture Bootcamp", category: "Free Programs", description: "Build scalable modern web applications using React, Node.js, and Cloud APIs.", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800", slug: "free-web-bootcamp" }
 ];
 
 export const Programs = () => {
@@ -19,12 +26,14 @@ export const Programs = () => {
     queryKey: ['public-programs', 'all'],
     queryFn: () => programService.getPrograms({ status: 'published' }),
   });
-  const programs = programsData?.data?.data?.length > 0 ? programsData.data.data : DUMMY_PROGRAMS;
 
-  const categories = ['All', 'Undergraduate', 'Postgraduate', 'Executive', 'Certification'];
+  const basePrograms = programsData?.data?.data?.length > 0 ? programsData.data.data : DUMMY_PROGRAMS;
+  const allProgramsList = [...basePrograms, ...FREE_PROGRAMS_ITEMS];
 
-  const filteredPrograms = programs.filter(prog => {
-    const matchesCategory = activeCategory === 'All' || prog.category === activeCategory;
+  const categories = ['All', 'Free Programs', 'Undergraduate', 'Postgraduate', 'Executive', 'Certification'];
+
+  const filteredPrograms = allProgramsList.filter(prog => {
+    const matchesCategory = activeCategory === 'All' ? prog.category !== 'Free Programs' : prog.category === activeCategory;
     const matchesSearch = prog.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           prog.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -121,6 +130,11 @@ export const Programs = () => {
             ))}
           </div>
         )}
+
+        {/* Talk to Our Career Counselor Section */}
+        <div className="mt-20">
+          <CareerCounselor />
+        </div>
       </div>
     </div>
   );

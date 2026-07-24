@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -30,9 +30,18 @@ export default function Register() {
       const response = await api.post('/auth/register', data);
       const { user, accessToken } = response.data.data;
       setCredentials(user, accessToken);
-      navigate('/'); 
+      const redirectPath = (user?.role === 'admin' || user?.role === 'super_admin') 
+        ? '/admin' 
+        : (user?.role === 'faculty' || user?.role === 'mentor') 
+          ? '/faculty' 
+          : '/dashboard';
+      navigate(redirectPath); 
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to register. Please try again.');
+      const msg = err.response?.data?.message || 
+        (Array.isArray(err.response?.data?.errors) ? err.response?.data?.errors[0] : null) || 
+        err.message || 
+        'Registration failed. Please verify your connection and try again.';
+      setError(msg);
     }
   };
 
@@ -128,14 +137,17 @@ export default function Register() {
             </div>
 
             <div className="mt-6 flex justify-center">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => setError('Google Sign Up Failed')}
-                theme="outline"
-                size="large"
-                width="100%"
-                shape="rectangular"
-              />
+              <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "431275153097-c3vgp6aop1iumeu069h5kssmi6bnoius.apps.googleusercontent.com"}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setError('Google Sign Up Failed')}
+                  theme="outline"
+                  size="large"
+                  width="100%"
+                  shape="rectangular"
+                  useOneTap={false}
+                />
+              </GoogleOAuthProvider>
             </div>
           </div>
         </div>

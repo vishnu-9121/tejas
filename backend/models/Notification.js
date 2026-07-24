@@ -20,6 +20,11 @@ const NotificationSchema = new mongoose.Schema({
     enum: ['info', 'success', 'warning', 'error', 'action_required'],
     default: 'info'
   },
+  priority: {
+    type: String,
+    enum: ['low', 'medium', 'high', 'urgent'],
+    default: 'medium'
+  },
   channels: [{
     type: String,
     enum: ['in-app', 'email', 'push', 'whatsapp']
@@ -28,14 +33,31 @@ const NotificationSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  readStatus: {
+    type: Boolean,
+    default: false
+  },
   actionLink: {
-    type: String, // e.g. /dashboard/applications/123
+    type: String,
     default: null
   },
-  // Optionally store the raw event payload that generated this
   metadata: {
     type: mongoose.Schema.Types.Mixed
   }
 }, { timestamps: true });
 
-export const Notification = mongoose.model('Notification', NotificationSchema);
+NotificationSchema.pre('save', function (next) {
+  if (this.isRead !== undefined && this.readStatus !== this.isRead) {
+    this.readStatus = this.isRead;
+  } else if (this.readStatus !== undefined && this.isRead !== this.readStatus) {
+    this.isRead = this.readStatus;
+  }
+  next();
+});
+
+NotificationSchema.index({ recipient: 1, isRead: 1 });
+NotificationSchema.index({ priority: 1 });
+NotificationSchema.index({ createdAt: -1 });
+
+export const Notification = mongoose.models.Notification || mongoose.model('Notification', NotificationSchema);
+export default Notification;

@@ -6,7 +6,7 @@ export const SEO = ({
   description, 
   keywords, 
   image = 'https://res.cloudinary.com/dvfpt33g3/image/upload/v1731671239/tejas_logo_main.png', 
-  url = 'https://tejasacademy.edu.in',
+  url = 'https://unlocktejas.com',
   type = 'website',
   schema 
 }) => {
@@ -18,6 +18,7 @@ export const SEO = ({
       <title>{siteTitle}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
+      <link rel="canonical" href={url} />
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />

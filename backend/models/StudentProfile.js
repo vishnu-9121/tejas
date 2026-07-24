@@ -28,11 +28,34 @@ const studentProfileSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
     studentId: {
       type: String,
       unique: true,
       required: true
     },
+    admissionNumber: {
+      type: String,
+    },
+    dateOfBirth: Date,
+    gender: { type: String, enum: ['male', 'female', 'other'] },
+    qualification: { type: String, default: 'High School / Secondary' },
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    parentDetails: {
+      fatherName: String,
+      fatherPhone: String,
+      motherName: String,
+      motherPhone: String,
+      emergencyContactPhone: String,
+    },
+    interests: [{ type: String }],
+    profilePhoto: String,
+    profileImage: String,
     personalInfo: {
       dateOfBirth: Date,
       gender: { type: String, enum: ['male', 'female', 'other'] },
@@ -98,12 +121,35 @@ const studentProfileSchema = new mongoose.Schema(
       type: String,
       enum: ['active', 'suspended', 'alumni', 'dropped', 'pending'],
       default: 'active'
-    },
-    profileImage: String // URL to cloudinary
+    }
   },
   {
     timestamps: true,
   }
 );
 
-export const StudentProfile = mongoose.model('StudentProfile', studentProfileSchema);
+studentProfileSchema.pre('save', function (next) {
+  if (this.user && !this.userId) {
+    this.userId = this.user;
+  } else if (this.userId && !this.user) {
+    this.user = this.userId;
+  }
+  if (this.studentId && !this.admissionNumber) {
+    this.admissionNumber = this.studentId;
+  } else if (this.admissionNumber && !this.studentId) {
+    this.studentId = this.admissionNumber;
+  }
+  if (this.profileImage && !this.profilePhoto) {
+    this.profilePhoto = this.profileImage;
+  } else if (this.profilePhoto && !this.profileImage) {
+    this.profileImage = this.profilePhoto;
+  }
+  next();
+});
+
+studentProfileSchema.index({ user: 1 });
+studentProfileSchema.index({ studentId: 1 });
+studentProfileSchema.index({ admissionNumber: 1 });
+
+export const StudentProfile = mongoose.models.StudentProfile || mongoose.model('StudentProfile', studentProfileSchema);
+export default StudentProfile;

@@ -1,6 +1,5 @@
+import 'dotenv/config';
 import express from "express";
-console.log("Starting server.js imports...");
-import dotenv from "dotenv";
 import morgan from "morgan";
 import compression from "compression";
 import cookieParser from "cookie-parser";
@@ -48,16 +47,15 @@ import backupRoutes from "./routes/backupRoutes.js";
 import { configureCloudinary } from "./config/cloudinary.js";
 
 import { seedEnterpriseCMS } from "./scripts/seedEnterpriseCMS.js";
-
-// Load environment variables
-dotenv.config();
+import { seedDefaultSuperAdmin } from "./scripts/seedSuperAdmin.js";
 
 // Initialize Cloudinary
 configureCloudinary();
 
-// Initialize Database Connection & Auto-Seed CMS
+// Initialize Database Connection & Auto-Seed CMS & Super Admin
 connectDB().then(() => {
   seedEnterpriseCMS();
+  seedDefaultSuperAdmin();
 });
 
 const app = express();
@@ -96,6 +94,16 @@ app.use(cookieParser());
 // 4. API Routes
 app.get("/", (req, res) => {
   res.json({ message: "Tejas Academy API Gateway - Active (v1.0)" });
+});
+
+// API Gateway Root Info
+app.get(['/api/v1', '/api/v1/'], (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'Tejas Academy API Gateway v1.0 Active',
+    health: '/api/v1/health',
+    documentation: 'https://unlocktejas.com/api/v1'
+  });
 });
 
 // Health Check Endpoint
@@ -166,7 +174,8 @@ initSocket(server);
 registerAllEventHandlers();
 
 server.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
 
-console.log("End of server.js setup");
+export { app, server };
+

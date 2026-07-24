@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { logger } from '../utils/logger.js';
 import { User } from '../models/User.js';
 import { Program } from '../models/Program.js';
@@ -90,9 +89,13 @@ export const connectDB = async () => {
   try {
     let mongoUri = process.env.MONGODB_URI;
 
-    // Check if URI is missing or just the placeholder string
+    // Check if URI is missing or placeholder
     if (!mongoUri || mongoUri.includes('your_mongodb_connection_string_here')) {
-      logger.info('Starting in-memory MongoDB server for local testing (this may take a minute on first run)...');
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('MONGODB_URI is required in production environment.');
+      }
+      logger.info('Starting in-memory MongoDB server for local testing...');
+      const { MongoMemoryServer } = await import('mongodb-memory-server');
       mongod = await MongoMemoryServer.create({ instance: { startupTimeout: 120000 } });
       mongoUri = mongod.getUri();
     } else {

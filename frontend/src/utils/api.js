@@ -1,9 +1,17 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/useAuthStore';
 
+// Fail-safe API base URL resolution
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
+  // In development, relative '/api/v1' uses Vite proxy to avoid cross-origin preflight issues
+  return '/api/v1';
+};
+
 // Create Axios Instance
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api/v1',
+  baseURL: getBaseUrl(),
   withCredentials: true, // Send HTTP-only cookies
   headers: {
     'Content-Type': 'application/json',
@@ -23,34 +31,37 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor
+// Response Interceptor with Automatic Retry on Network Errors
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // If 401 Unauthorized and not already retrying
+    // Handle Network Errors (Fallback to direct backend URL if proxy fails)
+    if (!error.response && !originalRequest._networkRetry) {
+      originalRequest._networkRetry = true;
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        originalRequest.baseURL = 'http://localhost:5000/api/v1';
+        return api(originalRequest);
+      }
+    }
+
+    // If 401 Unauthorized and not already retrying token refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        // Attempt to refresh token using the HTTP-only cookie
         const { data } = await axios.post(
-          `${import.meta.env.VITE_API_URL || '/api/v1'}/auth/refresh`,
+          `${getBaseUrl()}/auth/refresh`,
           {},
           { withCredentials: true }
         );
 
-        // Update Zustand store with new access token
         useAuthStore.getState().setAccessToken(data.data.accessToken);
-
-        // Update authorization header on the original request and retry
         originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh token failed or expired, log user out
         useAuthStore.getState().logout();
-        window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }

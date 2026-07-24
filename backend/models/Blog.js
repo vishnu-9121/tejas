@@ -14,21 +14,16 @@ const blogSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    content: {
-      type: String,
-      required: true, // Markdown or HTML string
-    },
     excerpt: {
       type: String,
       maxlength: 300,
     },
-    category: {
+    content: {
       type: String,
       required: true,
-      default: 'General'
     },
     coverImage: {
-      type: String, // Cloudinary URL
+      type: String,
       required: true,
     },
     author: {
@@ -36,12 +31,35 @@ const blogSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    category: {
+      type: String,
+      required: true,
+      default: 'General'
+    },
     tags: [
       {
         type: String,
         trim: true,
       },
     ],
+    seo: {
+      metaTitle: { type: String },
+      metaDescription: { type: String },
+      keywords: { type: String },
+    },
+    published: {
+      type: Boolean,
+      default: true,
+    },
+    status: {
+      type: String,
+      enum: ["Draft", "Published", "Archived"],
+      default: "Published",
+    },
+    publishedAt: {
+      type: Date,
+      default: Date.now,
+    },
     relatedBlogs: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -52,38 +70,34 @@ const blogSchema = new mongoose.Schema(
       type: Number,
       default: 5,
     },
-    seo: {
-      metaTitle: { type: String },
-      metaDescription: { type: String },
-      keywords: { type: String },
-    },
-    status: {
-      type: String,
-      enum: ["Draft", "Published", "Archived"],
-      default: "Draft",
-    },
     views: {
       type: Number,
       default: 0,
-    },
-    publishedAt: {
-      type: Date,
     },
   },
   { timestamps: true }
 );
 
-// Create text index for search
-blogSchema.index({ title: "text", content: "text", tags: "text" });
-blogSchema.index({ category: 1 });
-blogSchema.index({ status: 1 });
-
 blogSchema.pre('save', function (next) {
-  if (!this.isModified('title')) {
-    return next();
+  if (this.isModified('title') || !this.slug) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
   }
-  this.slug = slugify(this.title, { lower: true, strict: true });
+  if (!this.excerpt && this.content) {
+    this.excerpt = this.content.substring(0, 160);
+  }
+  if (this.published === true && this.status !== 'Published') {
+    this.status = 'Published';
+  } else if (this.status === 'Published' && this.published !== true) {
+    this.published = true;
+  }
   next();
 });
 
-export default mongoose.model("Blog", blogSchema);
+blogSchema.index({ title: "text", content: "text", tags: "text" });
+blogSchema.index({ category: 1 });
+blogSchema.index({ status: 1 });
+blogSchema.index({ slug: 1 });
+blogSchema.index({ publishedAt: -1 });
+
+export const Blog = mongoose.models.Blog || mongoose.model("Blog", blogSchema);
+export default Blog;

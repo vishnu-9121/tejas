@@ -12,6 +12,14 @@ const courseSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    program: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Program',
+    },
+    programId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Program',
+    },
     category: {
       type: String,
       required: true,
@@ -35,27 +43,39 @@ const courseSchema = new mongoose.Schema(
       required: true,
       default: 0
     },
-
-    program: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Program',
-    },
     credits: {
       type: Number,
       default: 3,
     },
-    prerequisites: {
-      type: String,
-      default: ''
+    order: {
+      type: Number,
+      default: 0,
     },
+    learningOutcomes: [{
+      type: String
+    }],
+    resources: [{
+      title: String,
+      url: String,
+      type: { type: String, enum: ['pdf', 'video', 'link'], default: 'pdf' }
+    }],
+    modules: [{
+      moduleName: String,
+      duration: String,
+      topics: [String]
+    }],
     curriculum: [{
       moduleName: String,
       topics: [String]
     }],
+    prerequisites: {
+      type: String,
+      default: ''
+    },
     status: {
       type: String,
       enum: ['draft', 'published'],
-      default: 'draft'
+      default: 'published'
     }
   },
   {
@@ -64,14 +84,23 @@ const courseSchema = new mongoose.Schema(
 );
 
 courseSchema.pre('save', function (next) {
-  if (this.isModified('title')) {
+  if (this.isModified('title') || !this.slug) {
     this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+  if (this.program && !this.programId) this.programId = this.program;
+  if (this.programId && !this.program) this.program = this.programId;
+  if (this.modules && (!this.curriculum || this.curriculum.length === 0)) {
+    this.curriculum = this.modules;
+  } else if (this.curriculum && (!this.modules || this.modules.length === 0)) {
+    this.modules = this.curriculum;
   }
   next();
 });
 
+courseSchema.index({ program: 1 });
+courseSchema.index({ slug: 1 });
 courseSchema.index({ category: 1 });
 courseSchema.index({ status: 1 });
-courseSchema.index({ level: 1 });
 
-export const Course = mongoose.model('Course', courseSchema);
+export const Course = mongoose.models.Course || mongoose.model('Course', courseSchema);
+export default Course;

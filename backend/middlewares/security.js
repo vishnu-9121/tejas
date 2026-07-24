@@ -4,13 +4,12 @@ import cors from 'cors';
 
 /**
  * Global Rate Limiter
- * Limits each IP to 100 requests per windowMs.
  */
 export const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 2000, // Limit each IP to 2000 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  max: 2000,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again after 15 minutes',
@@ -23,11 +22,11 @@ export const globalLimiter = rateLimit({
 
 /**
  * Auth Rate Limiter
- * Limits auth routes to 5 requests per 15 minutes.
+ * Increased max limit to prevent 429 errors during testing/development.
  */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: process.env.NODE_ENV === 'production' ? 30 : 500, // 500 requests in dev mode
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -51,39 +50,57 @@ export const securityHeaders = helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "res.cloudinary.com", "https://images.unsplash.com"],
-      connectSrc: ["'self'", "https://api.cloudinary.com"],
+      connectSrc: ["'self'", "https://api.cloudinary.com", "http://localhost:*", "http://127.0.0.1:*"],
     },
   },
   crossOriginEmbedderPolicy: false,
 });
 
+/**
+ * CORS Configuration supporting all local development ports and production domain
+ */
 export const corsOptions = cors({
   origin: function (origin, callback) {
-    const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL];
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+    // Always allow requests without origin (e.g. mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+
+    const defaultProductionOrigins = ['https://unlocktejas.com', 'https://www.unlocktejas.com'];
+    const configuredOrigins = (process.env.CLIENT_URL || process.env.FRONTEND_URL || '')
+      .split(',')
+      .map(o => o.trim())
+      .filter(Boolean);
+
+    const allowedOrigins = Array.from(new Set([...defaultProductionOrigins, ...configuredOrigins]));
+
+    // Check if origin matches production whitelist or any local development origin
+    const isLocalhost = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+
+    if (process.env.NODE_ENV === 'production') {
+      if (allowedOrigins.includes(origin) || isLocalhost) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Not allowed by CORS in production: ${origin}`));
+      }
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // In development mode, allow all localhost/127.0.0.1 ports and configured origins
+      callback(null, true);
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
 });
 
 /**
  * Global API Timeout Handler
- * Sets a 30 second timeout on all API requests
  */
 export const timeoutHandler = (req, res, next) => {
-  // Set the timeout for this request
   req.setTimeout(30000, () => {
     const err = new Error('Request Timeout');
     err.status = 408;
     next(err);
   });
   
-  // Also set the response timeout
   res.setTimeout(30000, () => {
     const err = new Error('Service Unavailable - Timeout');
     err.status = 503;

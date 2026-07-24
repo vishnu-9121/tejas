@@ -22,7 +22,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ["agreeably-bats-ravioli.ngrok-free.dev"],
     proxy: {
       '/api': {
         target: 'http://localhost:5000',

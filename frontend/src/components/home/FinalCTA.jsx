@@ -39,10 +39,10 @@ export function FinalCTA() {
             {cta.buttonText}
           </Button>
           <Button
-            variant="outline"
+            variant="secondary"
             size="lg"
             onClick={() => window.location.href = "/contact"}
-            className="text-neutral-0 border-neutral-0/30 hover:bg-primary-800 hover:border-neutral-0 font-semibold"
+            className="font-semibold"
           >
             Talk to an Advisor
           </Button>

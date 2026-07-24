@@ -40,3 +40,4 @@ const inquirySchema = new mongoose.Schema(
 inquirySchema.index({ status: 1 });
 
 export const Inquiry = mongoose.model('Inquiry', inquirySchema);
+export default Inquiry;

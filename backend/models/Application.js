@@ -58,4 +58,5 @@ applicationSchema.index({ status: 1 });
 applicationSchema.index({ applicantId: 1 });
 applicationSchema.index({ programId: 1 });
 
-export default mongoose.model("Application", applicationSchema);
+export const Application = mongoose.model("Application", applicationSchema);
+export default Application;

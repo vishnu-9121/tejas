@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -42,7 +42,11 @@ export default function Login() {
           
       navigate(redirectPath);
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password. Please check your credentials and try again.');
+      const msg = err.response?.data?.message || 
+        (Array.isArray(err.response?.data?.errors) ? err.response?.data?.errors[0] : null) || 
+        err.message || 
+        'Invalid email or password. Please check your credentials and try again.';
+      setError(msg);
     }
   };
 
@@ -194,14 +198,17 @@ export default function Login() {
 
             <div className="mt-6 flex justify-center">
               <div className="w-full rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:border-gray-300 transition-all flex justify-center p-1 bg-gray-50">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={() => setError('Google Authentication could not be completed. Please try again.')}
-                  theme="outline"
-                  size="large"
-                  width="100%"
-                  shape="circle"
-                />
+                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "431275153097-c3vgp6aop1iumeu069h5kssmi6bnoius.apps.googleusercontent.com"}>
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => setError('Google Authentication could not be completed. Please try again.')}
+                    theme="outline"
+                    size="large"
+                    width="100%"
+                    shape="circle"
+                    useOneTap={false}
+                  />
+                </GoogleOAuthProvider>
               </div>
             </div>
           </div>

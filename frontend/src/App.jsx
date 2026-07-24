@@ -22,24 +22,27 @@ const PageLoader = () => (
 );
 
 // Lazy Loaded Pages
-const Home = React.lazy(() => import('./pages/Home').then(module => ({ default: module.Home })));
-const About = React.lazy(() => import('./pages/About').then(module => ({ default: module.About })));
-const VisionMission = React.lazy(() => import('./pages/VisionMission').then(module => ({ default: module.VisionMission })));
-const Campus = React.lazy(() => import('./pages/Campus').then(module => ({ default: module.Campus })));
-const Programs = React.lazy(() => import('./pages/Programs').then(module => ({ default: module.Programs })));
-const ProgramDetails = React.lazy(() => import('./pages/ProgramDetails').then(module => ({ default: module.ProgramDetails })));
-const Admissions = React.lazy(() => import('./pages/Admissions').then(module => ({ default: module.Admissions })));
+const Home = React.lazy(() => import('./pages/Home').then(module => ({ default: module.default || module.Home })));
+const About = React.lazy(() => import('./pages/About').then(module => ({ default: module.default || module.About })));
+const VisionMission = React.lazy(() => import('./pages/VisionMission').then(module => ({ default: module.default || module.VisionMission })));
+const Campus = React.lazy(() => import('./pages/Campus').then(module => ({ default: module.default || module.Campus })));
+const Programs = React.lazy(() => import('./pages/Programs').then(module => ({ default: module.default || module.Programs })));
+const ProgramDetails = React.lazy(() => import('./pages/ProgramDetails').then(module => ({ default: module.default || module.ProgramDetails })));
+const Admissions = React.lazy(() => import('./pages/Admissions').then(module => ({ default: module.default || module.Admissions })));
 
-const Mentors = React.lazy(() => import('./pages/Mentors').then(module => ({ default: module.Mentors })));
-const Events = React.lazy(() => import('./pages/Events').then(module => ({ default: module.Events })));
-const Gallery = React.lazy(() => import('./pages/Gallery').then(module => ({ default: module.Gallery })));
-const TejasInsights = React.lazy(() => import('./pages/Blog').then(module => ({ default: module.Blog })));
-const InsightDetails = React.lazy(() => import('./pages/BlogDetails').then(module => ({ default: module.BlogDetails })));
-const Resources = React.lazy(() => import('./pages/Resources').then(module => ({ default: module.Resources })));
-const Placements = React.lazy(() => import('./pages/Placements').then(module => ({ default: module.Placements })));
-const Testimonials = React.lazy(() => import('./pages/Testimonials').then(module => ({ default: module.Testimonials })));
-const Contact = React.lazy(() => import('./pages/Contact').then(module => ({ default: module.Contact })));
-const Career = React.lazy(() => import('./pages/Career').then(module => ({ default: module.Career })));
+const Mentors = React.lazy(() => import('./pages/Mentors').then(module => ({ default: module.default || module.Mentors })));
+const Events = React.lazy(() => import('./pages/Events').then(module => ({ default: module.default || module.Events })));
+const Gallery = React.lazy(() => import('./pages/Gallery').then(module => ({ default: module.default || module.Gallery })));
+const TejasInsights = React.lazy(() => import('./pages/Blog').then(module => ({ default: module.default || module.Blog })));
+const InsightDetails = React.lazy(() => import('./pages/BlogDetails').then(module => ({ default: module.default || module.BlogDetails })));
+const Resources = React.lazy(() => import('./pages/Resources').then(module => ({ default: module.default || module.Resources })));
+const Placements = React.lazy(() => import('./pages/Placements').then(module => ({ default: module.default || module.Placements })));
+const Testimonials = React.lazy(() => import('./pages/Testimonials').then(module => ({ default: module.default || module.Testimonials })));
+const FreePrograms = React.lazy(() => import('./pages/FreePrograms').then(module => ({ default: module.default || module.FreePrograms })));
+const ForInstitutions = React.lazy(() => import('./pages/ForInstitutions').then(module => ({ default: module.default || module.ForInstitutions })));
+const Recognitions = React.lazy(() => import('./pages/Recognitions').then(module => ({ default: module.default || module.Recognitions })));
+const Contact = React.lazy(() => import('./pages/Contact').then(module => ({ default: module.default || module.Contact })));
+const Career = React.lazy(() => import('./pages/Career').then(module => ({ default: module.default || module.Career })));
 const Support = React.lazy(() => import('./pages/Support').then(module => ({ default: module.Support })));
 const Privacy = React.lazy(() => import('./pages/Privacy').then(module => ({ default: module.Privacy })));
 const Terms = React.lazy(() => import('./pages/Terms').then(module => ({ default: module.Terms })));
@@ -50,7 +53,8 @@ const JoinUs = React.lazy(() => import('./pages/JoinUs').then(module => ({ defau
 // Lazy Loaded Auth & Dashboard
 const Login = React.lazy(() => import('./pages/auth/Login'));
 const Register = React.lazy(() => import('./pages/auth/Register'));
-const ForgotPassword = React.lazy(() => import('./pages/auth/ForgotPassword').then(module => ({ default: module.ForgotPassword })));
+const ForgotPassword = React.lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPassword = React.lazy(() => import('./pages/auth/ResetPassword'));
 const StudentDashboard = React.lazy(() => import('./pages/dashboard/StudentDashboard').then(module => ({ default: module.StudentDashboard })));
 const FacultyDashboard = React.lazy(() => import('./pages/dashboard/FacultyDashboard').then(module => ({ default: module.FacultyDashboard })));
 
@@ -216,6 +220,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
         <Route path="/faculty" element={<ProtectedRoute allowedRoles={['faculty', 'admin', 'super_admin']}><FacultyDashboard /></ProtectedRoute>} />
 
@@ -225,6 +231,9 @@ function App() {
         <Route path="/about/campus" element={<Campus />} />
         <Route path="/programs" element={<Programs />} />
         <Route path="/programs/:slug" element={<ProgramDetails />} />
+        <Route path="/free-programs" element={<FreePrograms />} />
+        <Route path="/for-institutions" element={<ForInstitutions />} />
+        <Route path="/recognitions" element={<Recognitions />} />
         <Route path="/admissions" element={<Admissions />} />
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/mentors" element={<Mentors />} />
