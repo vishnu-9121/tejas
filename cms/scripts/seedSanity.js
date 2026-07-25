@@ -99,13 +99,21 @@ const SEED_DOCUMENTS = [
     _id: 'contactPage',
     _type: 'contactPage',
     title: 'Get in Touch with Tejas Academy',
-    subtitle: 'Our admissions and academic support teams are available to assist you.',
-    address: 'Tejas Academy Campus, Tech Corridor, Jubilee Hills, Hyderabad, Telangana - 500033',
-    phone: '+91 98765 43210',
+    heroTitle: 'Connect with Our Academic Counselors',
+    subtitle: 'Our admissions and academic support teams are available 6 days a week.',
+    heroSubtitle: 'Have questions about admissions, fee structures, or campus visits?',
     email: 'info@unlocktejas.com',
+    generalEmail: 'info@unlocktejas.com',
     supportEmail: 'admissions@unlocktejas.com',
+    admissionsEmail: 'admissions@unlocktejas.com',
+    phone: '+91 98765 43210',
+    helplinePhone: '+91 1800 123 4567',
+    whatsappSupport: '+91 98765 43210',
+    address: 'Tejas Academy Campus, Tech Corridor, Jubilee Hills, Hyderabad, Telangana - 500033',
+    campusAddress: 'Tejas Academy Campus, Tech Corridor, Jubilee Hills, Hyderabad, Telangana - 500033',
     workingHours: 'Monday - Saturday: 9:00 AM - 6:00 PM IST',
-    googleMapsEmbedUrl: 'https://maps.google.com'
+    googleMapsEmbedUrl: 'https://maps.google.com',
+    mapEmbedUrl: 'https://maps.google.com'
   },
 
   // 5. Navigation (Singleton)
@@ -385,7 +393,7 @@ async function seedSanity() {
   }
 
   const mutations = SEED_DOCUMENTS.map(doc => ({
-    createIfNotExists: doc
+    createOrReplace: doc
   }));
 
   const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/mutate/${SANITY_DATASET}`;

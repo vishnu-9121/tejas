@@ -35,18 +35,23 @@ export const sanityService = {
         for (const [key, val] of Object.entries(params)) {
           encodedQuery = encodedQuery.replace(`$${key}`, `"${val}"`);
         }
-        const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}?query=${encodedQuery}`;
+        // Use live api.sanity.io endpoint with cache-busting timestamp & no-store policy for instant updates
+        const timestamp = new Date().getTime();
+        const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}?query=${encodedQuery}&_t=${timestamp}`;
         
         const headers = {};
         if (SANITY_API_TOKEN) {
           headers['Authorization'] = `Bearer ${SANITY_API_TOKEN}`;
         }
 
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, { 
+          headers, 
+          cache: 'no-store'
+        });
         const json = await response.json();
         if (json.result) return json.result;
       } catch (err) {
-        console.warn('[SanityService] Sanity fetch error, falling back to database API:', err.message);
+        console.warn('[SanityService] Direct Sanity fetch error, falling back to Express API:', err.message);
       }
     }
     return null;
