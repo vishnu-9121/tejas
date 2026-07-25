@@ -26,6 +26,7 @@ export const homepage = {
       of: [
         {
           type: 'object',
+          name: 'statItem',
           fields: [
             { name: 'label', title: 'Statistic Title', type: 'string' },
             { name: 'value', title: 'Statistic Value (e.g., 98.4%, 15+ LPA)', type: 'string' },
@@ -48,6 +49,7 @@ export const homepage = {
           of: [
             {
               type: 'object',
+              name: 'featureItem',
               fields: [
                 { name: 'title', title: 'Feature Title', type: 'string' },
                 { name: 'description', title: 'Feature Description', type: 'text' },

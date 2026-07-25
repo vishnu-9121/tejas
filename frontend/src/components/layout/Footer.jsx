@@ -6,27 +6,15 @@ import { cmsService } from '@/services/cmsService';
 import { Button } from '@/components/ui/Button';
 import { NewsletterForm } from '@/components/forms/NewsletterForm';
 
-const footerLinks = [
-  {
-    group: 'Explore Academics',
-    links: [
-      { label: 'Home', url: '/' },
-      { label: 'Academic Programs', url: '/programs' },
-      { label: 'Admissions & Scholarships', url: '/admissions' },
-      { label: 'Free Learning Programs', url: '/free-programs' },
-      { label: 'Tejas Insights', url: '/insights' },
-    ]
-  },
-  {
-    group: 'Institutional & Partners',
-    links: [
-      { label: 'For Institutions', url: '/for-institutions' },
-      { label: 'Recognitions & Awards', url: '/recognitions' },
-      { label: 'Faculty & Mentors', url: '/mentors' },
-      { label: 'Our Community', url: '/about' },
-      { label: 'Partner with Us', url: '/contact' },
-    ]
-  }
+const fallbackQuickLinks = [
+  { label: 'Home', url: '/' },
+  { label: 'Academic Programs', url: '/programs' },
+  { label: 'Admissions & Scholarships', url: '/admissions' },
+  { label: 'Free Learning Programs', url: '/free-programs' },
+  { label: 'For Institutions', url: '/for-institutions' },
+  { label: 'Recognitions & Awards', url: '/recognitions' },
+  { label: 'Faculty & Mentors', url: '/mentors' },
+  { label: 'Our Community', url: '/about' },
 ];
 
 export const Footer = () => {
@@ -42,13 +30,22 @@ export const Footer = () => {
     staleTime: 60 * 1000,
   });
 
-  const liveSettings = settingsData?.data?.data || {};
+  const liveSettings = settingsData?.data?.data || settingsData?.data || settingsData || {};
+  const liveFooter = footerData?.data?.data || footerData?.data || footerData || {};
 
   const contactInfo = {
     address: liveSettings.physicalAddress || 'Tejas Academy Campus, Tech Corridor, Jubilee Hills, Hyderabad, Telangana - 500033',
     phone: liveSettings.contactPhone || '+91 98765 43210',
     email: liveSettings.contactEmail || 'info@unlocktejas.com'
   };
+
+  const quickLinks = liveFooter.quickLinks && liveFooter.quickLinks.length > 0 ? liveFooter.quickLinks : fallbackQuickLinks;
+  const legalLinks = liveFooter.legalLinks && liveFooter.legalLinks.length > 0 ? liveFooter.legalLinks : [
+    { label: 'Privacy Policy', url: '/privacy' },
+    { label: 'Terms of Service', url: '/terms' },
+  ];
+  const copyrightText = liveFooter.copyrightText || `© ${new Date().getFullYear()} Tejas Academy of Excellence. All rights reserved.`;
+  const accreditationText = liveFooter.accreditationText || 'Approved by UGC & AICTE, Govt. of India.';
 
   return (
     <footer className="bg-[#1b2a1c] text-emerald-100 font-sans border-t border-emerald-900/60 select-none">
@@ -99,24 +96,37 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Columns 2 & 3: Quick Navigation */}
-          {footerLinks.map((group, idx) => (
-            <div key={idx} className="lg:col-span-2">
-              <h4 className="text-white font-bold text-xs tracking-widest uppercase mb-5 text-amber-400">{group.group}</h4>
-              <ul className="space-y-3">
-                {group.links.map((link, lIdx) => (
-                  <li key={lIdx}>
-                    <Link 
-                      to={link.url} 
-                      className="text-sm text-emerald-200/80 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 font-medium"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Columns 2 & 3: Quick Navigation from CMS */}
+          <div className="lg:col-span-2">
+            <h4 className="text-white font-bold text-xs tracking-widest uppercase mb-5 text-amber-400">Quick Links</h4>
+            <ul className="space-y-3">
+              {quickLinks.slice(0, Math.ceil(quickLinks.length / 2)).map((link, lIdx) => (
+                <li key={lIdx}>
+                  <Link 
+                    to={link.url} 
+                    className="text-sm text-emerald-200/80 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 font-medium"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="lg:col-span-2">
+            <h4 className="text-white font-bold text-xs tracking-widest uppercase mb-5 text-amber-400">More Links</h4>
+            <ul className="space-y-3">
+              {quickLinks.slice(Math.ceil(quickLinks.length / 2)).map((link, lIdx) => (
+                <li key={lIdx}>
+                  <Link 
+                    to={link.url} 
+                    className="text-sm text-emerald-200/80 hover:text-white hover:translate-x-1 inline-block transition-all duration-200 font-medium"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* Column 4: Contact & Newsletter */}
           <div className="lg:col-span-4">
@@ -150,11 +160,12 @@ export const Footer = () => {
       <div className="border-t border-emerald-900/80 bg-[#121c13]">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-emerald-400/80 text-xs">
-            &copy; {new Date().getFullYear()} Tejas Academy of Excellence. All rights reserved. Approved by UGC & AICTE, Govt. of India.
+            {copyrightText} {accreditationText}
           </p>
           <div className="flex items-center gap-6 text-xs text-emerald-400/80 font-medium">
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            {legalLinks.map((link, idx) => (
+              <Link key={idx} to={link.url} className="hover:text-white transition-colors">{link.label}</Link>
+            ))}
             <Link to="/sitemap.xml" className="hover:text-white transition-colors">Sitemap</Link>
           </div>
         </div>

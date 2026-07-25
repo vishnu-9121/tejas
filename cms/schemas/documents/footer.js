@@ -12,6 +12,7 @@ export const footer = {
       of: [
         {
           type: 'object',
+          name: 'quickLink',
           fields: [
             { name: 'label', title: 'Link Label', type: 'string' },
             { name: 'url', title: 'Target Route', type: 'string' }
@@ -26,6 +27,7 @@ export const footer = {
       of: [
         {
           type: 'object',
+          name: 'legalLink',
           fields: [
             { name: 'label', title: 'Policy Name', type: 'string' },
             { name: 'url', title: 'Route Path', type: 'string' }

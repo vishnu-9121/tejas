@@ -20,6 +20,7 @@ export const siteSettings = {
       of: [
         {
           type: 'object',
+          name: 'socialLink',
           fields: [
             { name: 'platform', title: 'Platform Name (e.g. LinkedIn, Instagram, YouTube, Facebook, Twitter)', type: 'string' },
             { name: 'url', title: 'Profile URL', type: 'url' }

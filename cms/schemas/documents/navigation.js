@@ -12,6 +12,7 @@ export const navigation = {
       of: [
         {
           type: 'object',
+          name: 'menuItem',
           fields: [
             { name: 'label', title: 'Menu Label', type: 'string' },
             { name: 'url', title: 'Route Path', type: 'string' },
@@ -22,6 +23,7 @@ export const navigation = {
               of: [
                 {
                   type: 'object',
+                  name: 'dropdownItem',
                   fields: [
                     { name: 'label', title: 'Sub-menu Item Label', type: 'string' },
                     { name: 'url', title: 'Sub-menu Route Path', type: 'string' },

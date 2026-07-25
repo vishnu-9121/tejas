@@ -1,5 +1,6 @@
 /**
  * Standardized GROQ Queries for Tejas Academy Sanity CMS Engine
+ * Field names MUST match exactly with cms/schemas/documents/*.js
  */
 
 export const GROQ_SITE_SETTINGS_QUERY = `
@@ -104,67 +105,90 @@ export const GROQ_HOMEPAGE_QUERY = `
       videoUrl
     },
     stats,
-    whyChooseUs,
-    pillars,
-    timeline,
-    impactMetrics,
-    finalCta
+    whyChooseUs {
+      title,
+      subtitle,
+      features
+    },
+    finalCta {
+      title,
+      description,
+      buttonText,
+      buttonLink
+    }
   }
 `;
 
 export const GROQ_ABOUT_PAGE_QUERY = `
   *[_type == "aboutPage"][0] {
-    title,
-    description,
-    historyText,
-    "backgroundImage": mainImage.asset->url,
-    timeline,
-    leadershipMessage
+    heroTitle,
+    heroSubtitle,
+    storyText,
+    missionText,
+    visionText,
+    founderMessage {
+      founderName,
+      founderTitle,
+      messageText,
+      "founderPhotoUrl": founderPhoto.asset->url
+    },
+    timeline
   }
 `;
 
 export const GROQ_CONTACT_PAGE_QUERY = `
   *[_type == "contactPage"][0] {
     title,
+    heroTitle,
     subtitle,
-    address,
-    phone,
+    heroSubtitle,
     email,
+    generalEmail,
     supportEmail,
+    admissionsEmail,
+    phone,
+    helplinePhone,
+    whatsappSupport,
+    address,
+    campusAddress,
     workingHours,
     googleMapsEmbedUrl,
-    departments
+    mapEmbedUrl
   }
 `;
 
 export const GROQ_NAVIGATION_QUERY = `
   *[_type == "navigation"][0] {
-    headerLinks[] {
+    logoText,
+    "logoImageUrl": logoImage.asset->url,
+    menuItems[] {
       label,
-      path,
-      isExternal,
-      isButton,
-      subLinks[] {
+      url,
+      dropdownItems[] {
         label,
-        path,
+        url,
         description
       }
+    },
+    headerCta {
+      buttonText,
+      buttonLink
     }
   }
 `;
 
 export const GROQ_FOOTER_QUERY = `
   *[_type == "footer"][0] {
-    brandBio,
     copyrightText,
-    quickLinksGroup[] {
-      groupTitle,
-      links[] {
-        label,
-        path
-      }
+    accreditationText,
+    quickLinks[] {
+      label,
+      url
     },
-    socialLinks
+    legalLinks[] {
+      label,
+      url
+    }
   }
 `;
 

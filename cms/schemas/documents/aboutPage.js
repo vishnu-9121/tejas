@@ -26,6 +26,7 @@ export const aboutPage = {
       of: [
         {
           type: 'object',
+          name: 'timelineItem',
           fields: [
             { name: 'year', title: 'Year (e.g. 2018)', type: 'string' },
             { name: 'title', title: 'Milestone Title', type: 'string' },

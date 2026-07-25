@@ -13,6 +13,7 @@ export const excellenceFactor = {
       of: [
         {
           type: 'object',
+          name: 'optionItem',
           fields: [
             { name: 'label', title: 'Option Title', type: 'string' },
             { name: 'description', title: 'Option Description', type: 'string' },
