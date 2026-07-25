@@ -1,4 +1,6 @@
-export default {
+import { defineCliConfig } from 'sanity/cli';
+
+export default defineCliConfig({
   api: {
     projectId: process.env.SANITY_STUDIO_PROJECT_ID || '6nl927hv',
     dataset: process.env.SANITY_STUDIO_DATASET || 'production'
@@ -6,4 +8,4 @@ export default {
   project: {
     basePath: '/'
   }
-};
+});

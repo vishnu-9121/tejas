@@ -11,7 +11,15 @@ import {
   GROQ_PROGRAMS_QUERY, 
   GROQ_MENTORS_QUERY,
   GROQ_FAQS_QUERY,
-  GROQ_POPUP_MODALS_QUERY
+  GROQ_POPUP_MODALS_QUERY,
+  GROQ_ABOUT_PAGE_QUERY,
+  GROQ_CONTACT_PAGE_QUERY,
+  GROQ_NAVIGATION_QUERY,
+  GROQ_FOOTER_QUERY,
+  GROQ_GALLERY_QUERY,
+  GROQ_TESTIMONIALS_QUERY,
+  GROQ_EVENTS_QUERY,
+  GROQ_BLOGS_QUERY
 } from './groqQueries';
 
 const SANITY_PROJECT_ID = import.meta.env.VITE_SANITY_PROJECT_ID || '6nl927hv';
@@ -20,9 +28,6 @@ const SANITY_API_VERSION = import.meta.env.VITE_SANITY_API_VERSION || '2023-01-0
 const SANITY_API_TOKEN = import.meta.env.VITE_SANITY_API_TOKEN;
 
 export const sanityService = {
-  /**
-   * Execute GROQ Query against Sanity API Gateway
-   */
   fetchGroq: async (query, params = {}) => {
     if (SANITY_PROJECT_ID) {
       try {
@@ -59,7 +64,6 @@ export const sanityService = {
     const sanityRes = await sanityService.fetchGroq(GROQ_HERO_SLIDER_QUERY);
     if (sanityRes && sanityRes.length > 0) return sanityRes;
 
-    // Fallback slides
     return [
       {
         _id: 'slide-1',
@@ -110,17 +114,7 @@ export const sanityService = {
         questionSubtitle: 'Select the statement that resonates most with your career goals.',
         options: [
           { label: 'Building High-Scale AI & Software Systems', description: 'Deep technical mastery in AI, Cloud, and Software Architecture', recommendedCategory: 'Engineering', icon: 'Cpu' },
-          { label: 'Leading Tech Products & Business Ventures', description: 'Product management, executive strategy, and scaling teams', recommendedCategory: 'Management', icon: 'TrendingUp' },
-          { label: 'Extracting Insights from Big Data', description: 'Predictive analytics, machine learning, and data engineering', recommendedCategory: 'Data Science', icon: 'BarChart' }
-        ]
-      },
-      {
-        questionNumber: 2,
-        questionTitle: 'What learning environment enables your best performance?',
-        questionSubtitle: 'Tell us how you absorb complex skills most effectively.',
-        options: [
-          { label: 'Hands-on Labs & Real-World Capstone Projects', description: 'Building functional applications and lab simulations', recommendedCategory: 'Engineering', icon: 'Code' },
-          { label: 'Executive Case Studies & Strategic Leadership Workshops', description: 'Analyzing real business scenarios and strategic dilemmas', recommendedCategory: 'Management', icon: 'Users' }
+          { label: 'Leading Tech Products & Business Ventures', description: 'Product management, executive strategy, and scaling teams', recommendedCategory: 'Management', icon: 'TrendingUp' }
         ]
       }
     ];
@@ -139,15 +133,6 @@ export const sanityService = {
         shortDescription: 'Learn to leverage LLMs, prompt patterns, and generative tools for technical productivity.',
         modulesCount: 4,
         enrollLink: '/admissions'
-      },
-      {
-        _id: 'fp-2',
-        title: 'Executive Leadership & Problem Solving Masterclass',
-        category: 'Leadership',
-        duration: '5 Hours',
-        shortDescription: 'Frameworks for strategic decision making, negotiation, and high-performance team culture.',
-        modulesCount: 6,
-        enrollLink: '/admissions'
       }
     ];
   },
@@ -157,8 +142,7 @@ export const sanityService = {
     if (sanityRes && sanityRes.length > 0) return sanityRes;
 
     return [
-      { _id: 'inst-1', title: 'Faculty Development Programs (FDP)', category: 'Faculty Upskilling', description: 'Comprehensive workshops empowering educators with the latest pedagogical tools, AI research methods, and industry case studies.', keyBenefits: ['AI Curriculum Integration', 'Research Paper Publishing Support', 'Certificates of Mastery'], icon: 'BookOpen' },
-      { _id: 'inst-2', title: 'Institutional Placement & Skill Training', category: 'Student Employability', description: 'Customized bootcamp modules designed to elevate student interview readiness, coding benchmarks, and soft skills.', keyBenefits: ['Mock Technical Interviews', 'Placement Assessment Engine', 'Direct Corporate MoUs'], icon: 'Briefcase' }
+      { _id: 'inst-1', title: 'Faculty Development Programs (FDP)', category: 'Faculty Upskilling', description: 'Comprehensive workshops empowering educators with the latest pedagogical tools, AI research methods, and industry case studies.', keyBenefits: ['AI Curriculum Integration', 'Research Paper Publishing Support', 'Certificates of Mastery'], icon: 'BookOpen' }
     ];
   },
 
@@ -167,8 +151,7 @@ export const sanityService = {
     if (sanityRes && sanityRes.length > 0) return sanityRes;
 
     return [
-      { _id: 'rec-1', title: 'Best Academic Innovation Institute 2025', issuingBody: 'National Education Excellence Leadership Awards', year: '2025', description: 'Recognized for pioneering industry-aligned curriculum and AI research labs.' },
-      { _id: 'rec-2', title: 'Top 10 Higher Education Centers in Telangana', issuingBody: 'Higher Education Review India', year: '2025', description: 'Awarded for exceptional graduate placement ratios and campus infrastructure.' }
+      { _id: 'rec-1', title: 'Best Academic Innovation Institute 2025', issuingBody: 'National Education Excellence Leadership Awards', year: '2025', description: 'Recognized for pioneering industry-aligned curriculum and AI research labs.' }
     ];
   },
 
@@ -178,6 +161,70 @@ export const sanityService = {
 
     const dbRes = await api.get('/cms/homepage');
     return dbRes.data?.data || null;
+  },
+
+  getAboutPage: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_ABOUT_PAGE_QUERY);
+    if (sanityRes) return sanityRes;
+
+    const dbRes = await api.get('/cms/about');
+    return dbRes.data?.data || null;
+  },
+
+  getContactPage: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_CONTACT_PAGE_QUERY);
+    if (sanityRes) return sanityRes;
+
+    const dbRes = await api.get('/cms/contact');
+    return dbRes.data?.data || null;
+  },
+
+  getNavigation: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_NAVIGATION_QUERY);
+    if (sanityRes) return sanityRes;
+
+    const dbRes = await api.get('/cms/navigation');
+    return dbRes.data?.data || null;
+  },
+
+  getFooter: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_FOOTER_QUERY);
+    if (sanityRes) return sanityRes;
+
+    const dbRes = await api.get('/cms/footer');
+    return dbRes.data?.data || null;
+  },
+
+  getGallery: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_GALLERY_QUERY);
+    if (sanityRes && sanityRes.length > 0) return sanityRes;
+
+    const dbRes = await api.get('/gallery');
+    return dbRes.data?.data || [];
+  },
+
+  getTestimonials: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_TESTIMONIALS_QUERY);
+    if (sanityRes && sanityRes.length > 0) return sanityRes;
+
+    const dbRes = await api.get('/testimonials');
+    return dbRes.data?.data || [];
+  },
+
+  getEvents: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_EVENTS_QUERY);
+    if (sanityRes && sanityRes.length > 0) return sanityRes;
+
+    const dbRes = await api.get('/events');
+    return dbRes.data?.data || [];
+  },
+
+  getBlogs: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_BLOGS_QUERY);
+    if (sanityRes && sanityRes.length > 0) return sanityRes;
+
+    const dbRes = await api.get('/blogs');
+    return dbRes.data?.data || [];
   },
 
   getPrograms: async () => {
