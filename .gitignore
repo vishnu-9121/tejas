@@ -6,6 +6,8 @@
 .env
 dist/
 build/
+*.zip
+frontend/dist.zip
 .next/
 
 *.log
