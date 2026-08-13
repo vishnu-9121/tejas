@@ -105,9 +105,12 @@ const ManageLeadsCRM = React.lazy(() => import('./pages/admin/ManageLeadsCRM'));
 const ManageEmailCampaigns = React.lazy(() => import('./pages/admin/ManageEmailCampaigns'));
 const ManageBackups = React.lazy(() => import('./pages/admin/ManageBackups'));
 
+import { VelarisGlobalBackground } from './components/ui/VelarisGlobalBackground';
+
 const PublicLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-gray-50 selection:bg-primary-200">
+    <div className="min-h-screen flex flex-col font-sans selection:bg-primary-200 relative">
+      <VelarisGlobalBackground opacity={0.35} />
       <Navbar />
       <main className="flex-grow pt-[72px]">
         <Breadcrumb />
