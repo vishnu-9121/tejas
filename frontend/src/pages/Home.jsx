@@ -10,8 +10,6 @@ import { ExcellenceFactor } from "../components/admissions/ExcellenceFactor";
 import { EventsSection } from "../components/home/EventsSection";
 import { TestimonialsSection } from "../components/home/TestimonialsSection";
 import { ImpactSection } from "../components/home/ImpactSection";
-import { GallerySection } from "../components/home/GallerySection";
-import { BlogsSection } from "../components/home/BlogsSection";
 import { FAQSection } from "../components/home/FAQSection";
 import { CollaborationMarquee } from "../components/home/CollaborationMarquee";
 import { FinalCTA } from "../components/home/FinalCTA";
@@ -46,8 +44,6 @@ export function Home() {
       <EventsSection />
       <TestimonialsSection />
       <ImpactSection />
-      <GallerySection />
-      <BlogsSection />
       <FAQSection />
       <CollaborationMarquee />
       <FinalCTA />

@@ -19,7 +19,9 @@ import {
   GROQ_GALLERY_QUERY,
   GROQ_TESTIMONIALS_QUERY,
   GROQ_EVENTS_QUERY,
-  GROQ_BLOGS_QUERY
+  GROQ_BLOGS_QUERY,
+  GROQ_COURSES_QUERY,
+  GROQ_WORKSHOPS_QUERY
 } from './groqQueries';
 
 const SANITY_PROJECT_ID = import.meta.env.VITE_SANITY_PROJECT_ID || '6nl927hv';
@@ -262,5 +264,22 @@ export const sanityService = {
 
     const dbRes = await api.get('/cms/popup_modals');
     return dbRes.data?.data || [];
+  },
+
+  getCourses: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_COURSES_QUERY);
+    if (sanityRes && sanityRes.length > 0) return sanityRes;
+
+    const dbRes = await api.get('/courses');
+    return dbRes.data?.data || [];
+  },
+
+  getWorkshops: async () => {
+    const sanityRes = await sanityService.fetchGroq(GROQ_WORKSHOPS_QUERY);
+    if (sanityRes && sanityRes.length > 0) return sanityRes;
+
+    const dbRes = await api.get('/workshops');
+    return dbRes.data?.data || [];
   }
 };
+

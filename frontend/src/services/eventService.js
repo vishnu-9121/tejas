@@ -1,12 +1,36 @@
 import api from '../utils/api';
+import { sanityService } from './sanityService';
 
 export const eventService = {
   getEvents: async (params) => {
+    try {
+      const sanityEvents = await sanityService.getEvents();
+      if (sanityEvents && sanityEvents.length > 0) {
+        return {
+          success: true,
+          data: {
+            events: sanityEvents,
+            data: sanityEvents
+          }
+        };
+      }
+    } catch (err) {
+      console.warn('[eventService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get('/events', { params });
     return response.data;
   },
 
   getEventBySlug: async (slug) => {
+    try {
+      const sanityEvents = await sanityService.getEvents();
+      const match = sanityEvents?.find(e => e.slug === slug || e.slug?.current === slug);
+      if (match) {
+        return { success: true, data: match };
+      }
+    } catch (err) {
+      console.warn('[eventService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get(`/events/slug/${slug}`);
     return response.data;
   },

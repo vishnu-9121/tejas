@@ -14,11 +14,11 @@ export const Contact = () => {
 
   const title = contactData?.heroTitle || contactData?.title || "Get in Touch with Tejas Academy";
   const subtitle = contactData?.heroSubtitle || contactData?.subtitle || "Our admissions and academic support teams are available 6 days a week.";
-  const address = contactData?.campusAddress || contactData?.address || "Tejas Academy Campus, Tech Corridor, Jubilee Hills, Hyderabad, Telangana - 500033";
+  const address = contactData?.campusAddress || contactData?.address || "Beside L K Towers, Roy Nagar, Gannavaram - 521101";
   const phone = contactData?.helplinePhone || contactData?.phone || "+91 98765 43210";
   const email = contactData?.generalEmail || contactData?.email || "info@unlocktejas.com";
   const workingHours = contactData?.workingHours || "Monday - Saturday: 9:00 AM - 6:00 PM IST";
-  const mapUrl = contactData?.googleMapsEmbedUrl || contactData?.mapEmbedUrl || "https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Jubilee%20Hills,%20Hyderabad+(Tejas%20Academy)&t=&z=14&ie=UTF8&iwloc=B&output=embed";
+  const mapUrl = contactData?.googleMapsEmbedUrl || contactData?.mapEmbedUrl || "https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Gannavaram+(Tejas%20Academy)&t=&z=14&ie=UTF8&iwloc=B&output=embed";
 
   return (
     <div className="py-20 max-w-7xl mx-auto px-4 select-none">

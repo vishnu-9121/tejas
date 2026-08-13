@@ -1,7 +1,22 @@
 import api from '../utils/api';
+import { sanityService } from './sanityService';
 
 export const mentorService = {
   getMentors: async (params) => {
+    try {
+      const sanityMentors = await sanityService.getMentors();
+      if (sanityMentors && sanityMentors.length > 0) {
+        return {
+          success: true,
+          data: {
+            mentors: sanityMentors,
+            data: sanityMentors
+          }
+        };
+      }
+    } catch (err) {
+      console.warn('[mentorService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get('/mentors', { params });
     return response.data;
   },

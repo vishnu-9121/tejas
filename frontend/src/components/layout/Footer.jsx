@@ -34,7 +34,7 @@ export const Footer = () => {
   const liveFooter = footerData?.data?.data || footerData?.data || footerData || {};
 
   const contactInfo = {
-    address: liveSettings.physicalAddress || 'Tejas Academy Campus, Tech Corridor, Jubilee Hills, Hyderabad, Telangana - 500033',
+    address: liveSettings.physicalAddress || 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
     phone: liveSettings.contactPhone || '+91 98765 43210',
     email: liveSettings.contactEmail || 'info@unlocktejas.com'
   };

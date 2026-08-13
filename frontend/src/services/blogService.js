@@ -1,10 +1,22 @@
 import api from '../utils/api';
+import { sanityService } from './sanityService';
 
 export const blogService = {
   getBlogs: async (params) => {
-    // If we want all blogs for admin, we hit /blogs/admin/all
-    // For now we'll assume we pass an admin flag or just hit the admin endpoint if logged in.
-    // Actually, it's safer to have getAdminBlogs
+    try {
+      const sanityBlogs = await sanityService.getBlogs();
+      if (sanityBlogs && sanityBlogs.length > 0) {
+        return {
+          success: true,
+          data: {
+            blogs: sanityBlogs,
+            data: sanityBlogs
+          }
+        };
+      }
+    } catch (err) {
+      console.warn('[blogService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get('/blogs', { params });
     return response.data;
   },
@@ -15,6 +27,15 @@ export const blogService = {
   },
 
   getBlogBySlug: async (slug) => {
+    try {
+      const sanityBlogs = await sanityService.getBlogs();
+      const match = sanityBlogs?.find(b => b.slug === slug || b.slug?.current === slug);
+      if (match) {
+        return { success: true, data: match };
+      }
+    } catch (err) {
+      console.warn('[blogService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get(`/blogs/slug/${slug}`);
     return response.data;
   },

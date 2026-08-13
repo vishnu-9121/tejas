@@ -1,12 +1,41 @@
 import api from '../utils/api';
+import { sanityService } from './sanityService';
 
 export const programService = {
   getPrograms: async (params) => {
+    try {
+      const sanityPrograms = await sanityService.getPrograms();
+      if (sanityPrograms && sanityPrograms.length > 0) {
+        return {
+          success: true,
+          data: {
+            programs: sanityPrograms,
+            data: sanityPrograms,
+            pagination: {
+              total: sanityPrograms.length,
+              page: 1,
+              pages: 1
+            }
+          }
+        };
+      }
+    } catch (err) {
+      console.warn('[programService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get('/programs', { params });
     return response.data;
   },
 
   getProgramBySlug: async (slug) => {
+    try {
+      const sanityPrograms = await sanityService.getPrograms();
+      const match = sanityPrograms?.find(p => p.slug === slug || p.slug?.current === slug);
+      if (match) {
+        return { success: true, data: match };
+      }
+    } catch (err) {
+      console.warn('[programService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get(`/programs/${slug}`);
     return response.data;
   },

@@ -1,12 +1,36 @@
 import api from '../utils/api';
+import { sanityService } from './sanityService';
 
 export const courseService = {
   getCourses: async (params) => {
+    try {
+      const sanityCourses = await sanityService.getCourses();
+      if (sanityCourses && sanityCourses.length > 0) {
+        return {
+          success: true,
+          data: {
+            courses: sanityCourses,
+            data: sanityCourses
+          }
+        };
+      }
+    } catch (err) {
+      console.warn('[courseService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get('/courses', { params });
     return response.data;
   },
 
   getCourseBySlug: async (slug) => {
+    try {
+      const sanityCourses = await sanityService.getCourses();
+      const match = sanityCourses?.find(c => c.slug === slug || c.slug?.current === slug);
+      if (match) {
+        return { success: true, data: match };
+      }
+    } catch (err) {
+      console.warn('[courseService] Sanity fetch error, falling back to Express API:', err.message);
+    }
     const response = await api.get(`/courses/slug/${slug}`);
     return response.data;
   },

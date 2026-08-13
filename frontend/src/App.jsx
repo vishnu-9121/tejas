@@ -2,11 +2,9 @@ import React, { Suspense } from 'react';
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
-import { AnnouncementBar } from './components/layout/AnnouncementBar';
 import { SmoothScroll } from './components/layout/SmoothScroll';
 import { Breadcrumb } from './components/ui/Breadcrumb';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { ExitIntentModal } from './components/ui/ExitIntentModal';
 import { QuickConnectWidget } from './components/ui/QuickConnectWidget';
 import { SocialProofToasts } from './components/ui/SocialProofToasts';
 import { useNetwork } from './hooks/useNetwork';
@@ -110,7 +108,6 @@ const ManageBackups = React.lazy(() => import('./pages/admin/ManageBackups'));
 const PublicLayout = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-gray-50 selection:bg-primary-200">
-      <AnnouncementBar />
       <Navbar />
       <main className="flex-grow pt-[72px]">
         <Breadcrumb />
@@ -119,7 +116,6 @@ const PublicLayout = () => {
         </Suspense>
       </main>
       <Footer />
-      <ExitIntentModal />
       <QuickConnectWidget />
       <SocialProofToasts />
     </div>

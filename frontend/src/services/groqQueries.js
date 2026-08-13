@@ -1,5 +1,5 @@
 /**
- * Standardized GROQ Queries for Tejas Academy Sanity CMS Engine
+ * Standardized Resilient GROQ Queries for Tejas Academy Sanity CMS Engine
  * Field names MUST match exactly with cms/schemas/documents/*.js
  */
 
@@ -30,7 +30,7 @@ export const GROQ_HERO_SLIDER_QUERY = `
     primaryCtaLink,
     secondaryCtaText,
     secondaryCtaLink,
-    "imageUrl": bgImage.asset->url,
+    "imageUrl": coalesce(bgImage.asset->url, "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1600"),
     overlayColor
   }
 `;
@@ -87,6 +87,7 @@ export const GROQ_RECOGNITIONS_QUERY = `
     issuingBody,
     year,
     description,
+    "logoUrl": image.asset->url,
     "imageUrl": image.asset->url
   }
 `;
@@ -110,6 +111,7 @@ export const GROQ_HOMEPAGE_QUERY = `
       subtitle,
       features
     },
+    impactMetrics,
     finalCta {
       title,
       description,
@@ -122,10 +124,14 @@ export const GROQ_HOMEPAGE_QUERY = `
 export const GROQ_ABOUT_PAGE_QUERY = `
   *[_type == "aboutPage"][0] {
     heroTitle,
+    "title": coalesce(title, heroTitle),
     heroSubtitle,
+    "description": coalesce(description, heroSubtitle),
     storyText,
+    "historyText": coalesce(historyText, storyText),
     missionText,
     visionText,
+    leadershipMessage,
     founderMessage {
       founderName,
       founderTitle,
@@ -198,6 +204,7 @@ export const GROQ_GALLERY_QUERY = `
     title,
     category,
     caption,
+    "image": coalesce(image.asset->url, "https://via.placeholder.com/600x400"),
     "imageUrl": image.asset->url
   }
 `;
@@ -210,7 +217,9 @@ export const GROQ_TESTIMONIALS_QUERY = `
     company,
     program,
     quote,
+    "content": quote,
     rating,
+    "image": coalesce(avatar.asset->url, "https://via.placeholder.com/100"),
     "avatarUrl": avatar.asset->url
   }
 `;
@@ -221,17 +230,19 @@ export const GROQ_EVENTS_QUERY = `
     title,
     "slug": slug.current,
     category,
+    "type": category,
     date,
     time,
     location,
     description,
     registrationLink,
+    "image": image.asset->url,
     "imageUrl": image.asset->url
   }
 `;
 
 export const GROQ_BLOGS_QUERY = `
-  *[_type == "blog" && status == "Published"] | order(publishedAt desc) {
+  *[_type == "blog" && (!defined(status) || status == "published" || status == "Published")] | order(publishedAt desc) {
     _id,
     title,
     "slug": slug.current,
@@ -240,12 +251,15 @@ export const GROQ_BLOGS_QUERY = `
     content,
     tags,
     publishedAt,
+    "date": publishedAt,
+    "author": "Tejas Faculty",
+    "coverImage": coalesce(coverImage.asset->url, "https://via.placeholder.com/600x400"),
     "coverImageUrl": coverImage.asset->url
   }
 `;
 
 export const GROQ_PROGRAMS_QUERY = `
-  *[_type == "program" && status == "published"] | order(_createdAt desc) {
+  *[_type == "program" && (!defined(status) || status == "published" || status == "Published")] | order(_createdAt desc) {
     _id,
     title,
     "slug": slug.current,
@@ -256,6 +270,7 @@ export const GROQ_PROGRAMS_QUERY = `
     shortDescription,
     description,
     highlights,
+    "image": coalesce(image.asset->url, "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"),
     "imageUrl": image.asset->url,
     isFeatured
   }
@@ -267,11 +282,17 @@ export const GROQ_MENTORS_QUERY = `
     name,
     "slug": slug.current,
     role,
+    "title": role,
     department,
+    "company": department,
     bio,
+    "image": coalesce(image.asset->url, "https://via.placeholder.com/400"),
     "imageUrl": image.asset->url,
     experienceYears,
-    linkedInUrl
+    linkedInUrl,
+    "socialLinks": {
+      "linkedin": linkedInUrl
+    }
   }
 `;
 
@@ -302,3 +323,34 @@ export const GROQ_POPUP_MODALS_QUERY = `
     targetPages
   }
 `;
+
+export const GROQ_COURSES_QUERY = `
+  *[_type == "course"] {
+    _id,
+    title,
+    "slug": slug.current,
+    courseCode,
+    department,
+    credits,
+    description,
+    instructor,
+    "image": coverImage.asset->url,
+    "imageUrl": coverImage.asset->url
+  }
+`;
+
+export const GROQ_WORKSHOPS_QUERY = `
+  *[_type == "workshop"] {
+    _id,
+    title,
+    "slug": slug.current,
+    date,
+    durationHours,
+    mode,
+    mentorName,
+    description,
+    "image": coverImage.asset->url,
+    "imageUrl": coverImage.asset->url
+  }
+`;
+
