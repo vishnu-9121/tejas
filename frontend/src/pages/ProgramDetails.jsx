@@ -122,7 +122,12 @@ export const ProgramDetails = () => {
                 <span className="text-gray-900 font-bold">${program.tuitionFee?.toLocaleString() || 'N/A'}</span>
               </li>
             </ul>
-            <Button className="w-full" onClick={() => navigate('/admissions')}>Apply for this Program</Button>
+            <Button 
+              className="w-full py-3.5 text-base font-bold shadow-md shadow-primary-600/20" 
+              onClick={() => navigate(`/admissions?program=${encodeURIComponent(program.title || program.slug || '')}`)}
+            >
+              Apply for this Program &rarr;
+            </Button>
           </div>
         </div>
       </div>

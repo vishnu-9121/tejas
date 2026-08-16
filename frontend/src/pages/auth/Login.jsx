@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,12 +19,30 @@ const schema = z.object({
 export default function Login() {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const setCredentials = useAuthStore((state) => state.setCredentials);
   
+  // Determine return URL or original destination
+  const returnUrl = searchParams.get('returnUrl') || searchParams.get('redirect') || location.state?.from || '';
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema)
   });
+
+  const handlePostAuthRedirect = (user) => {
+    if (returnUrl && returnUrl !== '/login' && returnUrl !== '/register') {
+      navigate(returnUrl);
+      return;
+    }
+    const redirectPath = (user?.role === 'admin' || user?.role === 'super_admin') 
+      ? '/admin' 
+      : (user?.role === 'faculty' || user?.role === 'mentor') 
+        ? '/faculty' 
+        : '/dashboard';
+    navigate(redirectPath);
+  };
 
   const onSubmit = async (data) => {
     setError(null);
@@ -32,15 +50,7 @@ export default function Login() {
       const response = await api.post('/auth/login', data);
       const { user, accessToken } = response.data.data;
       setCredentials(user, accessToken);
-      
-      // Role-aware navigation
-      const redirectPath = (user?.role === 'admin' || user?.role === 'super_admin') 
-        ? '/admin' 
-        : (user?.role === 'faculty' || user?.role === 'mentor') 
-          ? '/faculty' 
-          : '/dashboard';
-          
-      navigate(redirectPath);
+      handlePostAuthRedirect(user);
     } catch (err) {
       const msg = err.response?.data?.message || 
         (Array.isArray(err.response?.data?.errors) ? err.response?.data?.errors[0] : null) || 
@@ -58,14 +68,7 @@ export default function Login() {
       });
       const { user, accessToken } = response.data.data;
       setCredentials(user, accessToken);
-      
-      const redirectPath = (user?.role === 'admin' || user?.role === 'super_admin') 
-        ? '/admin' 
-        : (user?.role === 'faculty' || user?.role === 'mentor') 
-          ? '/faculty' 
-          : '/dashboard';
-          
-      navigate(redirectPath);
+      handlePostAuthRedirect(user);
     } catch (err) {
       setError(err.response?.data?.message || 'Google Login failed. Please try signing in with email.');
     }
@@ -85,7 +88,10 @@ export default function Login() {
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           New applicant?{' '}
-          <Link to="/register" className="font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+          <Link 
+            to={returnUrl ? `/register?returnUrl=${encodeURIComponent(returnUrl)}` : '/register'} 
+            className="font-semibold text-primary-600 hover:text-primary-700 transition-colors"
+          >
             Start your application now &rarr;
           </Link>
         </p>
@@ -185,7 +191,7 @@ export default function Login() {
             </div>
           </form>
 
-          {/* Social Sign-In Divider & Tested Google Auth */}
+          {/* Social Sign-In Divider */}
           <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

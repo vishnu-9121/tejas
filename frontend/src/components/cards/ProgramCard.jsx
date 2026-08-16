@@ -19,9 +19,17 @@ export const ProgramCard = React.memo(({ id, slug, title, description, category,
           <div className="flex items-center gap-1"><Clock className="w-4 h-4" /> {duration}</div>
           <div className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {location}</div>
         </div>
-        <Link to={`/programs/${slug}`} className="inline-flex items-center font-semibold text-primary-600 hover:text-primary-700 transition-colors">
-          View Details <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
-        </Link>
+        <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
+          <Link to={`/programs/${slug}`} className="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-primary-600 transition-colors">
+            View Details <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <Link 
+            to={`/admissions?program=${encodeURIComponent(title)}`} 
+            className="inline-flex items-center text-xs font-bold px-3 py-1.5 rounded-lg bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white transition-all shadow-sm"
+          >
+            Apply Now
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -19,9 +19,10 @@ export const admissionService = {
     return response.data;
   },
 
-  // Update admission status
-  updateStatus: async (id, status) => {
-    const response = await api.put(`/admissions/${id}/status`, { status });
+  // Update admission status and notes
+  updateStatus: async (id, payload) => {
+    const data = typeof payload === 'string' ? { status: payload } : payload;
+    const response = await api.put(`/admissions/${id}/status`, data);
     return response.data;
   },
 
@@ -35,5 +36,20 @@ export const admissionService = {
   submitApplication: async (applicationData) => {
     const response = await api.post('/admissions', applicationData);
     return response.data;
+  },
+
+  // Download Excel Export directly from backend
+  downloadExcelExport: async (params = {}) => {
+    const response = await api.get('/admissions/export/excel', {
+      params,
+      responseType: 'blob'
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `tejas_admissions_${new Date().toISOString().split('T')[0]}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
   }
 };

@@ -69,18 +69,26 @@ const admissionSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    reviewNotes: {
+      type: String,
+      default: '',
+    },
+    counselorNotes: {
+      type: String,
+      default: '',
+    },
     personalDetails: {
       fullName: { type: String, required: true },
-      dateOfBirth: { type: Date, required: true },
-      gender: { type: String, enum: ['male', 'female', 'other'], required: true },
+      dateOfBirth: { type: Date, default: Date.now },
+      gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
       phone: { type: String, required: true },
-      address: { type: String, required: true },
+      address: { type: String, default: 'Not Provided' },
     },
     educationDetails: {
-      highestDegree: { type: String, required: true },
-      institution: { type: String, required: true },
-      yearOfPassing: { type: Number, required: true },
-      percentageOrCGPA: { type: String, required: true },
+      highestDegree: { type: String, default: 'Secondary / High School' },
+      institution: { type: String, default: 'Not Specified' },
+      yearOfPassing: { type: Number, default: () => new Date().getFullYear() },
+      percentageOrCGPA: { type: String, default: 'N/A' },
     },
   },
   {

@@ -31,13 +31,23 @@ const mockNotifications = [
 ];
 
 const mapStatusToProgress = (status) => {
-  switch (status) {
-    case "Pending": return { progress: 20, nextStep: "Under Review", color: "amber" };
-    case "Under Review": return { progress: 50, nextStep: "Interview", color: "blue" };
-    case "Interview Scheduled": return { progress: 75, nextStep: "Final Decision", color: "blue" };
-    case "Accepted": return { progress: 100, nextStep: "Enrollment", color: "green" };
-    case "Rejected": return { progress: 100, nextStep: "Re-apply", color: "red" };
-    default: return { progress: 10, nextStep: "Awaiting Action", color: "blue" };
+  const norm = (status || '').toLowerCase().trim();
+  switch (norm) {
+    case "submitted":
+    case "pending": 
+      return { progress: 25, nextStep: "Admissions Panel Review", color: "amber" };
+    case "under_review":
+    case "under review": 
+      return { progress: 50, nextStep: "Counselor Consultation Call", color: "blue" };
+    case "interview_scheduled":
+    case "interview scheduled": 
+      return { progress: 75, nextStep: "Interview & Document Verification", color: "blue" };
+    case "accepted": 
+      return { progress: 100, nextStep: "Formal Enrollment & Onboarding", color: "green" };
+    case "rejected": 
+      return { progress: 100, nextStep: "Advising Consultation / Re-apply", color: "red" };
+    default: 
+      return { progress: 20, nextStep: "Application Under Review", color: "blue" };
   }
 };
 
@@ -67,14 +77,15 @@ export const StudentDashboard = () => {
     ? appsData.data.map(app => {
         const { progress, nextStep, color } = mapStatusToProgress(app.status);
         return {
-          id: `APP-${app._id.substring(0, 6).toUpperCase()}`,
-          program: app.programName,
-          status: app.status,
-          date: new Date(app.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          id: app.applicationId || `APP-${app._id.substring(0, 8).toUpperCase()}`,
+          program: app.program || app.programName || 'Flagship Academic Program',
+          status: (app.status || 'submitted').replace('_', ' ').toUpperCase(),
+          date: new Date(app.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
           progress,
           nextStep,
           color,
-          realId: app._id
+          realId: app._id,
+          counselorNotes: app.counselorNotes || app.reviewNotes || ''
         };
       })
     : mockApplications;

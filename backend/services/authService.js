@@ -13,7 +13,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
  * Handle user registration (Email/Password)
  */
 export const registerService = async (userData) => {
-  const { name, email, password } = userData;
+  const { name, email, password, phone, phoneNumber } = userData;
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -21,7 +21,15 @@ export const registerService = async (userData) => {
   }
 
   const assignedRole = email === 'vishnu24.igm@gmail.com' ? 'super_admin' : 'student';
-  const user = await User.create({ name, email, password, role: assignedRole });
+  const userPhone = phone || phoneNumber || '';
+  const user = await User.create({ 
+    name, 
+    email, 
+    password, 
+    phone: userPhone, 
+    phoneNumber: userPhone, 
+    role: assignedRole 
+  });
   
   const accessToken = generateAccessToken(user._id, user.role);
   const refreshToken = generateRefreshToken(user._id);
