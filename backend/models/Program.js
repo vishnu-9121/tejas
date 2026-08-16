@@ -16,31 +16,38 @@ const programSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, 'Please specify a program category'],
-      enum: ['Undergraduate', 'Postgraduate', 'Executive', 'Certification'],
+      trim: true,
+      default: 'Undergraduate',
+    },
+    degreeLevel: {
+      type: String,
+      enum: ['Undergraduate', 'Postgraduate', 'Executive', 'Diploma', 'Certification', 'Master', 'Bachelor', 'Doctorate', 'Other'],
+      default: 'Undergraduate',
     },
     shortDescription: {
       type: String,
+      default: '',
     },
     description: {
       type: String,
-      required: [true, 'Please add a description'],
+      default: '',
     },
     duration: {
       type: String,
-      required: true,
+      default: '1 Year',
     },
     fees: {
       type: Number,
-      required: true,
+      default: 0,
     },
     pricing: {
       currency: { type: String, default: 'INR' },
-      totalFee: { type: Number },
+      totalFee: { type: Number, default: 0 },
       installmentAvailable: { type: Boolean, default: true },
     },
     eligibility: {
       type: String,
-      required: true,
+      default: 'Open to all eligible candidates based on academic criteria.',
     },
     mode: {
       type: String,
@@ -49,19 +56,35 @@ const programSchema = new mongoose.Schema(
     },
     intake: {
       type: Number,
-      required: true,
+      default: 60,
+    },
+    posterImage: {
+      type: String,
+      default: '',
+    },
+    poster: {
+      type: String,
+      default: '',
     },
     featuredImage: {
       type: String,
+      default: '',
     },
     thumbnailUrl: {
       type: String,
+      default: '',
     },
     bannerUrl: {
       type: String,
+      default: '',
     },
     brochure: {
       type: String,
+      default: '',
+    },
+    brochureUrl: {
+      type: String,
+      default: '',
     },
     order: {
       type: Number,
@@ -73,8 +96,10 @@ const programSchema = new mongoose.Schema(
         courses: [{ type: String }],
       },
     ],
-    overview: { type: String },
+    overview: { type: String, default: '' },
+    highlights: [{ type: String }],
     learningOutcomes: [{ type: String }],
+    careerOpportunities: [{ type: String }],
     faqs: [
       {
         question: { type: String },
@@ -85,6 +110,12 @@ const programSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    facultyMapping: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Faculty',
+      }
+    ],
     mentorMapping: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -92,13 +123,13 @@ const programSchema = new mongoose.Schema(
       }
     ],
     seo: {
-      metaTitle: { type: String },
-      metaDescription: { type: String },
-      keywords: { type: String },
+      metaTitle: { type: String, default: '' },
+      metaDescription: { type: String, default: '' },
+      keywords: { type: String, default: '' },
     },
     status: {
       type: String,
-      enum: ['Draft', 'Published', 'Archived'],
+      enum: ['Draft', 'Published', 'Archived', 'draft', 'published', 'archived'],
       default: 'Published',
     },
     isActive: {
@@ -118,19 +149,39 @@ programSchema.pre('save', function (next) {
   if (!this.shortDescription && this.description) {
     this.shortDescription = this.description.substring(0, 160);
   }
-  if (this.featuredImage && !this.thumbnailUrl) {
-    this.thumbnailUrl = this.featuredImage;
-  } else if (this.thumbnailUrl && !this.featuredImage) {
-    this.featuredImage = this.thumbnailUrl;
+  
+  // Normalize poster and thumbnail images
+  const primaryImage = this.posterImage || this.poster || this.featuredImage || this.thumbnailUrl || '';
+  if (primaryImage) {
+    if (!this.posterImage) this.posterImage = primaryImage;
+    if (!this.poster) this.poster = primaryImage;
+    if (!this.featuredImage) this.featuredImage = primaryImage;
+    if (!this.thumbnailUrl) this.thumbnailUrl = primaryImage;
   }
+  
+  // Normalize brochure
+  const primaryBrochure = this.brochureUrl || this.brochure || '';
+  if (primaryBrochure) {
+    this.brochureUrl = primaryBrochure;
+    this.brochure = primaryBrochure;
+  }
+
+  // Normalize pricing
   if (this.fees && (!this.pricing || !this.pricing.totalFee)) {
     this.pricing = { currency: 'INR', totalFee: this.fees, installmentAvailable: true };
+  } else if (this.pricing?.totalFee && !this.fees) {
+    this.fees = this.pricing.totalFee;
   }
+
+  // Normalize status and isActive
+  const normalizedStatus = (this.status || 'Published').toLowerCase();
+  this.isActive = normalizedStatus === 'published';
+  this.status = normalizedStatus === 'published' ? 'Published' : (normalizedStatus === 'draft' ? 'Draft' : 'Archived');
+
   next();
 });
 
 programSchema.index({ category: 1 });
-programSchema.index({ slug: 1 });
 programSchema.index({ isActive: 1 });
 programSchema.index({ isFeatured: 1 });
 programSchema.index({ order: 1 });

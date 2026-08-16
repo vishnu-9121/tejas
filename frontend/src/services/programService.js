@@ -2,8 +2,14 @@ import api from '../utils/api';
 import { sanityService } from './sanityService';
 
 export const programService = {
-  getPrograms: async (params) => {
+  // Public user facing programs list (combines / fallbacks smoothly)
+  getPrograms: async (params = {}) => {
     try {
+      const response = await api.get('/programs', { params });
+      if (response?.data?.data?.programs?.length > 0) {
+        return response.data;
+      }
+      
       const sanityPrograms = await sanityService.getPrograms();
       if (sanityPrograms && sanityPrograms.length > 0) {
         return {
@@ -19,25 +25,56 @@ export const programService = {
           }
         };
       }
+      return response.data;
     } catch (err) {
-      console.warn('[programService] Sanity fetch error, falling back to Express API:', err.message);
+      console.warn('[programService] Express fetch error, trying Sanity CMS:', err.message);
+      try {
+        const sanityPrograms = await sanityService.getPrograms();
+        return {
+          success: true,
+          data: {
+            programs: sanityPrograms || [],
+            data: sanityPrograms || [],
+            pagination: {
+              total: sanityPrograms?.length || 0,
+              page: 1,
+              pages: 1
+            }
+          }
+        };
+      } catch (sanityErr) {
+        return { success: false, data: { programs: [] } };
+      }
     }
+  },
+
+  // Admin dedicated programs fetcher
+  getAdminPrograms: async (params) => {
     const response = await api.get('/programs', { params });
     return response.data;
   },
 
   getProgramBySlug: async (slug) => {
     try {
+      const response = await api.get(`/programs/${slug}`);
+      if (response?.data?.data) {
+        return response.data;
+      }
+    } catch (err) {
+      console.warn('[programService] Backend fetch by slug error, trying Sanity:', err.message);
+    }
+
+    try {
       const sanityPrograms = await sanityService.getPrograms();
       const match = sanityPrograms?.find(p => p.slug === slug || p.slug?.current === slug);
       if (match) {
         return { success: true, data: match };
       }
-    } catch (err) {
-      console.warn('[programService] Sanity fetch error, falling back to Express API:', err.message);
+    } catch (sanityErr) {
+      console.warn('[programService] Sanity fetch error:', sanityErr.message);
     }
-    const response = await api.get(`/programs/${slug}`);
-    return response.data;
+
+    return { success: false, data: null };
   },
 
   getProgramById: async (id) => {
@@ -70,3 +107,5 @@ export const programService = {
     return response.data;
   }
 };
+
+export default programService;

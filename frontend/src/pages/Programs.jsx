@@ -7,15 +7,39 @@ import { programService } from '@/services/programService';
 import { CareerCounselor } from '@/components/academics/CareerCounselor';
 
 const DUMMY_PROGRAMS = [
-  { _id: "1", title: "Global Leadership Certificate", category: "Leadership", description: "Develop advanced leadership skills for the modern world.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", slug: "global-leadership" },
-  { _id: "2", title: "Startup Engineering", category: "Entrepreneurship", description: "From idea to execution: building scalable startups.", image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800", slug: "startup-engineering" },
-  { _id: "3", title: "Mastering Communication", category: "Communication", description: "Learn to articulate vision and lead teams effectively.", image: "https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&q=80&w=800", slug: "mastering-communication" }
-];
-
-const FREE_PROGRAMS_ITEMS = [
-  { _id: "fp-1", title: "Foundations of Generative AI & Prompting", category: "Free Programs", description: "Learn Large Language Models, prompt patterns, and AI engineering productivity.", image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&q=80&w=800", slug: "free-generative-ai" },
-  { _id: "fp-2", title: "Executive Leadership & Strategy Masterclass", category: "Free Programs", description: "Frameworks for strategic decision making, negotiation, and high-performance team culture.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", slug: "free-executive-leadership" },
-  { _id: "fp-3", title: "Full-Stack Web Architecture Bootcamp", category: "Free Programs", description: "Build scalable modern web applications using React, Node.js, and Cloud APIs.", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800", slug: "free-web-bootcamp" }
+  { 
+    _id: "btech-ai-ds", 
+    title: "B.Tech in Artificial Intelligence & Data Science", 
+    category: "Undergraduate", 
+    description: "A cutting-edge 4-year engineering program covering Machine Learning, Neural Networks, Cloud AI, and Ethical AI Systems.", 
+    duration: "4 Years",
+    fees: 1200000,
+    mode: "On-Campus",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800", 
+    slug: "btech-in-artificial-intelligence-and-data-science" 
+  },
+  { 
+    _id: "pgp-mgmt", 
+    title: "Post Graduate Program in Management", 
+    category: "Postgraduate", 
+    description: "A transformative 2-year program designed to build future global leaders with strong ethical foundations.", 
+    duration: "2 Years",
+    fees: 1500000,
+    mode: "On-Campus",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800", 
+    slug: "post-graduate-program-in-management" 
+  },
+  { 
+    _id: "bba-he", 
+    title: "BBA in Human Excellence", 
+    category: "Undergraduate", 
+    description: "A unique undergraduate program focusing on holistic development, character building, and modern business practices.", 
+    duration: "3 Years",
+    fees: 800000,
+    mode: "On-Campus",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800", 
+    slug: "bba-in-human-excellence" 
+  }
 ];
 
 export const Programs = () => {
@@ -27,45 +51,48 @@ export const Programs = () => {
     queryFn: () => programService.getPrograms({ status: 'published' }),
   });
 
-  const basePrograms = programsData?.data?.data?.length > 0 ? programsData.data.data : DUMMY_PROGRAMS;
-  const allProgramsList = [...basePrograms, ...FREE_PROGRAMS_ITEMS];
+  const apiPrograms = programsData?.data?.programs || programsData?.data?.data || (Array.isArray(programsData?.data) ? programsData.data : []);
+  const allProgramsList = apiPrograms && apiPrograms.length > 0 ? apiPrograms : DUMMY_PROGRAMS;
 
-  const categories = ['All', 'Free Programs', 'Undergraduate', 'Postgraduate', 'Executive', 'Certification'];
+  const categories = ['All', 'Undergraduate', 'Postgraduate', 'Executive', 'Certification', 'Engineering', 'Management'];
 
   const filteredPrograms = allProgramsList.filter(prog => {
-    const matchesCategory = activeCategory === 'All' ? prog.category !== 'Free Programs' : prog.category === activeCategory;
-    const matchesSearch = prog.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          prog.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const matchesCategory = activeCategory === 'All' || (prog.category && prog.category.toLowerCase() === activeCategory.toLowerCase());
+    const titleMatch = prog.title ? prog.title.toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    const descMatch = prog.description ? prog.description.toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    const catMatch = prog.category ? prog.category.toLowerCase().includes(searchQuery.toLowerCase()) : false;
+    return matchesCategory && (titleMatch || descMatch || catMatch);
   });
 
   return (
-    <div className="py-16 md:py-24 bg-gray-50">
+    <div className="py-16 md:py-24 bg-gray-50/50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold font-outfit text-gray-900 mb-6">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <span className="text-xs font-bold uppercase tracking-wider text-primary-600 bg-primary-50 px-3.5 py-1.5 rounded-full inline-block mb-3">
+            Academic Excellence 2026
+          </span>
+          <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
             Academic <span className="text-primary-600">Programs</span>
           </h1>
-          <p className="text-lg text-gray-600 leading-relaxed">
-            Discover our comprehensive range of programs designed to transform ambitious individuals into visionary global leaders.
+          <p className="text-base text-gray-600 leading-relaxed">
+            Discover our comprehensive range of undergraduate, postgraduate, and executive degrees engineered to forge visionary leaders.
           </p>
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-12 space-y-4 md:space-y-0">
-          
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
           {/* Categories */}
           <div className="flex flex-wrap justify-center gap-2">
             {categories.map(category => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeCategory === category
                     ? 'bg-primary-600 text-white shadow-md shadow-primary-600/20'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 {category}
@@ -74,15 +101,15 @@ export const Programs = () => {
           </div>
 
           {/* Search Box */}
-          <div className="relative w-full md:w-72">
+          <div className="relative w-full md:w-80">
             <input
               type="text"
-              placeholder="Search programs..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-shadow"
+              placeholder="Search programs by name, topic..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
         </div>
 
@@ -90,40 +117,40 @@ export const Programs = () => {
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="bg-white rounded-2xl h-[450px] animate-pulse border border-gray-100 shadow-sm"></div>
+              <div key={n} className="bg-white rounded-2xl h-[400px] animate-pulse border border-gray-100 shadow-sm"></div>
             ))}
           </div>
         )}
 
         {/* Error State */}
         {error && !isLoading && (
-          <div className="bg-red-50 text-red-600 p-6 rounded-xl flex flex-col items-center justify-center text-center">
-            <AlertCircle className="w-12 h-12 mb-4 text-red-500" />
-            <h3 className="text-lg font-semibold mb-2">Oops! Something went wrong.</h3>
-            <p>Failed to load programs. Please try again later.</p>
+          <div className="bg-red-50 text-red-600 p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+            <AlertCircle className="w-10 h-10 mb-2 text-red-500" />
+            <h3 className="text-base font-bold mb-1">Failed to load live programs</h3>
+            <p className="text-xs text-red-500">Showing catalog fallback. Please check connection.</p>
           </div>
         )}
 
         {/* Empty State */}
-        {!isLoading && !error && filteredPrograms.length === 0 && (
-          <div className="text-center py-24 bg-white rounded-2xl border border-gray-200">
-            <Filter className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No programs found</h3>
-            <p className="text-gray-500 max-w-md mx-auto">
-              We couldn't find any programs matching your current filters. Try adjusting your search or category selection.
+        {!isLoading && filteredPrograms.length === 0 && (
+          <div className="text-center py-20 bg-white rounded-2xl border border-gray-200 max-w-xl mx-auto">
+            <Filter className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-gray-900 mb-1">No programs found</h3>
+            <p className="text-xs text-gray-500 mb-4">
+              We couldn't find any programs matching your search filters.
             </p>
             <Button 
               variant="outline" 
-              className="mt-6"
+              size="sm"
               onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
             >
-              Clear Filters
+              Reset Filters
             </Button>
           </div>
         )}
 
         {/* Programs Grid */}
-        {!isLoading && !error && filteredPrograms.length > 0 && (
+        {!isLoading && filteredPrograms.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPrograms.map((program) => (
               <ProgramCard key={program._id || program.slug} {...program} />
@@ -131,7 +158,7 @@ export const Programs = () => {
           </div>
         )}
 
-        {/* Talk to Our Career Counselor Section */}
+        {/* Career Counselor Section */}
         <div className="mt-20">
           <CareerCounselor />
         </div>
@@ -139,3 +166,5 @@ export const Programs = () => {
     </div>
   );
 };
+
+export default Programs;
