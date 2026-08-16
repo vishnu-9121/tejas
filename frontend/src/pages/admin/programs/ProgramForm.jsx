@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   ArrowLeft, Save, Plus, Trash2, GripVertical, Upload, 
-  Image as ImageIcon, FileText, CheckCircle2, AlertCircle, Eye, Link as LinkIcon
+  Image as ImageIcon, FileText, CheckCircle2, AlertCircle, Eye, Link as LinkIcon,
+  Check, UserCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -61,8 +62,8 @@ export default function ProgramForm() {
       title: '',
       category: 'Undergraduate',
       degreeLevel: 'Undergraduate',
-      description: '',
       shortDescription: '',
+      description: '',
       overview: '',
       duration: '4 Years',
       fees: 1200000,
@@ -94,6 +95,8 @@ export default function ProgramForm() {
 
   const posterImageValue = watch('posterImage');
   const bannerUrlValue = watch('bannerUrl');
+  const selectedFaculty = watch('facultyMapping') || [];
+  const selectedMentors = watch('mentorMapping') || [];
 
   const { fields: curriculumFields, append: appendCurriculum, remove: removeCurriculum } = useFieldArray({
     control,
@@ -112,8 +115,8 @@ export default function ProgramForm() {
         title: p.title || '',
         category: p.category || 'Undergraduate',
         degreeLevel: p.degreeLevel || 'Undergraduate',
-        description: p.description || '',
         shortDescription: p.shortDescription || '',
+        description: p.description || '',
         overview: p.overview || '',
         duration: p.duration || '1 Year',
         fees: p.fees !== undefined ? p.fees : (p.pricing?.totalFee || 0),
@@ -130,8 +133,8 @@ export default function ProgramForm() {
         learningOutcomes: Array.isArray(p.learningOutcomes) ? p.learningOutcomes.join('\n') : (p.learningOutcomes || ''),
         careerOpportunities: Array.isArray(p.careerOpportunities) ? p.careerOpportunities.join('\n') : (p.careerOpportunities || ''),
         seo: p.seo || { metaTitle: '', metaDescription: '', keywords: '' },
-        facultyMapping: p.facultyMapping?.map(f => f._id || f) || [],
-        mentorMapping: p.mentorMapping?.map(m => m._id || m) || [],
+        facultyMapping: (p.facultyMapping || []).map(f => typeof f === 'object' ? f._id : f),
+        mentorMapping: (p.mentorMapping || []).map(m => typeof m === 'object' ? m._id : m),
         curriculum: p.curriculum?.map(c => ({
           semester: c.semester || '',
           courses: Array.isArray(c.courses) ? c.courses.join(', ') : (c.courses || '')
@@ -146,7 +149,6 @@ export default function ProgramForm() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       toast.error('Image size must be under 10MB');
       return;
@@ -171,7 +173,6 @@ export default function ProgramForm() {
         throw new Error('Upload URL not returned');
       }
     } catch (err) {
-      // Fallback to local Data URL for seamless preview and persistence
       const reader = new FileReader();
       reader.onloadend = () => {
         setValue(fieldName, reader.result, { shouldValidate: true, shouldDirty: true });
@@ -186,11 +187,36 @@ export default function ProgramForm() {
     }
   };
 
+  const toggleFacultySelection = (facultyId) => {
+    const current = [...selectedFaculty];
+    const index = current.indexOf(facultyId);
+    if (index > -1) {
+      current.splice(index, 1);
+    } else {
+      current.push(facultyId);
+    }
+    setValue('facultyMapping', current, { shouldDirty: true });
+  };
+
+  const toggleMentorSelection = (mentorId) => {
+    const current = [...selectedMentors];
+    const index = current.indexOf(mentorId);
+    if (index > -1) {
+      current.splice(index, 1);
+    } else {
+      current.push(mentorId);
+    }
+    setValue('mentorMapping', current, { shouldDirty: true });
+  };
+
   const mutation = useMutation({
     mutationFn: (data) => isEditing ? programService.updateProgram(id, data) : programService.createProgram(data),
-    onSuccess: () => {
+    onSuccess: (res) => {
       toast.success(isEditing ? 'Program updated successfully!' : 'Program published successfully!');
       queryClient.invalidateQueries(['programs']);
+      queryClient.invalidateQueries(['admin-programs']);
+      queryClient.invalidateQueries(['public-programs']);
+      queryClient.invalidateQueries(['program', id]);
       navigate('/admin/programs');
     },
     onError: (error) => {
@@ -199,19 +225,20 @@ export default function ProgramForm() {
   });
 
   const onSubmit = (formData) => {
-    // Validate essential fields
     if (!formData.title?.trim()) {
       setActiveTab('basic');
       toast.error('Program title is required');
       return;
     }
 
-    // Build payload safely
     const formattedData = {
       ...formData,
       fees: Number(formData.fees) || 0,
       intake: Number(formData.intake) || 60,
       isActive: formData.status === 'Published',
+      shortDescription: formData.shortDescription || formData.description?.substring(0, 160) || '',
+      description: formData.description || formData.overview || '',
+      overview: formData.overview || formData.description || '',
       posterImage: formData.posterImage || formData.thumbnailUrl || '',
       thumbnailUrl: formData.posterImage || formData.thumbnailUrl || '',
       bannerUrl: formData.bannerUrl || '',
@@ -225,30 +252,38 @@ export default function ProgramForm() {
       careerOpportunities: typeof formData.careerOpportunities === 'string'
         ? formData.careerOpportunities.split('\n').map(s => s.trim()).filter(Boolean)
         : (Array.isArray(formData.careerOpportunities) ? formData.careerOpportunities : []),
+      facultyMapping: formData.facultyMapping || [],
+      mentorMapping: formData.mentorMapping || [],
       curriculum: (formData.curriculum || []).map(c => ({
         semester: c.semester || '',
         courses: typeof c.courses === 'string'
           ? c.courses.split(',').map(course => course.trim()).filter(Boolean)
           : (Array.isArray(c.courses) ? c.courses : [])
       })).filter(c => c.semester || (c.courses && c.courses.length > 0)),
-      faqs: (formData.faqs || []).filter(f => f.question?.trim() && f.answer?.trim())
+      faqs: (formData.faqs || []).filter(f => f.question?.trim() && f.answer?.trim()),
+      seo: {
+        metaTitle: formData.seo?.metaTitle || `${formData.title} | Tejas Academy`,
+        metaDescription: formData.seo?.metaDescription || formData.shortDescription || '',
+        keywords: formData.seo?.keywords || ''
+      }
     };
 
     mutation.mutate(formattedData);
   };
 
   const onError = (formErrors) => {
-    // Auto switch to the tab containing the first error
     const errorKeys = Object.keys(formErrors);
     if (errorKeys.length > 0) {
       if (['title', 'category', 'duration', 'fees', 'intake', 'eligibility'].some(k => errorKeys.includes(k))) {
         setActiveTab('basic');
-      } else if (['posterImage', 'bannerUrl', 'shortDescription'].some(k => errorKeys.includes(k))) {
+      } else if (['posterImage', 'bannerUrl', 'shortDescription', 'description'].some(k => errorKeys.includes(k))) {
         setActiveTab('media');
       } else if (errorKeys.includes('curriculum')) {
         setActiveTab('curriculum');
-      } else if (['overview', 'highlights', 'learningOutcomes'].some(k => errorKeys.includes(k))) {
+      } else if (['overview', 'highlights', 'learningOutcomes', 'careerOpportunities'].some(k => errorKeys.includes(k))) {
         setActiveTab('outcomes');
+      } else if (errorKeys.includes('facultyMapping') || errorKeys.includes('mentorMapping')) {
+        setActiveTab('relationships');
       } else if (['seo', 'faqs'].some(k => errorKeys.includes(k))) {
         setActiveTab('seo');
       }
@@ -306,7 +341,7 @@ export default function ProgramForm() {
             variant="primary" 
             disabled={isSubmitting || mutation.isPending}
             onClick={handleSubmit(onSubmit, onError)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 shadow-md shadow-primary-600/20"
           >
             <Save className="w-4 h-4" />
             {isSubmitting || mutation.isPending ? 'Saving...' : (isEditing ? 'Update Program' : 'Publish Program')}
@@ -562,7 +597,7 @@ export default function ProgramForm() {
                 </div>
               </div>
 
-              {/* Hero Banner & Brochure Link */}
+              {/* Hero Banner, Brochure & Descriptions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-6 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
                   <div className="flex items-center justify-between">
@@ -607,12 +642,23 @@ export default function ProgramForm() {
 
                 <div className="space-y-1.5 md:col-span-2">
                   <label className="text-sm font-semibold text-gray-800">
-                    Short Card Teaser Description <span className="text-red-500">*</span>
+                    Short Card Teaser Description (Displayed on cards) <span className="text-red-500">*</span>
+                  </label>
+                  <Textarea 
+                    {...register('shortDescription')} 
+                    rows={2} 
+                    placeholder="Concise 2-sentence summary displayed on cards across the website..." 
+                  />
+                </div>
+
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-sm font-semibold text-gray-800">
+                    Main Program Description (Displayed in Header / Meta)
                   </label>
                   <Textarea 
                     {...register('description')} 
-                    rows={2} 
-                    placeholder="Concise 2-sentence summary displayed on cards across the website..." 
+                    rows={3} 
+                    placeholder="Full introduction to the academic program and its mission..." 
                   />
                 </div>
               </div>
@@ -692,12 +738,12 @@ export default function ProgramForm() {
               <div className="space-y-6">
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-gray-800">
-                    Comprehensive Program Overview (Detailed Web Representation)
+                    Comprehensive Program Overview (Detailed In-Depth Web Section)
                   </label>
                   <Textarea 
                     {...register('overview')} 
-                    rows={5} 
-                    placeholder="Provide an in-depth explanation of the academic program, pedagogy, and industry relevance..." 
+                    rows={6} 
+                    placeholder="Provide an in-depth explanation of the academic program, pedagogy, laboratory infrastructure, and research..." 
                   />
                 </div>
 
@@ -741,36 +787,96 @@ export default function ProgramForm() {
             {/* TAB 5: MENTORS & FACULTY */}
             <div className={activeTab === 'relationships' ? 'space-y-6' : 'hidden'}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="p-6 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
-                  <h3 className="text-base font-bold text-gray-900">Map Core Faculty Members</h3>
-                  <p className="text-xs text-gray-500">Hold Ctrl (Windows) or Cmd (Mac) to select multiple faculty members.</p>
-                  <select 
-                    multiple
-                    {...register('facultyMapping')} 
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[220px] text-sm"
-                  >
-                    {facultyOptions.map(faculty => (
-                      <option key={faculty._id} value={faculty._id}>
-                        {faculty.firstName} {faculty.lastName} — {faculty.department || 'Faculty'}
-                      </option>
-                    ))}
-                  </select>
+                {/* Faculty Selection */}
+                <div className="p-6 bg-gray-50 border border-gray-200 rounded-2xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                        <UserCheck className="w-5 h-5 text-primary-600" />
+                        Map Faculty Members
+                      </h3>
+                      <p className="text-xs text-gray-500">Click to select faculty teaching this program</p>
+                    </div>
+                    <Badge variant="primary">{selectedFaculty.length} Selected</Badge>
+                  </div>
+
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                    {facultyOptions.length === 0 ? (
+                      <p className="text-xs text-gray-400 py-4 text-center">No faculty members found in directory.</p>
+                    ) : (
+                      facultyOptions.map(faculty => {
+                        const isSelected = selectedFaculty.includes(faculty._id);
+                        return (
+                          <button
+                            key={faculty._id}
+                            type="button"
+                            onClick={() => toggleFacultySelection(faculty._id)}
+                            className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all ${
+                              isSelected
+                                ? 'bg-primary-50/80 border-primary-300 text-primary-900 font-semibold'
+                                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${isSelected ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                {isSelected ? <Check className="w-3.5 h-3.5" /> : (faculty.firstName?.[0] || 'F')}
+                              </div>
+                              <span className="text-sm">
+                                {faculty.firstName} {faculty.lastName}
+                                <span className="text-xs text-gray-400 font-normal ml-2">({faculty.department || 'Faculty'})</span>
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
 
-                <div className="p-6 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
-                  <h3 className="text-base font-bold text-gray-900">Map Industry Mentors</h3>
-                  <p className="text-xs text-gray-500">Hold Ctrl (Windows) or Cmd (Mac) to select multiple mentors.</p>
-                  <select 
-                    multiple
-                    {...register('mentorMapping')} 
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[220px] text-sm"
-                  >
-                    {mentorOptions.map(mentor => (
-                      <option key={mentor._id} value={mentor._id}>
-                        {mentor.name || `${mentor.firstName} ${mentor.lastName}`} — {mentor.company || mentor.role || 'Industry Mentor'}
-                      </option>
-                    ))}
-                  </select>
+                {/* Mentor Selection */}
+                <div className="p-6 bg-gray-50 border border-gray-200 rounded-2xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                        <UserCheck className="w-5 h-5 text-emerald-600" />
+                        Map Industry Mentors
+                      </h3>
+                      <p className="text-xs text-gray-500">Click to attach industry leaders as mentors</p>
+                    </div>
+                    <Badge variant="success">{selectedMentors.length} Selected</Badge>
+                  </div>
+
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                    {mentorOptions.length === 0 ? (
+                      <p className="text-xs text-gray-400 py-4 text-center">No industry mentors found in directory.</p>
+                    ) : (
+                      mentorOptions.map(mentor => {
+                        const isSelected = selectedMentors.includes(mentor._id);
+                        return (
+                          <button
+                            key={mentor._id}
+                            type="button"
+                            onClick={() => toggleMentorSelection(mentor._id)}
+                            className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all ${
+                              isSelected
+                                ? 'bg-emerald-50/80 border-emerald-300 text-emerald-900 font-semibold'
+                                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${isSelected ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                {isSelected ? <Check className="w-3.5 h-3.5" /> : (mentor.name?.[0] || 'M')}
+                              </div>
+                              <span className="text-sm">
+                                {mentor.name || `${mentor.firstName} ${mentor.lastName}`}
+                                <span className="text-xs text-gray-400 font-normal ml-2">({mentor.company || mentor.role || 'Mentor'})</span>
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

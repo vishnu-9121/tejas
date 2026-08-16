@@ -4,6 +4,10 @@ import { sanityService } from './sanityService';
 export const blogService = {
   getBlogs: async (params) => {
     try {
+      const response = await api.get('/blogs', { params });
+      if (response?.data?.data?.blogs?.length > 0 || (Array.isArray(response?.data?.data) && response?.data?.data?.length > 0)) {
+        return response.data;
+      }
       const sanityBlogs = await sanityService.getBlogs();
       if (sanityBlogs && sanityBlogs.length > 0) {
         return {
@@ -14,11 +18,22 @@ export const blogService = {
           }
         };
       }
+      return response.data;
     } catch (err) {
-      console.warn('[blogService] Sanity fetch error, falling back to Express API:', err.message);
+      console.warn('[blogService] Express fetch error, trying Sanity CMS:', err.message);
+      try {
+        const sanityBlogs = await sanityService.getBlogs();
+        return {
+          success: true,
+          data: {
+            blogs: sanityBlogs || [],
+            data: sanityBlogs || []
+          }
+        };
+      } catch (sanityErr) {
+        return { success: false, data: { blogs: [] } };
+      }
     }
-    const response = await api.get('/blogs', { params });
-    return response.data;
   },
 
   getAdminBlogs: async (params) => {
@@ -28,16 +43,23 @@ export const blogService = {
 
   getBlogBySlug: async (slug) => {
     try {
+      const response = await api.get(`/blogs/slug/${slug}`);
+      if (response?.data?.data) {
+        return response.data;
+      }
+    } catch (err) {
+      console.warn('[blogService] Express fetch by slug error, trying Sanity:', err.message);
+    }
+    try {
       const sanityBlogs = await sanityService.getBlogs();
       const match = sanityBlogs?.find(b => b.slug === slug || b.slug?.current === slug);
       if (match) {
         return { success: true, data: match };
       }
-    } catch (err) {
-      console.warn('[blogService] Sanity fetch error, falling back to Express API:', err.message);
+    } catch (sanityErr) {
+      console.warn('[blogService] Sanity fetch error:', sanityErr.message);
     }
-    const response = await api.get(`/blogs/slug/${slug}`);
-    return response.data;
+    return { success: false, data: null };
   },
 
   getBlogById: async (id) => {
@@ -60,3 +82,5 @@ export const blogService = {
     return response.data;
   }
 };
+
+export default blogService;

@@ -4,6 +4,10 @@ import { sanityService } from './sanityService';
 export const testimonialService = {
   getTestimonials: async (params) => {
     try {
+      const response = await api.get('/testimonials', { params });
+      if (response?.data?.data?.testimonials?.length > 0 || (Array.isArray(response?.data?.data) && response?.data?.data?.length > 0)) {
+        return response.data;
+      }
       const sanityTestimonials = await sanityService.getTestimonials();
       if (sanityTestimonials && sanityTestimonials.length > 0) {
         return {
@@ -14,11 +18,22 @@ export const testimonialService = {
           }
         };
       }
+      return response.data;
     } catch (err) {
-      console.warn('[testimonialService] Sanity fetch error, falling back to Express API:', err.message);
+      console.warn('[testimonialService] Express fetch error, trying Sanity CMS:', err.message);
+      try {
+        const sanityTestimonials = await sanityService.getTestimonials();
+        return {
+          success: true,
+          data: {
+            testimonials: sanityTestimonials || [],
+            data: sanityTestimonials || []
+          }
+        };
+      } catch (sanityErr) {
+        return { success: false, data: { testimonials: [] } };
+      }
     }
-    const response = await api.get('/testimonials', { params });
-    return response.data;
   },
 
   getTestimonialById: async (id) => {
@@ -41,3 +56,5 @@ export const testimonialService = {
     return response.data;
   }
 };
+
+export default testimonialService;
