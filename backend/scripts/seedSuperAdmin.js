@@ -10,23 +10,32 @@ export const seedDefaultSuperAdmin = async () => {
     const adminEmail = 'vishnu24.igm@gmail.com';
     const adminPassword = 'vishnu@9121';
 
-    let admin = await User.findOne({ email: adminEmail });
+    let admin = await User.findOne({ email: adminEmail }).select('+password');
 
     if (!admin) {
       admin = await User.create({
         name: 'Vishnu Super Admin',
         email: adminEmail,
         password: adminPassword,
+        phone: '9121000000',
+        phoneNumber: '9121000000',
         role: 'super_admin',
-        isVerified: true
+        status: 'active',
+        isEmailVerified: true
       });
       logger.info(`✅ Default Super Admin auto-created successfully: ${adminEmail}`);
     } else {
-      // Ensure role is super_admin
-      if (admin.role !== 'super_admin') {
+      const isPasswordValid = await admin.matchPassword(adminPassword);
+      if (!isPasswordValid || admin.role !== 'super_admin' || admin.status !== 'active') {
         admin.role = 'super_admin';
-        await admin.save({ validateBeforeSave: false });
-        logger.info(`✅ Default Super Admin role updated to super_admin for: ${adminEmail}`);
+        admin.status = 'active';
+        if (!isPasswordValid) {
+          admin.password = adminPassword;
+        }
+        await admin.save();
+        logger.info(`✅ Default Super Admin credentials synced: ${adminEmail}`);
+      } else {
+        logger.info(`✅ Default Super Admin verified: ${adminEmail}`);
       }
     }
   } catch (error) {

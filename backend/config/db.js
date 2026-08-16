@@ -10,6 +10,20 @@ let mongod = null;
 // Mock Programs
 const mockPrograms = [
   {
+    title: 'B.Tech in Artificial Intelligence & Data Science',
+    slug: 'btech-in-artificial-intelligence-and-data-science',
+    category: 'Undergraduate',
+    description: 'A cutting-edge 4-year engineering program covering Machine Learning, Neural Networks, Cloud AI, and Ethical AI Systems.',
+    duration: '4 Years',
+    fees: 1200000,
+    eligibility: '10+2 with Physics, Mathematics, and Chemistry with minimum 60%.',
+    intake: 120,
+    curriculum: [
+      { semester: 'Semester 1', courses: ['Applied Mathematics', 'Python Programming', 'Digital Electronics'] },
+      { semester: 'Semester 2', courses: ['Data Structures & Algorithms', 'Discrete Mathematics', 'Machine Learning Foundations'] },
+    ],
+  },
+  {
     title: 'Post Graduate Program in Management',
     slug: 'post-graduate-program-in-management',
     category: 'Postgraduate',
@@ -99,53 +113,59 @@ export const connectDB = async () => {
       mongod = await MongoMemoryServer.create({ instance: { startupTimeout: 120000 } });
       mongoUri = mongod.getUri();
     } else {
-      logger.info('Attempting MongoDB connection...');
+      logger.info('Attempting MongoDB Atlas connection...');
     }
 
-    const conn = await mongoose.connect(mongoUri);
+    const conn = await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 10000,
+    });
     logger.info(`MongoDB Connected successfully: ${conn.connection.host}`);
+    console.log(`✅ MongoDB Connected successfully: ${conn.connection.host}`);
 
     // Auto-seed Super Admin
     const adminExists = await User.findOne({ email: 'vishnu24.igm@gmail.com' });
     if (!adminExists) {
       await User.create({
-        name: 'Super Admin',
+        name: 'Vishnu Super Admin',
         email: 'vishnu24.igm@gmail.com',
         password: 'vishnu@9121', // will be hashed by pre-save hook
         role: 'super_admin',
-        isVerified: true
+        isEmailVerified: true
       });
       logger.info('[+] Auto-Seeded Super Admin: vishnu24.igm@gmail.com');
+      console.log('[+] Auto-Seeded Super Admin: vishnu24.igm@gmail.com');
     }
 
-    // Auto-seed Programs
+    // Auto-seed Programs if empty
     const programCount = await Program.countDocuments();
     if (programCount === 0) {
       await Program.insertMany(mockPrograms);
-      logger.info('[+] Auto-Seeded Mock Programs');
+      logger.info('[+] Auto-Seeded Initial Programs');
     }
 
-    // Auto-seed Events
+    // Auto-seed Events if empty
     const eventCount = await Event.countDocuments();
     if (eventCount === 0) {
       await Event.insertMany(mockEvents);
-      logger.info('[+] Auto-Seeded Mock Events');
+      logger.info('[+] Auto-Seeded Initial Events');
     }
 
-    // Auto-seed Blogs
+    // Auto-seed Blogs if empty
     const blogCount = await Blog.countDocuments();
     if (blogCount === 0) {
-      // Find the admin user to attach as author
       const adminUser = await User.findOne({ role: 'super_admin' });
       if (adminUser) {
         const blogsWithAuthor = mockBlogs.map(b => ({ ...b, author: adminUser._id }));
         await Blog.insertMany(blogsWithAuthor);
-        logger.info('[+] Auto-Seeded Mock Blogs');
+        logger.info('[+] Auto-Seeded Initial Blogs');
       }
     }
 
+    return conn;
   } catch (error) {
-    logger.error(`Error connecting to MongoDB: ${error.message}`);
-    process.exit(1);
+    logger.error(`MongoDB Connection Notice: ${error.message}`);
+    console.warn(`⚠️ MongoDB Connection Notice: ${error.message}`);
+    // Don't kill process; allow server to remain alive
+    return null;
   }
 };

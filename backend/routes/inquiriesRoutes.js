@@ -1,5 +1,19 @@
-// backend/routes/inquiriesRoutes.js
-\nconst router = express.Router();\n\n// New route for contact form submissions\nrouter.post(/contact, createInquiry);\n\n// Other existing routes remain the same
-router.post(/, createInquiry);
-router.get(/, protect, authorize(admin, super_admin), getInquiries);
-router.put(/:id, protect, authorize(admin, super_admin), updateInquiry);\n\nexport { router as inquiriesRoutes };
+import express from 'express';
+import {
+  createInquiry,
+  getInquiries,
+  updateInquiry,
+} from '../controllers/inquiriesController.js';
+import { protect, authorize } from '../middlewares/auth.js';
+
+const router = express.Router();
+
+// Public route for inquiries / contact submissions
+router.post('/', createInquiry);
+router.post('/contact', createInquiry);
+
+// Protected admin routes
+router.get('/', protect, authorize('super_admin', 'admin', 'operations_manager'), getInquiries);
+router.put('/:id', protect, authorize('super_admin', 'admin', 'operations_manager'), updateInquiry);
+
+export { router as inquiriesRoutes };

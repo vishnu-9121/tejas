@@ -14,17 +14,18 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
  */
 export const registerService = async (userData) => {
   const { name, email, password, phone, phoneNumber } = userData;
+  const normalizedEmail = (email || '').toLowerCase().trim();
 
-  const userExists = await User.findOne({ email });
+  const userExists = await User.findOne({ email: normalizedEmail });
   if (userExists) {
     throw new AppError('User already exists', 400);
   }
 
-  const assignedRole = email === 'vishnu24.igm@gmail.com' ? 'super_admin' : 'student';
+  const assignedRole = normalizedEmail === 'vishnu24.igm@gmail.com' ? 'super_admin' : 'student';
   const userPhone = phone || phoneNumber || '';
   const user = await User.create({ 
     name, 
-    email, 
+    email: normalizedEmail, 
     password, 
     phone: userPhone, 
     phoneNumber: userPhone, 
@@ -45,7 +46,8 @@ export const registerService = async (userData) => {
  * Handle user login (Email/Password)
  */
 export const loginService = async (email, password) => {
-  const user = await User.findOne({ email }).select('+password');
+  const normalizedEmail = (email || '').toLowerCase().trim();
+  const user = await User.findOne({ email: normalizedEmail }).select('+password');
   
   if (!user || !(await user.matchPassword(password))) {
     throw new AppError('Invalid email or password', 401);

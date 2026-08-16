@@ -64,7 +64,17 @@ export const corsOptions = cors({
     // Always allow requests without origin (e.g. mobile apps, curl, server-to-server)
     if (!origin) return callback(null, true);
 
-    const defaultProductionOrigins = ['https://unlocktejas.com', 'https://www.unlocktejas.com'];
+    // Allow any localhost or 127.0.0.1 port (5173, 3000, 5000, 8080, etc.)
+    const isLocalhost = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    if (isLocalhost) {
+      return callback(null, true);
+    }
+
+    const defaultProductionOrigins = [
+      'https://unlocktejas.com', 
+      'https://www.unlocktejas.com',
+      'https://cms.unlocktejas.com'
+    ];
     const configuredOrigins = (process.env.CLIENT_URL || process.env.FRONTEND_URL || '')
       .split(',')
       .map(o => o.trim())
@@ -72,23 +82,22 @@ export const corsOptions = cors({
 
     const allowedOrigins = Array.from(new Set([...defaultProductionOrigins, ...configuredOrigins]));
 
-    // Check if origin matches production whitelist or any local development origin
-    const isLocalhost = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-
-    if (process.env.NODE_ENV === 'production') {
-      if (allowedOrigins.includes(origin) || isLocalhost) {
-        callback(null, true);
-      } else {
-        callback(new Error(`Not allowed by CORS in production: ${origin}`));
-      }
-    } else {
-      // In development mode, allow all localhost/127.0.0.1 ports and configured origins
-      callback(null, true);
+    if (allowedOrigins.includes(origin) || allowedOrigins.some(ao => origin.startsWith(ao))) {
+      return callback(null, true);
     }
+
+    // In development mode, allow all origins
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
+    callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Cache-Control', 'Pragma'],
+  exposedHeaders: ['Content-Disposition'],
+  optionsSuccessStatus: 200,
 });
 
 /**

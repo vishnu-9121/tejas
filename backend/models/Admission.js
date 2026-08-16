@@ -112,7 +112,6 @@ admissionSchema.pre('save', function (next) {
 admissionSchema.index({ status: 1 });
 admissionSchema.index({ applicant: 1 });
 admissionSchema.index({ program: 1 });
-admissionSchema.index({ applicationId: 1 });
 
 export const Admission = mongoose.models.Admission || mongoose.model('Admission', admissionSchema);
 export default Admission;
