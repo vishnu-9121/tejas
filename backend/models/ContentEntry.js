@@ -5,15 +5,16 @@ const contentEntrySchema = new mongoose.Schema(
     key: {
       type: String,
       required: true,
-      unique: true, // e.g., 'homepage', 'footer', 'about_page'
+      unique: true, // e.g., 'homepage', 'about', 'navigation', 'footer', 'campus', 'careers', 'global_faqs', 'legal', 'notifications', 'quick_connect', 'seo', 'site_settings', 'social_proof', 'global_exit_intent'
+      trim: true,
+      lowercase: true,
     },
     title: {
       type: String,
-      required: true, // e.g., 'Homepage Settings'
+      default: '',
     },
     type: {
       type: String,
-      enum: ['PAGE', 'GLOBAL_COMPONENT', 'POPUP', 'SEO'],
       default: 'PAGE',
     },
     status: {
@@ -26,7 +27,7 @@ const contentEntrySchema = new mongoose.Schema(
       default: {},
     },
     publishedData: {
-      type: mongoose.Schema.Types.Mixed, // The currently live data
+      type: mongoose.Schema.Types.Mixed, // The currently live published data
       default: {},
     },
     publishedVersionNumber: {
@@ -35,8 +36,17 @@ const contentEntrySchema = new mongoose.Schema(
     },
     currentVersionNumber: {
       type: Number,
-      default: 1, // Increments every time a new version is created
+      default: 1,
     },
+    versions: [
+      {
+        versionNumber: { type: Number, required: true },
+        data: { type: mongoose.Schema.Types.Mixed },
+        commitMessage: { type: String, default: 'Published update' },
+        publishedAt: { type: Date, default: Date.now },
+        publishedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+      }
+    ],
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -51,4 +61,5 @@ const contentEntrySchema = new mongoose.Schema(
   }
 );
 
-export const ContentEntry = mongoose.model('ContentEntry', contentEntrySchema);
+export const ContentEntry = mongoose.models.ContentEntry || mongoose.model('ContentEntry', contentEntrySchema);
+export default ContentEntry;

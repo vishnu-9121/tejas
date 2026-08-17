@@ -53,7 +53,7 @@ export const EnterpriseAuditService = {
 
   // Helper method: Extract IP and UserAgent from Express request
   getReqMetadata(req) {
-    if (!req) return { ipAddress: '', userAgent: '' };
+    if (!req || !req.headers) return { ipAddress: req?.ip || req?.socket?.remoteAddress || '', userAgent: '' };
     const ipAddress = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || req.ip || '';
     const userAgent = req.headers['user-agent'] || '';
     return { ipAddress, userAgent };

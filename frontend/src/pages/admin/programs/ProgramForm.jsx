@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   ArrowLeft, Save, Plus, Trash2, GripVertical, Upload, 
   Image as ImageIcon, FileText, CheckCircle2, AlertCircle, Eye, Link as LinkIcon,
-  Check, UserCheck
+  Check, UserCheck, ArrowRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -144,7 +144,7 @@ export default function ProgramForm() {
     }
   }, [programData, reset]);
 
-  // Handle Poster Image Upload
+  // Handle Poster & Banner File Uploads
   const handleFileUpload = async (e, fieldName, setUploading) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -211,7 +211,7 @@ export default function ProgramForm() {
 
   const mutation = useMutation({
     mutationFn: (data) => isEditing ? programService.updateProgram(id, data) : programService.createProgram(data),
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.success(isEditing ? 'Program updated successfully!' : 'Program published successfully!');
       queryClient.invalidateQueries(['programs']);
       queryClient.invalidateQueries(['admin-programs']);
@@ -304,7 +304,7 @@ export default function ProgramForm() {
     return (
       <div className="p-16 text-center space-y-3">
         <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-gray-500 font-medium">Loading program specifications...</p>
+        <p className="text-gray-500 font-medium">Loading academic specifications...</p>
       </div>
     );
   }
@@ -485,6 +485,12 @@ export default function ProgramForm() {
                   />
                 </div>
               </div>
+
+              <div className="pt-6 border-t border-gray-100 flex justify-end">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('media')} className="flex items-center gap-2">
+                  Next Step: Poster & Media <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
             {/* TAB 2: POSTER & MEDIA UPLOAD */}
@@ -662,6 +668,15 @@ export default function ProgramForm() {
                   />
                 </div>
               </div>
+
+              <div className="pt-6 border-t border-gray-100 flex justify-between">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('basic')}>
+                  &larr; Previous Step: Basic Details
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setActiveTab('curriculum')} className="flex items-center gap-2">
+                  Next Step: Curriculum &rarr;
+                </Button>
+              </div>
             </div>
 
             {/* TAB 3: CURRICULUM BUILDER */}
@@ -731,6 +746,15 @@ export default function ProgramForm() {
                   ))}
                 </div>
               )}
+
+              <div className="pt-6 border-t border-gray-100 flex justify-between">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('media')}>
+                  &larr; Previous Step: Poster & Media
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setActiveTab('outcomes')} className="flex items-center gap-2">
+                  Next Step: Highlights & Outcomes &rarr;
+                </Button>
+              </div>
             </div>
 
             {/* TAB 4: HIGHLIGHTS & OUTCOMES */}
@@ -781,6 +805,15 @@ export default function ProgramForm() {
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100 flex justify-between">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('curriculum')}>
+                  &larr; Previous Step: Curriculum
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setActiveTab('relationships')} className="flex items-center gap-2">
+                  Next Step: Mentors & Faculty &rarr;
+                </Button>
               </div>
             </div>
 
@@ -879,6 +912,15 @@ export default function ProgramForm() {
                   </div>
                 </div>
               </div>
+
+              <div className="pt-6 border-t border-gray-100 flex justify-between">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('outcomes')}>
+                  &larr; Previous Step: Highlights & Outcomes
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setActiveTab('seo')} className="flex items-center gap-2">
+                  Next Step: SEO & FAQs &rarr;
+                </Button>
+              </div>
             </div>
 
             {/* TAB 6: SEO & FAQS */}
@@ -947,6 +989,21 @@ export default function ProgramForm() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100 flex justify-between">
+                <Button type="button" variant="outline" onClick={() => setActiveTab('relationships')}>
+                  &larr; Previous Step: Mentors & Faculty
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="primary" 
+                  onClick={handleSubmit(onSubmit, onError)}
+                  disabled={isSubmitting || mutation.isPending}
+                  className="flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" /> {isEditing ? 'Update Academic Program' : 'Publish Academic Program'}
+                </Button>
               </div>
             </div>
 

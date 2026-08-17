@@ -28,6 +28,7 @@ import { uploadRoutes } from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import { courseRoutes } from "./routes/courseRoutes.js";
 import { mentorRoutes } from "./routes/mentorRoutes.js";
+import { facultyRoutes } from "./routes/facultyRoutes.js";
 import { workshopRoutes } from "./routes/workshopRoutes.js";
 import { cmsRoutes } from "./routes/cmsRoutes.js";
 import { newsletterRoutes } from "./routes/newsletterRoutes.js";
@@ -44,39 +45,32 @@ import roleRoutes from "./routes/roleRoutes.js";
 import leadRoutes from "./routes/leadRoutes.js";
 import emailCampaignRoutes from "./routes/emailCampaignRoutes.js";
 import backupRoutes from "./routes/backupRoutes.js";
-import { configureCloudinary } from "./config/cloudinary.js";
-
-import { seedEnterpriseCMS } from "./scripts/seedEnterpriseCMS.js";
-import { seedDefaultSuperAdmin } from "./scripts/seedSuperAdmin.js";
-
-// Initialize Cloudinary
-configureCloudinary();
 
 const app = express();
 
-// 1. Security & Headers Middleware
-app.use(timeoutHandler); // Must be early in the stack
+// Trust proxy for rate limiter, cPanel / NGINX / Cloudflare
+app.set("trust proxy", 1);
+
+// 1. Security & Global Middlewares
+app.use(timeoutHandler);
 app.use(securityHeaders);
 app.use(corsOptions);
 app.use(globalLimiter);
 
-// Prevent Mongo injection
-app.use(mongoSanitize());
-
-// Prevent XSS attacks
-app.use(xss());
-
-// Prevent HTTP Param Pollution
-app.use(hpp());
-
-// 2. Logging & Compression
-if (process.env.NODE_ENV !== "test") {
+// 2. Request Logging & Sanitization
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+} else {
   app.use(
     morgan("combined", {
       stream: { write: (message) => logger.info(message.trim()) },
     })
   );
 }
+
+app.use(mongoSanitize());
+app.use(xss());
+app.use(hpp());
 app.use(compression());
 
 // 3. Body Parsers & Cookie Parser
@@ -103,7 +97,7 @@ app.get(['/api/v1', '/api/v1/'], (req, res) => {
 app.get('/api/v1/health', (req, res) => {
   const dbState = mongoose.connection.readyState;
   const status = dbState === 1 ? 'Healthy' : 'Degraded';
-  const statusCode = dbState === 1 ? 200 : 200; // Return 200 so probes pass
+  const statusCode = dbState === 1 ? 200 : 200;
 
   res.status(statusCode).json({
     status,
@@ -123,11 +117,13 @@ app.use("/api/v1/programs", programRoutes);
 app.use("/api/v1/admissions", admissionsRoutes);
 app.use("/api/v1/inquiries", inquiriesRoutes);
 app.use("/api/v1/insights", blogRoutes);
+app.use("/api/v1/blogs", blogRoutes);
 app.use('/api/v1/events', eventsRoutes);
 app.use('/api/v1/uploads', uploadRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use("/api/v1/courses", courseRoutes);
 app.use("/api/v1/mentors", mentorRoutes);
+app.use("/api/v1/faculty", facultyRoutes);
 app.use("/api/v1/workshops", workshopRoutes);
 app.use("/api/v1/cms", cmsRoutes);
 app.use("/api/v1/newsletter", newsletterRoutes);
@@ -159,28 +155,31 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
-// Initialize WebSockets
+// WebSocket Initialization
 initSocket(server);
-
-// Register all Event Bus listeners
 registerAllEventHandlers();
 
-// Start HTTP Server immediately
+// Bind and listen immediately
 server.listen(PORT, () => {
-  logger.info(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  logger.info(`HTTP Server & WebSockets listening on port ${PORT}`);
+  console.log(`🚀 Server running in ${process.env.NODE_ENV || 'production'} mode on port ${PORT}`);
+  
+  // Connect to DB asynchronously
+  connectDB().catch((err) => {
+    logger.error(`Initial MongoDB connection failed: ${err.message}`);
+    console.warn(`[WARN] MongoDB initial connect attempt failed: ${err.message}. Auto-reconnect active.`);
+  });
 });
 
-// Connect to Database & Auto-Seed
-connectDB().then(async (conn) => {
-  if (conn) {
-    try {
-      await seedEnterpriseCMS();
-      await seedDefaultSuperAdmin();
-    } catch (e) {
-      logger.warn(`Seed execution notice: ${e.message}`);
-    }
-  }
+// Process signal handlers
+process.on("unhandledRejection", (err) => {
+  logger.error(`Unhandled Rejection: ${err.message}`);
+  console.error("Unhandled Rejection:", err);
 });
 
-export { app, server };
+process.on("uncaughtException", (err) => {
+  logger.error(`Uncaught Exception: ${err.message}`);
+  console.error("Uncaught Exception:", err);
+});
+
+export default app;
