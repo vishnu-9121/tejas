@@ -9,7 +9,7 @@ import { logger } from "../utils/logger.js";
  */
 export const sendEmail = async (to, subject, html) => {
   const mailOptions = {
-    from: `Tejas Academy <${process.env.SMTP_FROM_EMAIL || "noreply@tejasacademy.edu"}>`,
+    from: `Tejas Academy <${process.env.SMTP_FROM_EMAIL || "support@unlocktejas.com"}>`,
     to,
     subject,
     html,

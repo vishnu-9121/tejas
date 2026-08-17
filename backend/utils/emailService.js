@@ -32,7 +32,7 @@ export const sendEmail = async (options) => {
     const transporter = nodemailer.createTransport(transporterConfig);
 
     const message = {
-      from: `${process.env.FROM_NAME || 'Tejas Academy'} <${process.env.FROM_EMAIL || 'noreply@tejasacademy.edu'}>`,
+      from: `${process.env.FROM_NAME || 'Tejas Academy'} <${process.env.FROM_EMAIL || 'support@unlocktejas.com'}>`,
       to: options.email,
       subject: options.subject,
       html: options.message,
