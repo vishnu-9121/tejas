@@ -21,7 +21,7 @@ const programSchema = new mongoose.Schema(
     },
     degreeLevel: {
       type: String,
-      enum: ['Undergraduate', 'Postgraduate', 'Executive', 'Diploma', 'Certification', 'Master', 'Bachelor', 'Doctorate', 'Other'],
+      enum: ['Undergraduate', 'Postgraduate', 'Executive', 'Diploma', 'Certification', 'Master', 'Bachelor', 'Doctorate', 'Engineering', 'Management', 'Data Science', 'Other'],
       default: 'Undergraduate',
     },
     shortDescription: {
@@ -29,6 +29,10 @@ const programSchema = new mongoose.Schema(
       default: '',
     },
     description: {
+      type: String,
+      default: '',
+    },
+    overview: {
       type: String,
       default: '',
     },
@@ -86,6 +90,11 @@ const programSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    videoUrl: {
+      type: String,
+      default: '',
+    },
+    galleryImages: [{ type: String }],
     order: {
       type: Number,
       default: 0,
@@ -94,12 +103,19 @@ const programSchema = new mongoose.Schema(
       {
         semester: { type: String },
         courses: [{ type: String }],
+        description: { type: String, default: '' },
       },
     ],
-    overview: { type: String, default: '' },
     highlights: [{ type: String }],
     learningOutcomes: [{ type: String }],
     careerOpportunities: [{ type: String }],
+    skills: [{ type: String }],
+    placementStats: {
+      highestPackage: { type: String, default: '' },
+      averagePackage: { type: String, default: '' },
+      placementRate: { type: String, default: '' },
+      topRecruiters: [{ type: String }]
+    },
     faqs: [
       {
         question: { type: String },
@@ -113,7 +129,7 @@ const programSchema = new mongoose.Schema(
     facultyMapping: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Faculty',
+        ref: 'User',
       }
     ],
     mentorMapping: [
@@ -126,6 +142,10 @@ const programSchema = new mongoose.Schema(
       metaTitle: { type: String, default: '' },
       metaDescription: { type: String, default: '' },
       keywords: { type: String, default: '' },
+      canonicalUrl: { type: String, default: '' },
+      ogTitle: { type: String, default: '' },
+      ogDescription: { type: String, default: '' },
+      ogImage: { type: String, default: '' }
     },
     status: {
       type: String,

@@ -11371,3 +11371,12 @@
 {"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 09:58:08"}
 {"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-17 09:59:43"}
 {"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 09:59:44"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-17 10:04:56"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-17 10:04:56"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 10:04:57"}
+{"level":"info","message":"Starting in-memory MongoDB server for local testing...","timestamp":"2026-08-17 10:14:59"}
+{"level":"error","message":"MongoDB Connection Notice: Instance failed to start within 10000ms","timestamp":"2026-08-17 10:15:22"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-17 10:15:38"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 10:15:39"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-17 10:16:41"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 10:16:43"}

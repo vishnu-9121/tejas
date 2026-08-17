@@ -68,11 +68,13 @@ export const AdmissionsForm = () => {
     { value: 'Mastering Communication & Influence', label: 'Mastering Communication & Influence' }
   ];
 
-  const rawPrograms = Array.isArray(programsData?.data?.data?.programs) 
-    ? programsData.data.data.programs 
-    : Array.isArray(programsData?.data?.data) 
-      ? programsData.data.data 
-      : [];
+  const rawPrograms = Array.isArray(programsData?.data?.programs) 
+    ? programsData.data.programs 
+    : Array.isArray(programsData?.data?.data?.programs) 
+      ? programsData.data.data.programs 
+      : Array.isArray(programsData?.data) 
+        ? programsData.data 
+        : [];
 
   const fetchedPrograms = rawPrograms.map(p => ({ 
     value: p.title || p.name || p.slug, 

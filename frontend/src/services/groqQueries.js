@@ -266,13 +266,32 @@ export const GROQ_PROGRAMS_QUERY = `
     category,
     duration,
     level,
+    fees,
     fee,
+    intake,
+    mode,
+    eligibility,
     shortDescription,
     description,
+    overview,
     highlights,
-    "image": coalesce(image.asset->url, "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"),
-    "imageUrl": image.asset->url,
-    isFeatured
+    learningOutcomes,
+    careerOpportunities,
+    curriculum[] {
+      semester,
+      courses
+    },
+    faqs[] {
+      question,
+      answer
+    },
+    brochureUrl,
+    "posterImage": coalesce(posterImage.asset->url, image.asset->url, "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"),
+    "bannerUrl": bannerImage.asset->url,
+    "image": coalesce(posterImage.asset->url, image.asset->url, "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"),
+    "imageUrl": coalesce(posterImage.asset->url, image.asset->url),
+    isFeatured,
+    status
   }
 `;
 

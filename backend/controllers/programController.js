@@ -1,14 +1,22 @@
+import slugify from 'slugify';
 import { Program } from '../models/Program.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { eventBus } from '../utils/eventBus.js';
 
-// Helper to normalize program input payload
-const normalizeProgramPayload = (body) => {
+// Helper to normalize and sanitize complete 6-section program input payload
+export const normalizeProgramPayload = (body) => {
   const payload = { ...body };
 
   if (payload.fees !== undefined) {
     payload.fees = Number(payload.fees) || 0;
+    if (!payload.pricing) payload.pricing = {};
+    payload.pricing.totalFee = payload.fees;
+    payload.pricing.currency = payload.pricing.currency || 'INR';
+    payload.pricing.installmentAvailable = payload.pricing.installmentAvailable !== undefined ? payload.pricing.installmentAvailable : true;
+  } else if (payload.pricing?.totalFee !== undefined) {
+    payload.fees = Number(payload.pricing.totalFee) || 0;
   }
+
   if (payload.intake !== undefined) {
     payload.intake = Number(payload.intake) || 60;
   }
@@ -16,20 +24,33 @@ const normalizeProgramPayload = (body) => {
     payload.order = Number(payload.order) || 0;
   }
 
-  // Normalize string arrays
-  ['learningOutcomes', 'highlights', 'careerOpportunities'].forEach((field) => {
+  // Generate or refresh slug if title changes
+  if (payload.title && (!payload.slug || typeof payload.slug !== 'string')) {
+    payload.slug = slugify(payload.title, { lower: true, strict: true });
+  }
+
+  // Section 1 & 4: Text summaries & in-depth descriptions
+  if (!payload.shortDescription && payload.description) {
+    payload.shortDescription = payload.description.substring(0, 160);
+  }
+
+  // Section 4: Highlights & Outcomes String Arrays
+  ['learningOutcomes', 'highlights', 'careerOpportunities', 'skills'].forEach((field) => {
     if (typeof payload[field] === 'string') {
       payload[field] = payload[field]
         .split('\n')
         .map((s) => s.trim())
         .filter(Boolean);
+    } else if (Array.isArray(payload[field])) {
+      payload[field] = payload[field].map(s => typeof s === 'string' ? s.trim() : String(s)).filter(Boolean);
     }
   });
 
-  // Normalize curriculum
+  // Section 3: Curriculum Architecture
   if (Array.isArray(payload.curriculum)) {
     payload.curriculum = payload.curriculum.map((c) => ({
       semester: c.semester || c.termName || '',
+      description: c.description || '',
       courses: Array.isArray(c.courses)
         ? c.courses.map((x) => (typeof x === 'string' ? x.trim() : x.title || x.name || '')).filter(Boolean)
         : typeof c.courses === 'string'
@@ -38,7 +59,23 @@ const normalizeProgramPayload = (body) => {
     })).filter((c) => c.semester || (c.courses && c.courses.length > 0));
   }
 
-  // Normalize image references
+  // Section 6: FAQs
+  if (Array.isArray(payload.faqs)) {
+    payload.faqs = payload.faqs.filter(f => f && (f.question?.trim() || f.answer?.trim())).map(f => ({
+      question: (f.question || '').trim(),
+      answer: (f.answer || '').trim()
+    }));
+  }
+
+  // Section 5: Mentors & Faculty ObjectId references
+  if (Array.isArray(payload.facultyMapping)) {
+    payload.facultyMapping = payload.facultyMapping.map(f => typeof f === 'object' && f !== null ? (f._id || f.id) : f).filter(Boolean);
+  }
+  if (Array.isArray(payload.mentorMapping)) {
+    payload.mentorMapping = payload.mentorMapping.map(m => typeof m === 'object' && m !== null ? (m._id || m.id) : m).filter(Boolean);
+  }
+
+  // Section 2: Media, Posters, Banners & Brochures
   const mainImage = payload.posterImage || payload.poster || payload.featuredImage || payload.thumbnailUrl || payload.image || '';
   if (mainImage) {
     payload.posterImage = mainImage;
@@ -47,13 +84,26 @@ const normalizeProgramPayload = (body) => {
     payload.thumbnailUrl = mainImage;
   }
 
-  // Normalize brochure references
   const mainBrochure = payload.brochureUrl || payload.brochure || '';
   if (mainBrochure) {
     payload.brochureUrl = mainBrochure;
     payload.brochure = mainBrochure;
   }
 
+  // Section 6: SEO Metadata
+  if (payload.seo) {
+    payload.seo = {
+      metaTitle: payload.seo.metaTitle || (payload.title ? `${payload.title} | Tejas Academy` : ''),
+      metaDescription: payload.seo.metaDescription || payload.shortDescription || '',
+      keywords: payload.seo.keywords || '',
+      canonicalUrl: payload.seo.canonicalUrl || '',
+      ogTitle: payload.seo.ogTitle || payload.seo.metaTitle || '',
+      ogDescription: payload.seo.ogDescription || payload.seo.metaDescription || '',
+      ogImage: payload.seo.ogImage || payload.posterImage || ''
+    };
+  }
+
+  // Status normalization
   if (payload.status) {
     const s = payload.status.toLowerCase();
     payload.isActive = s === 'published';
@@ -87,7 +137,17 @@ export const getPrograms = async (req, res, next) => {
       ];
     }
 
-    const programs = await Program.find(match).skip(skip).limit(limit).sort('order -createdAt').lean();
+    const programs = await Program.find(match)
+      .skip(skip)
+      .limit(limit)
+      .sort('order -createdAt')
+      .populate('facultyMapping', 'name firstName lastName email department designation avatar profileImage')
+      .populate({
+        path: 'mentorMapping',
+        populate: { path: 'user', select: 'name email avatar' }
+      })
+      .lean();
+
     const total = await Program.countDocuments(match);
 
     res.status(200).json({
@@ -106,21 +166,27 @@ export const getPrograms = async (req, res, next) => {
   }
 };
 
-// @desc    Get single program by slug
+// @desc    Get single program by slug or ID
 // @route   GET /api/v1/programs/:slug
 // @access  Public
 export const getProgramBySlug = async (req, res, next) => {
   try {
     let program = await Program.findOne({ slug: req.params.slug })
-      .populate('mentorMapping')
-      .populate('facultyMapping')
+      .populate('facultyMapping', 'name firstName lastName email department designation avatar profileImage')
+      .populate({
+        path: 'mentorMapping',
+        populate: { path: 'user', select: 'name email avatar' }
+      })
       .lean();
 
-    if (!program) {
+    if (!program && req.params.slug.match(/^[0-9a-fA-F]{24}$/)) {
       // Fallback by ID if slug was passed as an ObjectId
       program = await Program.findById(req.params.slug)
-        .populate('mentorMapping')
-        .populate('facultyMapping')
+        .populate('facultyMapping', 'name firstName lastName email department designation avatar profileImage')
+        .populate({
+          path: 'mentorMapping',
+          populate: { path: 'user', select: 'name email avatar' }
+        })
         .lean();
     }
 
@@ -137,14 +203,17 @@ export const getProgramBySlug = async (req, res, next) => {
   }
 };
 
-// @desc    Get single program by ID (for admin)
+// @desc    Get single program by ID (for admin editor)
 // @route   GET /api/v1/programs/id/:id
 // @access  Private/Admin
 export const getProgramById = async (req, res, next) => {
   try {
     const program = await Program.findById(req.params.id)
-      .populate('mentorMapping')
-      .populate('facultyMapping')
+      .populate('facultyMapping', 'name firstName lastName email department designation avatar profileImage')
+      .populate({
+        path: 'mentorMapping',
+        populate: { path: 'user', select: 'name email avatar' }
+      })
       .lean();
 
     if (!program) {
@@ -166,7 +235,14 @@ export const getProgramById = async (req, res, next) => {
 export const createProgram = async (req, res, next) => {
   try {
     const normalizedBody = normalizeProgramPayload(req.body);
-    const program = await Program.create(normalizedBody);
+    let program = await Program.create(normalizedBody);
+
+    program = await Program.findById(program._id)
+      .populate('facultyMapping', 'name firstName lastName email department designation avatar profileImage')
+      .populate({
+        path: 'mentorMapping',
+        populate: { path: 'user', select: 'name email avatar' }
+      });
 
     eventBus.emit('PROGRAM_UPDATED', program);
 
@@ -189,7 +265,12 @@ export const updateProgram = async (req, res, next) => {
     const program = await Program.findByIdAndUpdate(req.params.id, normalizedBody, {
       new: true,
       runValidators: true,
-    });
+    })
+      .populate('facultyMapping', 'name firstName lastName email department designation avatar profileImage')
+      .populate({
+        path: 'mentorMapping',
+        populate: { path: 'user', select: 'name email avatar' }
+      });
 
     if (!program) {
       return next(new AppError('Program not found', 404));
