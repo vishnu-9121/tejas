@@ -253,7 +253,7 @@ export const ProgramDetails = () => {
 
                 {faqs.length === 0 ? (
                   <p className="text-gray-500 py-8 text-center bg-gray-50 rounded-xl border border-gray-100">
-                    Have questions? Contact our admissions counselors at admissions@unlocktejas.com.
+                    Have questions? Contact our admissions counselors at <a href="mailto:support@unlocktejas.com" className="text-primary-700 font-semibold underline">support@unlocktejas.com</a> or call/WhatsApp <a href="tel:+918331051327" className="text-primary-700 font-semibold underline">+91 83310 51327</a>.
                   </p>
                 ) : (
                   <div className="space-y-3">

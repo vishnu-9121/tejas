@@ -19,9 +19,9 @@ export default function ManageSettings() {
 
   const { register, handleSubmit, reset, watch, formState: { isSubmitting } } = useForm({
     defaultValues: {
-      contactEmail: 'admissions@tejasacademy.edu',
-      contactPhone: '+91 800 123 4567',
-      physicalAddress: '123 Education Drive, Tech Park, Bangalore, 560001, India',
+      contactEmail: 'support@unlocktejas.com',
+      contactPhone: '+91 83310 51327',
+      physicalAddress: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
       socialLinks: {
         linkedin: '',
         twitter: '',
@@ -114,12 +114,12 @@ export default function ManageSettings() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">Primary Email</label>
-              <Input type="email" {...register('contactEmail')} placeholder="admissions@tejasacademy.edu" />
+              <Input type="email" {...register('contactEmail')} placeholder="support@unlocktejas.com" />
             </div>
             
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">Phone Number</label>
-              <Input type="tel" {...register('contactPhone')} placeholder="+91 800 123 4567" />
+              <Input type="tel" {...register('contactPhone')} placeholder="+91 83310 51327" />
             </div>
 
             <div className="space-y-1 md:col-span-2">

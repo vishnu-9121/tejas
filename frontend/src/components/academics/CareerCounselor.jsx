@@ -39,7 +39,7 @@ export function CareerCounselor() {
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
             <Button
               as="a"
-              href="https://wa.me/919876543210"
+              href="https://wa.me/918331051327?text=Hi%2C%20I%20would%20like%20to%20know%20more%20about%20Tejas%20Academy%20programs"
               target="_blank"
               rel="noopener noreferrer"
               variant="success"
@@ -51,7 +51,7 @@ export function CareerCounselor() {
             </Button>
             <Button
               as="a"
-              href="tel:+919876543210"
+              href="tel:+918331051327"
               variant="outline"
               size="md"
               leftIcon={<Phone className="w-4 h-4" />}

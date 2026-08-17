@@ -35,8 +35,8 @@ export const Footer = () => {
 
   const contactInfo = {
     address: liveSettings.physicalAddress || 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
-    phone: liveSettings.contactPhone || '+91 98765 43210',
-    email: liveSettings.contactEmail || 'info@unlocktejas.com'
+    phone: liveSettings.contactPhone || '+91 83310 51327',
+    email: liveSettings.contactEmail || 'support@unlocktejas.com'
   };
 
   const quickLinks = liveFooter.quickLinks && liveFooter.quickLinks.length > 0 ? liveFooter.quickLinks : fallbackQuickLinks;
@@ -138,11 +138,15 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3 group">
                 <Phone className="w-5 h-5 text-amber-400 shrink-0" />
-                <span className="text-sm text-emerald-200/80 font-medium">{contactInfo.phone}</span>
+                <a href={`tel:${contactInfo.phone.replace(/[^0-9+]/g, '')}`} className="text-sm text-emerald-200/80 hover:text-white transition-colors font-medium">
+                  {contactInfo.phone}
+                </a>
               </li>
               <li className="flex items-center gap-3 group">
                 <Mail className="w-5 h-5 text-amber-400 shrink-0" />
-                <span className="text-sm text-emerald-200/80 font-medium">{contactInfo.email}</span>
+                <a href={`mailto:${contactInfo.email}`} className="text-sm text-emerald-200/80 hover:text-white transition-colors font-medium">
+                  {contactInfo.email}
+                </a>
               </li>
             </ul>
 

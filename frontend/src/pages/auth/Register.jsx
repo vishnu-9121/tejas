@@ -162,7 +162,7 @@ export default function Register() {
                 label="Mobile Phone Number"
                 id="phone"
                 type="tel"
-                placeholder="e.g. 9876543210"
+                placeholder="e.g. 8331051327"
                 autoComplete="tel"
                 leftIcon={<Phone className="w-4 h-4" />}
                 {...register('phone')}

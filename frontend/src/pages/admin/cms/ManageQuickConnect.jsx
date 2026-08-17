@@ -19,7 +19,7 @@ export default function ManageQuickConnect() {
   const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm({
     defaultValues: {
       isActive: true,
-      whatsappNumber: '1234567890',
+      whatsappNumber: '918331051327',
       whatsappMessage: 'Hello, I would like to know more about Tejas Academy.',
       contactUrl: '/contact',
       brochureUrl: '/brochure.pdf',
@@ -79,7 +79,7 @@ export default function ManageQuickConnect() {
             
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">WhatsApp Number</label>
-              <Input {...register('whatsappNumber')} placeholder="e.g. 919876543210 (Include country code, no +)" />
+              <Input {...register('whatsappNumber')} placeholder="e.g. 918331051327 (Include country code, no +)" />
             </div>
 
             <div className="space-y-1">

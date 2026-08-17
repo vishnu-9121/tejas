@@ -145,7 +145,7 @@ export const Career = () => {
                 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number <span className="text-red-500">*</span></label>
-                  <Input type="tel" required placeholder="+91 98765 43210" />
+                  <Input type="tel" required placeholder="+91 83310 51327" />
                 </div>
                 
                 <div>

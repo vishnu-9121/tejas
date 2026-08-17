@@ -5,7 +5,7 @@ import { protect, restrictTo } from '../middlewares/auth.js';
 const router = express.Router();
 
 router.use(protect);
-router.use(restrictTo('admin', 'super_admin'));
+router.use(restrictTo('admin', 'super_admin', 'operations_manager'));
 
 router.get('/', getGlobalActivity);
 router.get('/stats', getActivityStats);

@@ -340,7 +340,7 @@ export const StudentDashboard = () => {
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Phone Number</label>
                 <input
                   type="tel"
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 83310 51327"
                   value={profileForm.phoneNumber}
                   onChange={(e) => setProfileForm(prev => ({ ...prev, phoneNumber: e.target.value }))}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"

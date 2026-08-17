@@ -14,7 +14,7 @@ export const QuickConnectWidget = () => {
 
   const config = cmsData?.data?.data || {
     isActive: true,
-    whatsappNumber: '1234567890',
+    whatsappNumber: '918331051327',
     whatsappMessage: 'Hello, I would like to know more about Tejas Academy.',
     contactUrl: '/contact',
     brochureUrl: '/brochure.pdf',

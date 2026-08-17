@@ -15,8 +15,8 @@ export const Contact = () => {
   const title = contactData?.heroTitle || contactData?.title || "Get in Touch with Tejas Academy";
   const subtitle = contactData?.heroSubtitle || contactData?.subtitle || "Our admissions and academic support teams are available 6 days a week.";
   const address = contactData?.campusAddress || contactData?.address || "Beside L K Towers, Roy Nagar, Gannavaram - 521101";
-  const phone = contactData?.helplinePhone || contactData?.phone || "+91 98765 43210";
-  const email = contactData?.generalEmail || contactData?.email || "info@unlocktejas.com";
+  const phone = contactData?.helplinePhone || contactData?.phone || "+91 83310 51327";
+  const email = contactData?.generalEmail || contactData?.email || "support@unlocktejas.com";
   const workingHours = contactData?.workingHours || "Monday - Saturday: 9:00 AM - 6:00 PM IST";
   const mapUrl = contactData?.googleMapsEmbedUrl || contactData?.mapEmbedUrl || "https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Gannavaram+(Tejas%20Academy)&t=&z=14&ie=UTF8&iwloc=B&output=embed";
 
@@ -41,9 +41,22 @@ export const Contact = () => {
               <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200">
                 <Phone className="w-5 h-5" />
               </div>
-              <div>
-                <h4 className="font-bold text-gray-900 text-sm">Helpline & Direct Support</h4>
-                <p className="text-sm text-gray-600 mt-1">{phone}</p>
+              <div className="flex-1">
+                <h4 className="font-bold text-gray-900 text-sm">Official Helpline & WhatsApp</h4>
+                <div className="flex items-center gap-3 mt-1">
+                  <a href={`tel:${phone.replace(/[^0-9+]/g, '')}`} className="text-sm text-primary-700 font-semibold hover:underline">
+                    {phone}
+                  </a>
+                  <span className="text-gray-300">|</span>
+                  <a 
+                    href="https://wa.me/918331051327?text=Hi%2C%20I%20would%20like%20to%20connect%20with%20Tejas%20Academy" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="text-xs font-bold text-emerald-600 hover:text-emerald-700 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200"
+                  >
+                    WhatsApp
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -53,7 +66,9 @@ export const Contact = () => {
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 text-sm">Official Email</h4>
-                <p className="text-sm text-gray-600 mt-1">{email}</p>
+                <a href={`mailto:${email}`} className="text-sm text-primary-700 font-semibold hover:underline mt-1 inline-block">
+                  {email}
+                </a>
               </div>
             </div>
 
