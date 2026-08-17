@@ -80,7 +80,7 @@ const admissionSchema = new mongoose.Schema(
     personalDetails: {
       fullName: { type: String, required: true },
       dateOfBirth: { type: Date, default: Date.now },
-      gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
+      gender: { type: String, enum: ['male', 'female', 'other', 'Male', 'Female', 'Other'], default: 'other' },
       phone: { type: String, required: true },
       address: { type: String, default: 'Not Provided' },
     },

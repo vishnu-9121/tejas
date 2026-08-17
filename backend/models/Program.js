@@ -108,8 +108,10 @@ const programSchema = new mongoose.Schema(
     ],
     highlights: [{ type: String }],
     learningOutcomes: [{ type: String }],
+    outcomes: [{ type: String }],
     careerOpportunities: [{ type: String }],
     skills: [{ type: String }],
+    toolsLearned: [{ type: String }],
     placementStats: {
       highestPackage: { type: String, default: '' },
       averagePackage: { type: String, default: '' },
@@ -184,6 +186,13 @@ programSchema.pre('save', function (next) {
   if (primaryBrochure) {
     this.brochureUrl = primaryBrochure;
     this.brochure = primaryBrochure;
+  }
+
+  // Normalize outcomes and learningOutcomes
+  if (this.outcomes && this.outcomes.length > 0 && (!this.learningOutcomes || this.learningOutcomes.length === 0)) {
+    this.learningOutcomes = this.outcomes;
+  } else if (this.learningOutcomes && this.learningOutcomes.length > 0 && (!this.outcomes || this.outcomes.length === 0)) {
+    this.outcomes = this.learningOutcomes;
   }
 
   // Normalize pricing

@@ -268,6 +268,7 @@ export const AnalyticsEngine = {
       popularPrograms,
       systemHealth: {
         status: 'Operational',
+        database: 'Connected',
         uptime: process.uptime(),
         memoryUsageMB: (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(1)
       }
@@ -324,9 +325,14 @@ export const AnalyticsEngine = {
 
   async track(eventData) {
     try {
-      await AnalyticsEvent.create(eventData);
+      const normalized = { ...eventData };
+      if (normalized.source) normalized.source = String(normalized.source).toLowerCase();
+      if (normalized.device) normalized.device = String(normalized.device).toLowerCase();
+      if (normalized.event) normalized.event = String(normalized.event).toLowerCase();
+      return await AnalyticsEvent.create(normalized);
     } catch (error) {
       console.error('[AnalyticsEngine] Track error:', error.message);
+      return null;
     }
   }
 };
