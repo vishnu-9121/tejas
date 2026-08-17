@@ -97,7 +97,6 @@ leadSchema.pre('save', function (next) {
 });
 
 leadSchema.index({ name: 'text', email: 'text', program: 'text' });
-leadSchema.index({ status: 1 });
 leadSchema.index({ followUpDate: 1 });
 
 export const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
