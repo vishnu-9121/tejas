@@ -95,14 +95,14 @@ export const AnalyticsEngine = {
     ] = await Promise.all([
       Inquiry.countDocuments(),
       Admission.countDocuments(),
-      Admission.countDocuments({ status: { $in: ['Pending', 'Under Review'] } }),
-      Admission.countDocuments({ status: 'Accepted' }),
-      Admission.countDocuments({ status: 'Enrolled' })
+      Admission.countDocuments({ status: { $in: ['Pending', 'Under Review', 'pending', 'under_review', 'submitted', 'interview_scheduled'] } }),
+      Admission.countDocuments({ status: { $in: ['Accepted', 'accepted', 'approved'] } }),
+      Admission.countDocuments({ status: { $in: ['Enrolled', 'enrolled'] } })
     ]);
 
     const conversionRate = totalInquiries > 0
       ? ((totalApplications / totalInquiries) * 100).toFixed(1)
-      : 0;
+      : (totalApplications > 0 ? 100 : 0);
 
     return {
       leads: totalInquiries,
@@ -124,7 +124,7 @@ export const AnalyticsEngine = {
       pipeline.push(
         Admission.countDocuments({ createdAt: { $gte: start, $lte: end } })
           .then(count => ({
-            month: start.toLocaleString('default', { month: 'short', year: '2-digit' }),
+            month: start.toLocaleString('default', { month: 'short' }),
             count
           }))
       );
@@ -183,21 +183,26 @@ export const AnalyticsEngine = {
   // ──────────────────────────────────────────────
 
   async getRevenueMetrics() {
-    // For now, estimate revenue based on enrolled admissions
-    // In a real system, this would query a Payments collection
-    const enrolled = await Admission.countDocuments({ status: 'Enrolled' });
-    const accepted = await Admission.countDocuments({ status: 'Accepted' });
-    const totalAdmissions = await Admission.countDocuments();
+    const [enrolledAdmissions, acceptedAdmissions, totalAdmissions] = await Promise.all([
+      Admission.find({ status: { $in: ['enrolled', 'Enrolled'] } }).populate('programId', 'fees pricing.totalFee').lean(),
+      Admission.find({ status: { $in: ['accepted', 'Accepted', 'approved'] } }).populate('programId', 'fees pricing.totalFee').lean(),
+      Admission.countDocuments()
+    ]);
 
-    const avgFeePerStudent = 150000; // ₹1.5L placeholder
-    const estimatedRevenue = enrolled * avgFeePerStudent;
-    const projectedRevenue = (enrolled + accepted) * avgFeePerStudent;
+    const calculateSum = (list) => list.reduce((acc, curr) => {
+      const fee = curr.programId?.pricing?.totalFee || curr.programId?.fees || 150000;
+      return acc + (Number(fee) || 0);
+    }, 0);
+
+    const estimatedRevenue = calculateSum(enrolledAdmissions);
+    const projectedRevenue = estimatedRevenue + calculateSum(acceptedAdmissions);
 
     return {
       estimatedRevenue,
       projectedRevenue,
-      enrolledStudents: enrolled,
-      avgRevenuePerStudent: avgFeePerStudent
+      enrolledStudents: enrolledAdmissions.length,
+      acceptedStudents: acceptedAdmissions.length,
+      totalAdmissions
     };
   },
 
@@ -207,7 +212,13 @@ export const AnalyticsEngine = {
 
   async getPopularPrograms(limit = 5) {
     const programs = await Admission.aggregate([
-      { $group: { _id: '$programName', applications: { $sum: 1 } } },
+      { 
+        $group: { 
+          _id: { $ifNull: ['$program', '$programName'] }, 
+          applications: { $sum: 1 } 
+        } 
+      },
+      { $match: { _id: { $ne: null } } },
       { $sort: { applications: -1 } },
       { $limit: limit }
     ]);

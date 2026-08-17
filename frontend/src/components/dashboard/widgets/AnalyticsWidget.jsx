@@ -1,60 +1,49 @@
 import React from "react";
-import { TrendingUp, Target, CheckCircle2 } from "lucide-react";
+import { TrendingUp, Target, CheckCircle2, UserCheck } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export const AnalyticsWidget = ({ profileScore = 85 }) => {
+export const AnalyticsWidget = ({ profileScore = 100, applicationsCount = 0 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-      {/* Stripe-style Analytics Card */}
+      {/* Learning Status Card */}
       <div className="bg-white rounded-3xl p-6 border border-gray-100/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-full flex flex-col justify-between">
         <div>
           <div className="text-gray-500 font-medium mb-1 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary-500" /> Study Hours (This Week)
+            <TrendingUp className="w-5 h-5 text-primary-500" /> Platform Engagement
           </div>
-          <div className="flex items-end gap-3">
-            <h3 className="text-4xl font-black text-gray-900">24.5<span className="text-xl text-gray-400 font-bold">h</span></h3>
-            <span className="text-green-500 text-sm font-bold bg-green-50 px-2 py-1 rounded-md mb-1">+12%</span>
+          <div className="flex items-end gap-3 mt-2">
+            <h3 className="text-4xl font-black text-gray-900">{profileScore}<span className="text-xl text-primary-600 font-bold">%</span></h3>
+            <span className="text-green-600 text-xs font-bold bg-green-50 px-2.5 py-1 rounded-full mb-1">Profile Health</span>
           </div>
         </div>
 
-        {/* Mock Chart Area */}
-        <div className="mt-6 flex items-end justify-between h-24 gap-2">
-          {/* Bar Chart Representation */}
-          {[40, 70, 45, 90, 65, 80, 50].map((height, i) => (
-            <div key={i} className="w-full bg-gray-100 rounded-t-sm hover:bg-primary-100 transition-colors cursor-pointer group relative flex flex-col justify-end h-full">
-              <div 
-                className={`w-full rounded-t-sm transition-all duration-500 ${i === 3 ? 'bg-primary-500' : 'bg-primary-200 group-hover:bg-primary-400'}`} 
-                style={{ height: `${height}%` }}
-              ></div>
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-between text-xs text-gray-400 font-semibold mt-2 uppercase">
-          <span>Mon</span>
-          <span>Tue</span>
-          <span>Wed</span>
-          <span>Thu</span>
-          <span>Fri</span>
-          <span>Sat</span>
-          <span>Sun</span>
+        <div className="mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+          <p className="text-xs text-gray-500">
+            {profileScore === 100 ? 'Your profile is fully complete and verified for program admissions.' : 'Complete your personal and contact details in Account Settings to maximize your admission priority.'}
+          </p>
         </div>
       </div>
 
       {/* Goals & Profile */}
       <div className="space-y-6 flex flex-col h-full">
         <div className="bg-white rounded-3xl p-6 border border-gray-100/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex-1">
-           <div className="text-gray-500 font-medium mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-accent-500" /> Weekly Goals</div>
+           <div className="text-gray-500 font-medium mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-accent-500" /> Admission Checklist</div>
            <div className="space-y-3">
              <div className="flex items-center gap-3">
                <div className="w-5 h-5 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center text-white"><CheckCircle2 className="w-3 h-3" /></div>
-               <span className="text-gray-500 line-through text-sm font-medium">Complete Chapter 3 Quiz</span>
+               <span className="text-gray-700 text-sm font-medium">Register Student Account</span>
              </div>
              <div className="flex items-center gap-3">
-               <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>
-               <span className="text-gray-900 text-sm font-medium">Read AI Ethics Case Study</span>
+               <div className={`w-5 h-5 rounded-full border-2 ${applicationsCount > 0 ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300'} flex items-center justify-center`}>
+                 {applicationsCount > 0 && <CheckCircle2 className="w-3 h-3" />}
+               </div>
+               <span className="text-gray-900 text-sm font-medium">Submit Program Application</span>
              </div>
              <div className="flex items-center gap-3">
-               <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>
-               <span className="text-gray-900 text-sm font-medium">Attend Lab Session</span>
+               <div className={`w-5 h-5 rounded-full border-2 ${profileScore >= 90 ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300'} flex items-center justify-center`}>
+                 {profileScore >= 90 && <CheckCircle2 className="w-3 h-3" />}
+               </div>
+               <span className="text-gray-900 text-sm font-medium">Complete Student Profile</span>
              </div>
            </div>
         </div>
@@ -69,7 +58,6 @@ export const AnalyticsWidget = ({ profileScore = 85 }) => {
             <div className="w-full bg-gray-700 rounded-full h-1.5">
               <div className="bg-accent-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(250,204,21,0.5)]" style={{ width: `${profileScore}%` }}></div>
             </div>
-            <p className="text-xs text-gray-400 font-medium mt-3">Add your LinkedIn URL to reach 100%</p>
           </div>
         </div>
       </div>

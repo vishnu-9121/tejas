@@ -107,13 +107,21 @@ export default function DashboardHome() {
           
           {activeTab === "overview" && (
             <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-              <WorkspaceOverview kpis={kpis} recentActivities={recentActivities} />
+              <WorkspaceOverview 
+                kpis={kpis} 
+                recentActivities={recentActivities} 
+                admissionsTrend={data?.data?.admissionsTrend} 
+              />
             </motion.div>
           )}
 
           {activeTab === "academics" && (
             <motion.div key="academics" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-              <WorkspaceAcademics kpis={kpis} />
+              <WorkspaceAcademics 
+                kpis={kpis} 
+                admissionsFunnel={data?.data?.admissionsFunnel}
+                popularPrograms={data?.data?.popularPrograms}
+              />
             </motion.div>
           )}
 

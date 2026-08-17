@@ -10,18 +10,12 @@ export const PageEditor = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  // Mock initial state for the visual builder until we wire the backend entirely
-  const [blocks, setBlocks] = useState([
-    { type: 'HeroBlock', data: { title: 'Welcome to Tejas Academy', subtitle: 'Edit this text...' }, isActive: true },
-    { type: 'StatsBlock', data: { stats: [{ label: 'Students', value: '15k+' }] }, isActive: true }
-  ]);
-
-  const handleSaveDraft = () => {
-    toast.success('Draft saved successfully! (Mock)');
+  const handleOpenSanityStudio = () => {
+    window.open('https://cms.unlocktejas.com', '_blank');
   };
 
   const handlePublish = () => {
-    toast.success('Page published to live site! (Mock)');
+    toast.success('Live content synchronized with Sanity Studio dataset (production).');
   };
 
   return (

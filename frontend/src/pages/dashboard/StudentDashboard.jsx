@@ -181,7 +181,7 @@ export const StudentDashboard = () => {
         return (
           <ApplicantView 
             applications={applications}
-            mockNotifications={realNotifications}
+            notifications={realNotifications}
             upcomingEvents={upcomingEvents}
             profileScore={profileScore}
           />

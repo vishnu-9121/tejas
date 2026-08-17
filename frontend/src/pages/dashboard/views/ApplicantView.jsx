@@ -20,7 +20,7 @@ const StatusBadge = ({ status, color }) => {
   );
 };
 
-export const ApplicantView = ({ applications, mockNotifications, upcomingEvents, profileScore }) => {
+export const ApplicantView = ({ applications, notifications, upcomingEvents, profileScore }) => {
   const navigate = useNavigate();
   const currentApp = applications?.[0];
 
