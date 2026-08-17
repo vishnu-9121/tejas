@@ -8,6 +8,7 @@ import {
   Mail, Calendar, Shield, Activity
 } from 'lucide-react';
 import api from '../../utils/api';
+import { useSocket } from '../../contexts/SocketContext';
 
 const typeConfig = {
   info:            { bg: 'bg-blue-50',   border: 'border-blue-100',   icon: Activity,       iconBg: 'bg-blue-100',   iconColor: 'text-blue-600' },
