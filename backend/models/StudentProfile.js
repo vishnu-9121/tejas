@@ -147,8 +147,6 @@ studentProfileSchema.pre('save', function (next) {
   next();
 });
 
-studentProfileSchema.index({ user: 1 });
-studentProfileSchema.index({ studentId: 1 });
 studentProfileSchema.index({ admissionNumber: 1 });
 
 export const StudentProfile = mongoose.models.StudentProfile || mongoose.model('StudentProfile', studentProfileSchema);

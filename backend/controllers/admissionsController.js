@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Admission } from '../models/Admission.js';
 import { User } from '../models/User.js';
 import { Program } from '../models/Program.js';
@@ -83,7 +84,7 @@ export const createAdmission = async (req, res, next) => {
     normalizedData.applicationStatus = 'submitted';
 
     // Link Program ObjectId if programId or title/slug is provided
-    if (req.body.programId && req.body.programId.match(/^[0-9a-fA-F]{24}$/)) {
+    if (req.body.programId && (mongoose.isValidObjectId(req.body.programId) || String(req.body.programId).match(/^[0-9a-fA-F]{24}$/))) {
       const progDoc = await Program.findById(req.body.programId);
       if (progDoc) {
         normalizedData.programId = progDoc._id;

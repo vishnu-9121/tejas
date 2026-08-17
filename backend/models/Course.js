@@ -98,7 +98,6 @@ courseSchema.pre('save', function (next) {
 });
 
 courseSchema.index({ program: 1 });
-courseSchema.index({ slug: 1 });
 courseSchema.index({ category: 1 });
 courseSchema.index({ status: 1 });
 

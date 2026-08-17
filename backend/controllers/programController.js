@@ -179,7 +179,7 @@ export const getProgramBySlug = async (req, res, next) => {
       })
       .lean();
 
-    if (!program && req.params.slug.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!program && req.params.slug && (mongoose.isValidObjectId(req.params.slug) || String(req.params.slug).match(/^[0-9a-fA-F]{24}$/))) {
       // Fallback by ID if slug was passed as an ObjectId
       program = await Program.findById(req.params.slug)
         .populate('facultyMapping', 'name firstName lastName email department designation avatar profileImage')

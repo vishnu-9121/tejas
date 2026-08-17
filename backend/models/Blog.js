@@ -96,7 +96,6 @@ blogSchema.pre('save', function (next) {
 blogSchema.index({ title: "text", content: "text", tags: "text" });
 blogSchema.index({ category: 1 });
 blogSchema.index({ status: 1 });
-blogSchema.index({ slug: 1 });
 blogSchema.index({ publishedAt: -1 });
 
 export const Blog = mongoose.models.Blog || mongoose.model("Blog", blogSchema);
