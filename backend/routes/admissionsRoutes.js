@@ -27,7 +27,7 @@ router.route('/')
   .get(protect, authorize('super_admin', 'admin', 'operations_manager'), getAdmissions);
 
 router.route('/:id')
-  .get(protect, authorize('super_admin', 'admin', 'operations_manager'), getAdmissionById);
+  .get(protect, getAdmissionById);
 
 router.put('/:id/status', protect, authorize('super_admin', 'admin', 'operations_manager'), updateAdmissionStatus);
 

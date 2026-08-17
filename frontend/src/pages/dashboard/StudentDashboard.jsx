@@ -22,13 +22,8 @@ import { ApplicantView } from "./views/ApplicantView";
 import { ActiveLearnerView } from "./views/ActiveLearnerView";
 import { AlumniView } from "./views/AlumniView";
 
-const mockApplications = [];
-const mockEvents = [];
-const mockNotifications = [
-  { id: 1, text: "Your transcript has been verified.", time: "2 hours ago", type: "success" },
-  { id: 2, text: "Reminder: Scholarship application deadline is approaching.", time: "1 day ago", type: "warning" },
-  { id: 3, text: "Welcome to Tejas Academy! Please complete your profile.", time: "3 days ago", type: "info" }
-];
+import api from "../../utils/api";
+import { toast } from "sonner";
 
 const mapStatusToProgress = (status) => {
   const norm = (status || '').toLowerCase().trim();
@@ -52,14 +47,34 @@ const mapStatusToProgress = (status) => {
 };
 
 export const StudentDashboard = () => {
-  const { user, logout } = useAuthStore();
+  const { user, logout, setCredentials, accessToken } = useAuthStore();
   const [greeting, setGreeting] = useState("Welcome");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    name: user?.name || "",
+    phoneNumber: user?.phone || user?.phoneNumber || "",
+    address: user?.address || "",
+    bio: user?.bio || ""
+  });
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const navigate = useNavigate();
 
   // --- Real-time Data Hooks ---
-  const { data: appsData } = useQuery({
+  const { data: appsData, refetch: refetchApps } = useQuery({
     queryKey: ['my-applications'],
-    queryFn: admissionService.getMyApplications
+    queryFn: admissionService.getMyApplications,
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true
+  });
+
+  const { data: notifsData } = useQuery({
+    queryKey: ['my-notifications'],
+    queryFn: async () => {
+      const res = await api.get('/notifications');
+      return res.data;
+    },
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true
   });
 
   const { data: eventsData } = useQuery({
@@ -67,18 +82,30 @@ export const StudentDashboard = () => {
     queryFn: () => eventService.getEvents({ limit: 3 })
   });
 
-  const { data: userData } = useQuery({
+  const { data: userData, refetch: refetchUser } = useQuery({
     queryKey: ['my-profile'],
     queryFn: userService.getMe
   });
 
-  // Data processing
+  // Sync profile form when user data is loaded
+  useEffect(() => {
+    if (userData?.data) {
+      setProfileForm({
+        name: userData.data.name || "",
+        phoneNumber: userData.data.phoneNumber || userData.data.phone || "",
+        address: userData.data.address || "",
+        bio: userData.data.bio || ""
+      });
+    }
+  }, [userData]);
+
+  // Data processing from real backend
   const applications = appsData?.data?.length > 0 
     ? appsData.data.map(app => {
         const { progress, nextStep, color } = mapStatusToProgress(app.status);
         return {
           id: app.applicationId || `APP-${app._id.substring(0, 8).toUpperCase()}`,
-          program: app.program || app.programName || 'Flagship Academic Program',
+          program: app.program || app.programName || 'Academic Program',
           status: (app.status || 'submitted').replace('_', ' ').toUpperCase(),
           date: new Date(app.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
           progress,
@@ -88,7 +115,16 @@ export const StudentDashboard = () => {
           counselorNotes: app.counselorNotes || app.reviewNotes || ''
         };
       })
-    : mockApplications;
+    : [];
+
+  const realNotifications = notifsData?.data?.length > 0
+    ? notifsData.data.map(n => ({
+        id: n._id,
+        text: n.message || n.title,
+        time: new Date(n.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
+        type: n.type || 'info'
+      }))
+    : [];
 
   const upcomingEvents = eventsData?.data?.events?.length > 0
     ? eventsData.data.events.slice(0, 3).map(event => ({
@@ -97,9 +133,9 @@ export const StudentDashboard = () => {
         date: new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         time: event.time || "10:00 AM"
       }))
-    : mockEvents;
+    : [];
 
-  const currentUserData = userData?.data || user; // Fallback to auth user
+  const currentUserData = userData?.data || user;
   const savedProgramsCount = currentUserData?.savedPrograms?.length || 0;
   const bookmarkedEventsCount = currentUserData?.bookmarkedEvents?.length || 0;
   const profileScore = currentUserData?.profileCompletionScore || 25;
@@ -111,6 +147,24 @@ export const StudentDashboard = () => {
     else if (hour < 18) setGreeting("Good afternoon");
     else setGreeting("Good evening");
   }, []);
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setIsSavingProfile(true);
+    try {
+      const res = await userService.updateProfile(profileForm);
+      if (res.data) {
+        setCredentials({ ...user, ...res.data }, accessToken);
+      }
+      await refetchUser();
+      toast.success("Profile updated successfully!");
+      setIsSettingsOpen(false);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update profile.");
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   // Render correct view based on lifecycle stage
   const renderDashboardView = () => {
@@ -127,7 +181,7 @@ export const StudentDashboard = () => {
         return (
           <ApplicantView 
             applications={applications}
-            mockNotifications={mockNotifications}
+            mockNotifications={realNotifications}
             upcomingEvents={upcomingEvents}
             profileScore={profileScore}
           />
@@ -208,11 +262,12 @@ export const StudentDashboard = () => {
                   </div>
                   {bookmarkedEventsCount > 0 && <span className="bg-gray-100 text-gray-600 text-xs py-0.5 px-2 rounded-full font-bold group-hover:bg-primary-100 group-hover:text-primary-700 transition-colors">{bookmarkedEventsCount}</span>}
                 </Link>
-                <button onClick={() => navigate('/dashboard')} className="flex items-center justify-between px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 font-medium transition-all group w-full text-left">
+                <button onClick={() => setIsSettingsOpen(true)} className="flex items-center justify-between px-4 py-3 rounded-2xl text-gray-600 hover:bg-gray-50 font-medium transition-all group w-full text-left">
                   <div className="flex items-center gap-3">
                     <Settings className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
                     Account Settings
                   </div>
+                  <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-70 transition-opacity" />
                 </button>
                 
                 <div className="mt-4 pt-4 border-t border-gray-100">
@@ -238,6 +293,10 @@ export const StudentDashboard = () => {
               </motion.div>
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-3">
                 <NotificationDropdown />
+                <Button onClick={() => setIsSettingsOpen(true)} variant="outline" className="rounded-full px-4 text-xs font-semibold flex items-center gap-1.5 border-gray-200">
+                  <Settings className="w-3.5 h-3.5" />
+                  Edit Profile
+                </Button>
                 <Button onClick={() => navigate('/programs')} variant="primary" className="shadow-lg shadow-primary-600/20 rounded-full px-6 flex items-center gap-2">
                   <BookMarked className="w-4 h-4" />
                   Explore Catalog
@@ -257,6 +316,81 @@ export const StudentDashboard = () => {
           </main>
         </div>
       </div>
+
+      {/* Account Settings Modal */}
+      {isSettingsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-gray-100 relative">
+            <h3 className="text-2xl font-bold text-gray-900 mb-1">Update Student Profile</h3>
+            <p className="text-sm text-gray-500 mb-6">Manage your contact details and account information.</p>
+            
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  value={profileForm.name}
+                  onChange={(e) => setProfileForm(prev => ({ ...prev, name: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  value={profileForm.phoneNumber}
+                  onChange={(e) => setProfileForm(prev => ({ ...prev, phoneNumber: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Residential Address / City</label>
+                <input
+                  type="text"
+                  placeholder="Vijayawada, Andhra Pradesh"
+                  value={profileForm.address}
+                  onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Career Goal / Bio</label>
+                <textarea
+                  rows={3}
+                  placeholder="Aspiring AI Engineer looking to build foundational ML models..."
+                  value={profileForm.bio}
+                  onChange={(e) => setProfileForm(prev => ({ ...prev, bio: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium resize-none"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setIsSettingsOpen(false)} 
+                  className="flex-1 rounded-xl"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  variant="primary" 
+                  disabled={isSavingProfile} 
+                  className="flex-1 rounded-xl"
+                >
+                  {isSavingProfile ? 'Saving...' : 'Save Profile'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

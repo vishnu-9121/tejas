@@ -24,6 +24,53 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
   const navigate = useNavigate();
   const currentApp = applications?.[0];
 
+  const handlePrintApplication = (app) => {
+    const printWindow = window.open('', '_blank', 'width=800,height=700');
+    if (printWindow) {
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Tejas Academy - Application ${app.id}</title>
+            <style>
+              body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1f2937; line-height: 1.6; }
+              .header { border-bottom: 3px solid #0284c7; padding-bottom: 20px; margin-bottom: 28px; }
+              h1 { color: #0f172a; margin: 0 0 6px 0; font-size: 24px; }
+              .sub { color: #64748b; font-size: 14px; margin: 0; }
+              .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+              .row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
+              .label { font-weight: 600; color: #475569; }
+              .val { font-weight: 700; color: #0f172a; }
+              .badge { background: #e0f2fe; color: #0369a1; padding: 4px 14px; border-radius: 9999px; font-weight: 700; font-size: 12px; text-transform: uppercase; }
+              .footer { margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 16px; font-size: 12px; color: #94a3b8; text-align: center; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h1>TEJAS ACADEMY OF EXCELLENCE</h1>
+              <p class="sub">Official Admission Application Summary & Receipt</p>
+            </div>
+            <div class="card">
+              <div class="row"><span class="label">Application Reference ID:</span><span class="val">${app.id}</span></div>
+              <div class="row"><span class="label">Program of Study:</span><span class="val">${app.program}</span></div>
+              <div class="row"><span class="label">Submission Date:</span><span class="val">${app.date}</span></div>
+              <div class="row"><span class="label">Application Status:</span><span class="badge">${app.status}</span></div>
+              <div class="row"><span class="label">Admissions Stage:</span><span class="val">${app.nextStep} (${app.progress}% Complete)</span></div>
+              ${app.counselorNotes ? `<div class="row"><span class="label">Admissions Note:</span><span class="val">${app.counselorNotes}</span></div>` : ''}
+            </div>
+            <div class="footer">
+              <p>Tejas Academy of Excellence • Official Admissions Record • https://unlocktejas.com</p>
+            </div>
+            <script>
+              window.onload = function() { window.print(); };
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  };
+
   const item = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
@@ -41,7 +88,7 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
             </div>
             <h3 className="text-2xl font-bold mb-4">{currentApp?.program || 'No Application Started'}</h3>
             {currentApp ? (
-              <div className="flex items-end justify-between">
+              <div className="flex items-end justify-between flex-wrap gap-4">
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Status</p>
                   <div className="flex items-center gap-2">
@@ -52,7 +99,9 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
                     <span className="font-semibold text-accent-400">{currentApp.status}</span>
                   </div>
                 </div>
-                <Button variant="gold" size="sm" className="rounded-full shadow-lg shadow-accent-500/20">View Details</Button>
+                <Button onClick={() => handlePrintApplication(currentApp)} variant="gold" size="sm" className="rounded-full shadow-lg shadow-accent-500/20">
+                  Print Summary Receipt
+                </Button>
               </div>
             ) : (
               <div className="flex items-end justify-between">
@@ -76,7 +125,7 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
               <div className="bg-primary-600 h-1.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${profileScore}%` }}></div>
             </div>
             {profileScore < 100 && (
-              <p onClick={() => navigate('/dashboard')} className="text-xs text-primary-600 font-medium mt-3 hover:underline cursor-pointer">Complete profile now &rarr;</p>
+              <p onClick={() => navigate('/dashboard')} className="text-xs text-primary-600 font-medium mt-3 hover:underline cursor-pointer">Complete profile details &rarr;</p>
             )}
           </div>
         </motion.div>
@@ -93,7 +142,7 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
           
           <div className="bg-white rounded-3xl border border-gray-100/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-2">
             {applications.length > 0 ? applications.map(app => (
-              <div key={app.id} className="p-6">
+              <div key={app.id} className="p-6 border-b border-gray-100 last:border-0">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                   <div>
                     <div className="flex items-center gap-3 mb-1">
@@ -116,7 +165,7 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs font-semibold inline-block text-primary-600">
+                      <span className="text-xs font-semibold inline-block text-primary-600 font-bold">
                         {app.progress}%
                       </span>
                     </div>
@@ -125,15 +174,29 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
                     <div style={{ width: `${app.progress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary-600 transition-all duration-1000 ease-out"></div>
                   </div>
                 </div>
+
+                {app.counselorNotes && (
+                  <div className="bg-blue-50/70 border border-blue-100 rounded-2xl p-4 my-4 text-xs text-blue-900">
+                    <span className="font-bold">Reviewer Note:</span> {app.counselorNotes}
+                  </div>
+                )}
                 
                 <div className="flex gap-3 mt-6">
-                  <Button variant="outline" className="flex-1 rounded-xl">Download PDF</Button>
-                  <Button variant="primary" className="flex-1 rounded-xl">Continue Application</Button>
+                  <Button onClick={() => handlePrintApplication(app)} variant="outline" className="flex-1 rounded-xl">
+                    Download Slip / PDF
+                  </Button>
+                  <Button onClick={() => navigate('/programs')} variant="primary" className="flex-1 rounded-xl">
+                    Explore Catalog
+                  </Button>
                 </div>
               </div>
             )) : (
               <div className="p-12 text-center text-gray-500">
-                <p>You haven't applied to any programs yet.</p>
+                <p className="font-semibold text-gray-700">No applications submitted yet.</p>
+                <p className="text-xs text-gray-400 mt-1 mb-4">Select an academic program from our catalog to begin your admission application.</p>
+                <Button onClick={() => navigate('/programs')} variant="primary" size="sm" className="rounded-full">
+                  Browse Programs
+                </Button>
               </div>
             )}
           </div>
@@ -155,10 +218,12 @@ export const ApplicantView = ({ applications, mockNotifications, upcomingEvents,
                   </div>
                 </div>
               )) : (
-                <p className="text-sm text-gray-500 text-center py-4">No upcoming events.</p>
+                <p className="text-sm text-gray-400 text-center py-4">No upcoming events scheduled.</p>
               )}
             </div>
-            <Button onClick={() => navigate('/events')} variant="ghost" className="w-full mt-4 text-primary-600 text-sm font-semibold">View All Calendar</Button>
+            <Button onClick={() => navigate('/events')} variant="ghost" className="w-full mt-4 text-primary-600 text-sm font-semibold">
+              View Calendar
+            </Button>
           </motion.div>
         </div>
       </div>

@@ -4,8 +4,14 @@ import * as studentController from '../controllers/studentController.js';
 
 const router = express.Router();
 
-// All routes require authentication and admin/operations_manager privileges
+// All routes require authentication
 router.use(protect);
+
+// Student Self-Service Routes (Scoped strictly to logged-in user via JWT)
+router.get('/me', studentController.getMyStudentProfile);
+router.put('/me', studentController.updateMyStudentProfile);
+
+// Admin & Operations Manager Management Routes
 router.use(authorize('super_admin', 'admin', 'operations_manager'));
 
 router.route('/')

@@ -182,6 +182,106 @@ export const addTimelineEvent = async (req, res, next) => {
   }
 };
 
+// Get logged in student's own profile (Auto-creates minimal profile if none exists)
+export const getMyStudentProfile = async (req, res, next) => {
+  try {
+    let student = await StudentProfile.findOne({ user: req.user.id })
+      .populate('user', 'name email phone phoneNumber role profileImage')
+      .populate('academicInfo.program', 'title slug duration fees')
+      .populate('academicInfo.courses', 'title');
+
+    if (!student) {
+      const user = await User.findById(req.user.id);
+      if (!user) throw new AppError('User not found', 404);
+
+      const year = new Date().getFullYear();
+      const count = await StudentProfile.countDocuments();
+      const studentId = `TAE-${year}-${String(count + 1).padStart(4, '0')}`;
+
+      student = await StudentProfile.create({
+        user: user._id,
+        userId: user._id,
+        studentId,
+        admissionNumber: studentId,
+        personalInfo: {},
+        contactInfo: {
+          phone: user.phone || user.phoneNumber || '',
+          address: { street: user.address || '' }
+        },
+        timeline: [{
+          title: 'Account Activated',
+          description: 'Student account initialized in portal.',
+          type: 'system'
+        }]
+      });
+
+      student = await StudentProfile.findById(student._id)
+        .populate('user', 'name email phone phoneNumber role profileImage');
+    }
+
+    sendResponse(res, HTTP_STATUS.OK, 'Student profile retrieved successfully', student);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update logged in student's own permitted profile data
+export const updateMyStudentProfile = async (req, res, next) => {
+  try {
+    const { personalInfo, contactInfo, guardianDetails, name, phoneNumber, address, bio } = req.body;
+    
+    let student = await StudentProfile.findOne({ user: req.user.id });
+    if (!student) {
+      const year = new Date().getFullYear();
+      const count = await StudentProfile.countDocuments();
+      const studentId = `TAE-${year}-${String(count + 1).padStart(4, '0')}`;
+
+      student = await StudentProfile.create({
+        user: req.user.id,
+        userId: req.user.id,
+        studentId,
+        personalInfo: personalInfo || {},
+        contactInfo: contactInfo || {},
+        guardianDetails: guardianDetails || {}
+      });
+    } else {
+      if (personalInfo) student.personalInfo = { ...student.personalInfo, ...personalInfo };
+      if (contactInfo) student.contactInfo = { ...student.contactInfo, ...contactInfo };
+      if (guardianDetails) student.guardianDetails = { ...student.guardianDetails, ...guardianDetails };
+      await student.save();
+    }
+
+    // Also sync User fields if provided
+    const userUpdate = {};
+    if (name) userUpdate.name = name;
+    if (phoneNumber) {
+      userUpdate.phone = phoneNumber;
+      userUpdate.phoneNumber = phoneNumber;
+    }
+    if (address) userUpdate.address = address;
+    if (bio) userUpdate.bio = bio;
+
+    if (Object.keys(userUpdate).length > 0) {
+      let score = 25;
+      if (name || userUpdate.name) score += 15;
+      if (phoneNumber || userUpdate.phone) score += 20;
+      if (address || userUpdate.address) score += 20;
+      if (bio || userUpdate.bio) score += 20;
+      userUpdate.profileCompletionScore = score;
+
+      await User.findByIdAndUpdate(req.user.id, userUpdate, { new: true });
+    }
+
+    const updatedProfile = await StudentProfile.findOne({ user: req.user.id })
+      .populate('user', 'name email phone phoneNumber role profileImage bio address profileCompletionScore')
+      .populate('academicInfo.program', 'title slug');
+
+    sendResponse(res, HTTP_STATUS.OK, 'Profile updated successfully', updatedProfile);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Delete student (Soft or Hard)
 export const deleteStudent = async (req, res, next) => {
   try {

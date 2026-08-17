@@ -7,10 +7,7 @@ import {
   GraduationCap, DollarSign, Users, AlertTriangle, Zap, 
   Mail, Calendar, Shield, Activity
 } from 'lucide-react';
-import { useSocket } from '../../contexts/SocketContext';
-import axios from 'axios';
-
-const API = import.meta.env.VITE_API_URL || '/api/v1';
+import api from '../../utils/api';
 
 const typeConfig = {
   info:            { bg: 'bg-blue-50',   border: 'border-blue-100',   icon: Activity,       iconBg: 'bg-blue-100',   iconColor: 'text-blue-600' },
@@ -37,17 +34,14 @@ export const NotificationDropdown = () => {
   const queryClient = useQueryClient();
   const { socket } = useSocket();
 
-  // Fetch notifications from the API
+  // Fetch real notifications from the API using authenticated client
   const { data, refetch } = useQuery({
     queryKey: ['my-notifications'],
     queryFn: async () => {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`${API}/notifications`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/notifications');
       return res.data;
     },
-    refetchInterval: 60000 // Fallback poll every 60s
+    refetchInterval: 15000 // Poll every 15s
   });
 
   const notifications = data?.data || [];
@@ -77,10 +71,7 @@ export const NotificationDropdown = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(`${API}/notifications/${id}/read`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(`/notifications/${id}/read`);
       refetch();
     } catch (err) {
       console.error('Failed to mark as read', err);
@@ -89,10 +80,7 @@ export const NotificationDropdown = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(`${API}/notifications/read-all`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put('/notifications/read-all');
       refetch();
     } catch (err) {
       console.error('Failed to mark all as read', err);

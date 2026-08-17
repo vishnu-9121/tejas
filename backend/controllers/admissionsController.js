@@ -1,5 +1,7 @@
 import { Admission } from '../models/Admission.js';
 import { User } from '../models/User.js';
+import { Program } from '../models/Program.js';
+import { Notification } from '../models/Notification.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { eventBus, EVENTS } from '../utils/eventBus.js';
 import * as XLSX from 'xlsx';
@@ -77,6 +79,28 @@ export const createAdmission = async (req, res, next) => {
     const normalizedData = normalizeAdmissionPayload(req.body, req.user);
     normalizedData.applicant = applicantId;
     normalizedData.studentId = applicantId;
+    normalizedData.status = 'submitted';
+    normalizedData.applicationStatus = 'submitted';
+
+    // Link Program ObjectId if programId or title/slug is provided
+    if (req.body.programId && req.body.programId.match(/^[0-9a-fA-F]{24}$/)) {
+      const progDoc = await Program.findById(req.body.programId);
+      if (progDoc) {
+        normalizedData.programId = progDoc._id;
+        normalizedData.program = progDoc.title;
+      }
+    } else if (normalizedData.program) {
+      const progDoc = await Program.findOne({
+        $or: [
+          { title: { $regex: new RegExp(`^${normalizedData.program.trim()}$`, 'i') } },
+          { slug: normalizedData.program.toLowerCase().trim() }
+        ]
+      });
+      if (progDoc) {
+        normalizedData.programId = progDoc._id;
+        normalizedData.program = progDoc.title;
+      }
+    }
 
     // Check if the user already has an active application for this same program
     const existingApp = await Admission.findOne({
@@ -94,6 +118,25 @@ export const createAdmission = async (req, res, next) => {
     }
 
     const application = await Admission.create(normalizedData);
+
+    // Create a real in-app notification in MongoDB for the applicant
+    try {
+      await Notification.create({
+        recipient: applicantId,
+        title: 'Application Submitted Successfully',
+        message: `Your application for "${application.program}" has been received (Ref ID: ${application.applicationId}). Our admissions panel is reviewing your details.`,
+        type: 'success',
+        priority: 'medium',
+        actionLink: '/dashboard',
+        metadata: {
+          admissionId: application._id,
+          applicationId: application.applicationId,
+          program: application.program
+        }
+      });
+    } catch (notifErr) {
+      console.warn('[Admissions] Notification creation warning:', notifErr.message);
+    }
 
     // Emit event
     eventBus.emit(EVENTS.ADMISSION_SUBMITTED, {
@@ -220,14 +263,22 @@ export const getAdmissionStats = async (req, res, next) => {
 
 // @desc    Get admission by ID
 // @route   GET /api/v1/admissions/:id
-// @access  Private/Admin
+// @access  Private (Applicant or Admin/Staff)
 export const getAdmissionById = async (req, res, next) => {
   try {
     const application = await Admission.findById(req.params.id)
-      .populate('applicant', 'name email phone phoneNumber');
+      .populate('applicant', 'name email phone phoneNumber')
+      .populate('programId', 'title slug degreeLevel duration fees');
 
     if (!application) {
       return next(new AppError('Application not found', 404));
+    }
+
+    // Security check (IDOR protection): Non-admin users can ONLY view their own application
+    const isAdminOrStaff = ['super_admin', 'admin', 'operations_manager'].includes(req.user?.role);
+    const applicantId = application.applicant?._id || application.applicant;
+    if (!isAdminOrStaff && String(applicantId) !== String(req.user?.id)) {
+      return next(new AppError('Not authorized to access this application', 403));
     }
 
     res.status(200).json({
@@ -250,9 +301,12 @@ export const updateAdmissionStatus = async (req, res, next) => {
     }
     
     const oldStatus = originalApplication.status;
-    const updateData = {};
-    if (req.body.status) updateData.status = req.body.status;
-    if (req.body.applicationStatus) updateData.applicationStatus = req.body.applicationStatus;
+    const targetStatus = req.body.status || req.body.applicationStatus || originalApplication.status;
+    
+    const updateData = {
+      status: targetStatus,
+      applicationStatus: targetStatus
+    };
     if (req.body.reviewNotes !== undefined) updateData.reviewNotes = req.body.reviewNotes;
     if (req.body.counselorNotes !== undefined) updateData.counselorNotes = req.body.counselorNotes;
     if (req.body.paymentStatus) updateData.paymentStatus = req.body.paymentStatus;
@@ -262,6 +316,39 @@ export const updateAdmissionStatus = async (req, res, next) => {
       updateData,
       { new: true, runValidators: true }
     );
+
+    // If status changed or counselor added a note, create a real in-app Notification for the student
+    if (oldStatus !== application.status || req.body.counselorNotes) {
+      try {
+        const statusLabels = {
+          'submitted': 'Submitted',
+          'under_review': 'Under Review',
+          'interview_scheduled': 'Interview Scheduled',
+          'accepted': 'Accepted / Admitted',
+          'rejected': 'Application Decision Reached'
+        };
+        const readableStatus = statusLabels[application.status] || application.status;
+        const noteDetail = application.counselorNotes ? ` Note from Counselor: "${application.counselorNotes}"` : '';
+
+        await Notification.create({
+          recipient: application.applicant,
+          title: `Application Status Updated: ${readableStatus}`,
+          message: `Your application for ${application.program} is now marked as "${readableStatus}".${noteDetail}`,
+          type: application.status === 'accepted' ? 'success' : (application.status === 'rejected' ? 'error' : 'action_required'),
+          priority: 'high',
+          actionLink: '/dashboard',
+          metadata: {
+            admissionId: application._id,
+            applicationId: application.applicationId,
+            oldStatus,
+            newStatus: application.status,
+            program: application.program
+          }
+        });
+      } catch (notifErr) {
+        console.warn('[Admissions] Status update notification warning:', notifErr.message);
+      }
+    }
 
     // Emit events based on new status
     if (application.status === 'accepted') {

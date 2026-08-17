@@ -58,16 +58,6 @@ export const AdmissionsForm = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const fallbackPrograms = [
-    { value: 'B.Tech in Artificial Intelligence & Data Science', label: 'B.Tech in Artificial Intelligence & Data Science' },
-    { value: 'MBA in Digital Business & Fintech', label: 'MBA in Digital Business & Fintech' },
-    { value: 'M.Des in UX Architecture & Design', label: 'M.Des in UX Architecture & Design' },
-    { value: 'Executive Leadership Certificate', label: 'Executive Leadership Certificate' },
-    { value: 'Startup Engineering & Venture Creation', label: 'Startup Engineering & Venture Creation' },
-    { value: 'Global Leadership Certificate', label: 'Global Leadership Certificate' },
-    { value: 'Mastering Communication & Influence', label: 'Mastering Communication & Influence' }
-  ];
-
   const rawPrograms = Array.isArray(programsData?.data?.programs) 
     ? programsData.data.programs 
     : Array.isArray(programsData?.data?.data?.programs) 
@@ -81,7 +71,11 @@ export const AdmissionsForm = () => {
     label: p.title || p.name 
   }));
 
-  const programs = fetchedPrograms.length > 0 ? fetchedPrograms : fallbackPrograms;
+  // If a program was preselected in the URL query, ensure it is available in options
+  const programs = [...fetchedPrograms];
+  if (preselectedProgram && !programs.some(p => p.value === preselectedProgram)) {
+    programs.unshift({ value: preselectedProgram, label: preselectedProgram });
+  }
 
   // React Hook Form initialized with default values from user or query params
   const { register, handleSubmit, formState: { errors }, setValue, trigger, getValues, watch } = useForm({
