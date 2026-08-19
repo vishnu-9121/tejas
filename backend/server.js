@@ -45,6 +45,8 @@ import roleRoutes from "./routes/roleRoutes.js";
 import leadRoutes from "./routes/leadRoutes.js";
 import emailCampaignRoutes from "./routes/emailCampaignRoutes.js";
 import backupRoutes from "./routes/backupRoutes.js";
+import { seoRoutes } from "./routes/seoRoutes.js";
+import { generateDynamicSitemap, getRobotsTxt } from "./controllers/seoController.js";
 
 const app = express();
 
@@ -77,6 +79,10 @@ app.use(compression());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+
+// Public Root & SEO Meta Routes
+app.get("/sitemap.xml", generateDynamicSitemap);
+app.get("/robots.txt", getRobotsTxt);
 
 // 4. API Routes
 app.get("/", (req, res) => {
@@ -126,6 +132,7 @@ app.use("/api/v1/mentors", mentorRoutes);
 app.use("/api/v1/faculty", facultyRoutes);
 app.use("/api/v1/workshops", workshopRoutes);
 app.use("/api/v1/cms", cmsRoutes);
+app.use("/api/v1/seo", seoRoutes);
 app.use("/api/v1/newsletter", newsletterRoutes);
 app.use("/api/v1/gallery", galleryRoutes);
 app.use("/api/v1/testimonials", testimonialRoutes);
@@ -182,4 +189,5 @@ process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
 });
 
+export { app, server };
 export default app;

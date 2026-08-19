@@ -83,8 +83,12 @@ export const globalSearch = async (req, res) => {
 
       if (shouldSearch('applications')) {
         searches.applications = Admission.find({
-          $or: [{ studentName: regex }, { programName: regex }, { email: regex }]
-        }).select('studentName programName status createdAt').limit(searchLimit).lean();
+          $or: [
+            { 'personalDetails.fullName': regex },
+            { applicationId: regex },
+            { programName: regex }
+          ]
+        }).select('applicationId personalDetails program status createdAt').limit(searchLimit).lean();
       }
 
       if (shouldSearch('cms')) {

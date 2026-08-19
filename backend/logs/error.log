@@ -16,3 +16,20 @@
 {"level":"error","message":"MongoDB Connection Notice: Instance failed to start within 10000ms","timestamp":"2026-08-17 10:15:22"}
 {"level":"error","message":"MongoDB Connection Notice: Instance failed to start within 10000ms","timestamp":"2026-08-17 12:07:23"}
 {"level":"error","message":"MongoDB Connection Notice: Instance failed to start within 10000ms","timestamp":"2026-08-17 12:08:04"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:29"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:29"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:30"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:31"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:31"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Too many failed login attempts","timestamp":"2026-08-17 12:18:33"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 13:06:03"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 14:15:24"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-19 14:16:42"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-19 14:30:31"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 19:26:43"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 22:26:49"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 22:26:49"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-20 01:31:21"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-20 01:31:58"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-20 01:32:39"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-20 02:05:01"}

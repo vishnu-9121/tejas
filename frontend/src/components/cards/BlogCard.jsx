@@ -7,7 +7,15 @@ export const BlogCard = React.memo(({ slug, title, excerpt, coverImage, author, 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col group hover:shadow-md transition-shadow h-full">
       <Link to={`/insights/${slug}`} className="relative h-48 overflow-hidden block">
-        <img src={coverImage || 'https://via.placeholder.com/400x300'} alt={title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <img 
+          src={(coverImage || 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e').includes('?') ? (coverImage || 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e') : `${coverImage || 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e'}?auto=format&w=600&q=80`} 
+          alt={`${title} - Tejas Insights Article`} 
+          width="400"
+          height="192"
+          loading="lazy" 
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+        />
         <div className="absolute top-4 left-4"><Badge variant="default" className="bg-white/90 backdrop-blur">{category}</Badge></div>
       </Link>
       <div className="p-6 flex flex-col flex-grow">

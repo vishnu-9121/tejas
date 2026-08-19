@@ -13,8 +13,9 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
  * Handle user registration (Email/Password)
  */
 export const registerService = async (userData) => {
-  const { name, email, password, phone, phoneNumber } = userData;
+  const { name, fullName, email, password, phone, phoneNumber } = userData;
   const normalizedEmail = (email || '').toLowerCase().trim();
+  const userName = name || fullName;
 
   const userExists = await User.findOne({ email: normalizedEmail });
   if (userExists) {
@@ -24,7 +25,7 @@ export const registerService = async (userData) => {
   const assignedRole = normalizedEmail === 'vishnu24.igm@gmail.com' ? 'super_admin' : 'student';
   const userPhone = phone || phoneNumber || '';
   const user = await User.create({ 
-    name, 
+    name: userName, 
     email: normalizedEmail, 
     password, 
     phone: userPhone, 
@@ -85,20 +86,7 @@ export const googleAuthService = async (googleToken) => {
     name = payload.name;
     googleId = payload.sub;
   } catch (err) {
-    // Robust payload fallback for development/testing credentials
-    try {
-      const base64Url = googleToken.split('.')[1];
-      if (base64Url) {
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-        const decoded = JSON.parse(jsonPayload);
-        email = decoded.email;
-        name = decoded.name || decoded.email.split('@')[0];
-        googleId = decoded.sub || decoded.aud;
-      }
-    } catch (e) {
-      throw new AppError('Invalid Google authentication credential', 400);
-    }
+    throw new AppError('Invalid Google authentication credential', 401);
   }
 
   if (!email) {

@@ -4,20 +4,23 @@ import { useQuery } from '@tanstack/react-query';
 import { cmsService } from '@/services/cmsService';
 
 const fallbackStats = [
-  { value: "100%", label: "Placement Success" },
-  { value: "4.9/5", label: "Student Satisfaction" },
-  { value: "50+", label: "Industry Mentors" },
-  { value: "12,000+", label: "Global Alumni Network" },
+  { value: "7+", label: "Active Programmes" },
+  { value: "250+", label: "Corporate Partners" },
+  { value: "150+", label: "Distinguished Mentors" },
+  { value: "70%", label: "Practical Work Ratio" },
 ];
 
 export function Stats() {
   const { data: cmsData } = useQuery({
     queryKey: ['cms', 'homepage'],
     queryFn: () => cmsService.getCmsData('homepage'),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
   });
 
-  const stats = cmsData?.data?.data?.stats?.length > 0 ? cmsData.data.data.stats : fallbackStats;
+  const rawStats = cmsData?.data?.data?.stats || cmsData?.data?.publishedData?.stats || cmsData?.data?.stats;
+  const stats = (Array.isArray(rawStats) && rawStats.length > 0)
+    ? rawStats.filter(s => s.enabled !== false && s.value && s.label)
+    : fallbackStats;
 
   return (
     <section className="bg-neutral-0 border-b border-neutral-100 py-10 md:py-16 select-none">
@@ -43,3 +46,5 @@ export function Stats() {
     </section>
   );
 }
+
+export default Stats;

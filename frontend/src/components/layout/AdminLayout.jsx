@@ -5,7 +5,7 @@ import {
   Calendar, FileText, Image as ImageIcon, Settings, 
   Menu, X, LogOut, Mail, MessageSquare, 
   Globe, Bell, Search, HelpCircle, Navigation, Briefcase, Map, Shield, ShieldCheck,
-  MousePointerClick, MessageCircle, BarChart3, UserCheck, HardDrive, Database
+  MousePointerClick, MessageCircle, BarChart3, UserCheck, HardDrive, Database, Share2
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Button } from '../ui/Button';
@@ -21,55 +21,59 @@ export const AdminLayout = () => {
 
   const sidebarLinks = [
     {
-      title: 'Analytics & Overview',
+      title: 'Command & Analytics',
       items: [
         { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-        { name: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
-        { name: 'Faculty Analytics', path: '/admin/analytics/faculty', icon: Users },
-        { name: 'Management', path: '/admin/analytics/management', icon: BarChart3 },
-        { name: 'Audit Consoles', path: '/admin/audit-logs', icon: ShieldCheck },
+        { name: 'Live Analytics', path: '/admin/analytics', icon: BarChart3 },
+        { name: 'Faculty Metrics', path: '/admin/analytics/faculty', icon: Users },
+        { name: 'Management Insights', path: '/admin/analytics/management', icon: BarChart3 },
+        { name: 'Audit Logs & History', path: '/admin/audit-logs', icon: ShieldCheck },
       ]
     },
     {
-      title: 'Content Management',
+      title: 'Academics & Content',
       items: [
+        { name: 'Programmes CMS', path: '/admin/programs', icon: BookOpen },
+        { name: 'Courses CMS', path: '/admin/courses', icon: BookOpen },
+        { name: 'Workshops CMS', path: '/admin/workshops', icon: GraduationCap },
+        { name: 'Industry Mentors', path: '/admin/mentors', icon: Users },
+        { name: 'Events Calendar', path: '/admin/events', icon: Calendar },
+        { name: 'Blogs & Insights', path: '/admin/blogs', icon: FileText },
+        { name: 'Campus Gallery', path: '/admin/gallery', icon: ImageIcon },
+        { name: 'Student Reviews', path: '/admin/testimonials', icon: MessageSquare },
+      ]
+    },
+    {
+      title: 'Admissions & CRM',
+      items: [
+        { name: 'Admissions Portal', path: '/admin/admissions', icon: GraduationCap },
+        { name: 'CRM Leads Pipeline', path: '/admin/leads', icon: UserCheck },
+        { name: 'Users & Students', path: '/admin/students', icon: Users },
+        { name: 'Inquiries & Helpdesk', path: '/admin/inquiries', icon: MessageSquare },
+        { name: 'Email Broadcasts', path: '/admin/campaigns', icon: Mail },
+        { name: 'Newsletter', path: '/admin/newsletter', icon: Mail },
+      ]
+    },
+    {
+      title: 'Website CMS & Settings',
+      items: [
+        { name: 'Pages & CMS Catalog', path: '/admin/cms/pages', icon: Globe },
         { name: 'Media Library', path: '/admin/cms/media', icon: ImageIcon },
         { name: 'Homepage CMS', path: '/admin/cms/homepage', icon: Globe },
         { name: 'About Page CMS', path: '/admin/cms/about', icon: FileText },
-        { name: 'Campus CMS', path: '/admin/cms/campus', icon: Map },
-        { name: 'Programs CMS', path: '/admin/programs', icon: BookOpen },
-        { name: 'Events CMS', path: '/admin/events', icon: Calendar },
-        { name: 'Insights CMS', path: '/admin/insights', icon: FileText },
-        { name: 'Gallery CMS', path: '/admin/gallery', icon: ImageIcon },
-        { name: 'Careers CMS', path: '/admin/cms/careers', icon: Briefcase },
-        { name: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
-        { name: 'Legal Pages CMS', path: '/admin/cms/legal', icon: Shield },
-      ]
-    },
-    {
-      title: 'Global Settings',
-      items: [
-        { name: 'SEO Manager', path: '/admin/cms/seo', icon: Search },
+        { name: 'Campus Facilities CMS', path: '/admin/cms/campus', icon: Map },
+        { name: 'Careers & Hiring CMS', path: '/admin/cms/careers', icon: Briefcase },
+        { name: 'Legal Policies CMS', path: '/admin/cms/legal', icon: Shield },
+        { name: 'Support FAQs (30 FAQs)', path: '/admin/cms/faq', icon: HelpCircle },
+        { name: 'Exit Intent Modals', path: '/admin/cms/exit-intent', icon: MousePointerClick },
+        { name: 'Social Proof Toasts', path: '/admin/cms/social-proof', icon: Users },
+        { name: 'Quick Connect Widget', path: '/admin/cms/quick-connect', icon: MessageCircle },
+        { name: 'Navigation Menus', path: '/admin/cms/navigation', icon: Navigation },
+        { name: 'SEO & Meta Config', path: '/admin/cms/seo', icon: Search },
+        { name: 'Social Media Links', path: '/admin/cms/social-links', icon: Share2 },
         { name: 'Website Settings', path: '/admin/cms/settings', icon: Settings },
         { name: 'Roles & Permissions', path: '/admin/roles', icon: ShieldCheck },
-        { name: 'System Backups', path: '/admin/backups', icon: Database },
-        { name: 'Notifications', path: '/admin/cms/notifications', icon: Bell },
-        { name: 'Global FAQs', path: '/admin/cms/faq', icon: HelpCircle },
-        { name: 'Navigation CMS', path: '/admin/cms/navigation', icon: Navigation },
-        { name: 'Exit Intent', path: '/admin/cms/exit-intent', icon: MousePointerClick },
-        { name: 'Social Proof', path: '/admin/cms/social-proof', icon: Users },
-        { name: 'Quick Connect', path: '/admin/cms/quick-connect', icon: MessageCircle },
-      ]
-    },
-    {
-      title: 'People & Admissions',
-      items: [
-        { name: 'Users & Roles', path: '/admin/students', icon: Users },
-        { name: 'CRM Leads', path: '/admin/leads', icon: UserCheck },
-        { name: 'Email Broadcasts', path: '/admin/campaigns', icon: Mail },
-        { name: 'Admissions', path: '/admin/admissions', icon: GraduationCap },
-        { name: 'Mentors', path: '/admin/mentors', icon: Users },
-        { name: 'Newsletter', path: '/admin/newsletter', icon: Mail },
+        { name: 'Database Backups', path: '/admin/backups', icon: Database },
       ]
     }
   ];
@@ -87,23 +91,37 @@ export const AdminLayout = () => {
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:relative lg:translate-x-0`}
       >
-        <div className="flex items-center justify-between h-16 px-4 bg-slate-950">
-          <span className="text-xl font-bold font-outfit tracking-wide text-primary-400">Tejas Admin</span>
-          <button className="lg:hidden text-gray-400 hover:text-white" onClick={() => setSidebarOpen(false)}>
-            <X size={24} />
+        <div className="flex items-center justify-between h-16 px-4 bg-slate-950 border-b border-slate-800/80">
+          <Link to="/admin" className="flex items-center gap-2.5 select-none">
+            <div className="w-8 h-8 rounded-full bg-white p-0.5 shadow-sm ring-1 ring-amber-400 flex items-center justify-center shrink-0">
+              <img 
+                src="/logo.png" 
+                alt="Tejas Academy Official Logo" 
+                width="32"
+                height="32"
+                className="w-full h-full object-contain" 
+              />
+            </div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-bold font-sans tracking-tight text-white">Tejas Admin</span>
+              <span className="text-[9px] font-bold text-amber-400 uppercase tracking-widest -mt-0.5">Control Center</span>
+            </div>
+          </Link>
+          <button className="lg:hidden text-gray-400 hover:text-white" onClick={() => setSidebarOpen(false)} aria-label="Close sidebar">
+            <X size={22} />
           </button>
         </div>
         
-        <div className="p-4">
-          <div className="mb-8 px-2">
-            <p className="text-sm text-slate-400 font-medium">Logged in as</p>
-            <p className="text-base font-semibold truncate">{user?.name || 'Admin User'}</p>
+        <div className="flex-1 overflow-y-auto p-4 pb-20">
+          <div className="mb-6 px-2">
+            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Logged in as</p>
+            <p className="text-base font-semibold truncate text-white">{user?.name || 'Admin User'}</p>
           </div>
 
-          <nav className="space-y-6 mt-4">
+          <nav className="space-y-6">
             {sidebarLinks.map((section, idx) => (
               <div key={idx} className="px-2">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-2">
                   {section.title}
                 </h3>
                 <div className="space-y-1">
@@ -113,6 +131,7 @@ export const AdminLayout = () => {
                       <Link
                         key={item.name}
                         to={item.path}
+                        onClick={() => setSidebarOpen(false)}
                         className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                           isActive
                             ? 'bg-primary-600 text-white shadow-sm'
@@ -130,10 +149,10 @@ export const AdminLayout = () => {
           </nav>
         </div>
 
-        <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800 bg-slate-950/80">
           <button
             onClick={handleLogout}
-            className="flex items-center w-full px-4 py-3 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
+            className="flex items-center w-full px-4 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
           >
             <LogOut className="mr-3 h-5 w-5 text-slate-400" />
             Logout

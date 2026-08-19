@@ -99,8 +99,8 @@ const admissionSchema = new mongoose.Schema(
 admissionSchema.pre('save', function (next) {
   if (this.isNew && !this.applicationId) {
     const year = new Date().getFullYear();
-    const random = Math.floor(1000 + Math.random() * 9000);
-    this.applicationId = `TAE-APP-${year}-${random}`;
+    const random = Math.floor(100000 + Math.random() * 900000);
+    this.applicationId = `TAE-APP-${year}-${random}-${Date.now().toString().slice(-4)}`;
   }
   if (this.status && !this.applicationStatus) this.applicationStatus = this.status;
   if (this.applicationStatus && !this.status) this.status = this.applicationStatus;

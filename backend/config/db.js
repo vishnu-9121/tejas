@@ -123,17 +123,19 @@ export const connectDB = async () => {
     console.log(`✅ MongoDB Connected successfully: ${conn.connection.host}`);
 
     // Auto-seed Super Admin
-    const adminExists = await User.findOne({ email: 'vishnu24.igm@gmail.com' });
+    const defaultAdminEmail = process.env.ADMIN_DEFAULT_EMAIL || 'vishnu24.igm@gmail.com';
+    const defaultAdminPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'vishnu@9121';
+    const adminExists = await User.findOne({ email: defaultAdminEmail });
     if (!adminExists) {
       await User.create({
-        name: 'Vishnu Super Admin',
-        email: 'vishnu24.igm@gmail.com',
-        password: 'vishnu@9121', // will be hashed by pre-save hook
+        name: 'Tejas Super Admin',
+        email: defaultAdminEmail,
+        password: defaultAdminPassword, // will be hashed by pre-save hook
         role: 'super_admin',
         isEmailVerified: true
       });
-      logger.info('[+] Auto-Seeded Super Admin: vishnu24.igm@gmail.com');
-      console.log('[+] Auto-Seeded Super Admin: vishnu24.igm@gmail.com');
+      logger.info(`[+] Auto-Seeded Super Admin: ${defaultAdminEmail}`);
+      console.log(`[+] Auto-Seeded Super Admin: ${defaultAdminEmail}`);
     }
 
     // Auto-seed Programs if empty

@@ -7,13 +7,25 @@ const testimonialSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    email: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     role: {
       type: String,
-      required: true, // e.g. "Alumni, Batch 2023"
+      required: true, // e.g. "Student", "Alumni, Batch 2024"
+      trim: true,
+    },
+    program: {
+      type: String,
+      trim: true,
+      default: '',
     },
     content: {
       type: String,
       required: true,
+      trim: true,
     },
     rating: {
       type: Number,
@@ -23,6 +35,22 @@ const testimonialSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String, // Optional headshot
+      default: '',
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'approved',
+      index: true,
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+    submittedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
     },
     isActive: {
       type: Boolean,

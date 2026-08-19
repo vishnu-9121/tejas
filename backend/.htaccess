@@ -1,0 +1,18 @@
+﻿# cPanel Phusion Passenger Node.js Reverse Proxy Configuration
+# Tejas Academy Production API Gateway
+
+DirectoryIndex server.js
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^server\.js$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ server.js/$1 [QSA,L]
+</IfModule>
+
+# Set Environment Header
+<IfModule mod_env.c>
+  SetEnv NODE_ENV production
+</IfModule>

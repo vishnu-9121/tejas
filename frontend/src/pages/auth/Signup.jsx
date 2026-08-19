@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { authService } from "../../services/authService";
 import { useAuthStore } from "../../store/useAuthStore";
 import { api } from "../../utils/api";
+import { getDashboardRoute } from "@/utils/navigation";
 import { AuthLayout } from "../../components/layout/AuthLayout";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -53,7 +54,7 @@ export const Signup = () => {
       setCredentials(user, accessToken);
       
       toast.success("Account created successfully!");
-      navigate("/dashboard");
+      navigate(getDashboardRoute(user?.role));
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong during registration.");
     } finally {

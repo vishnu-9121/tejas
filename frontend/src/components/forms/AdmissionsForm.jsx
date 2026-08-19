@@ -24,7 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 const fullSchema = z.object({
   fullName: z.string().min(2, 'Full name is required (at least 2 characters)'),
   email: z.string().email('Please enter a valid email address'),
-  phone: z.string().min(10, 'Please enter a valid 10-digit phone number'),
+  phone: z.string().regex(/^[0-9+\s-]{10,15}$/, 'Please enter a valid 10-digit phone number'),
   prevSchool: z.string().min(2, 'School or Institution name is required'),
   grade: z.string().min(1, 'Percentage or CGPA is required'),
   highestDegree: z.string().optional(),
@@ -138,6 +138,7 @@ export const AdmissionsForm = () => {
 
   // Submission handler
   const onSubmit = async (data) => {
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setFormError(null);
     try {
@@ -285,7 +286,7 @@ export const AdmissionsForm = () => {
               </div>
               <div className="text-xs text-gray-600">
                 <span className="font-semibold text-gray-900 block">Final Offer & Enrollment</span>
-                Selected applicants receive the provisional offer letter with scholarship eligibility.
+                Selected applicants receive the provisional offer letter and enrollment onboarding instructions.
               </div>
             </div>
           </div>

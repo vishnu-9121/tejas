@@ -11402,3 +11402,56 @@
 {"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 12:09:14"}
 {"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-17 12:09:43"}
 {"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 12:09:44"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-17 12:14:23"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-17 12:14:23"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-17 12:14:25"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:29"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:29"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:30"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:31"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-17 12:18:31"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Too many failed login attempts","timestamp":"2026-08-17 12:18:33"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-18 16:15:00"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-18 16:15:00"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-18 16:15:02"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-19 11:32:46"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-19 11:32:46"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-19 11:32:48"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 13:06:03"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-19 13:06:02"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-19 13:06:02"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-19 13:06:04"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-19 13:06:15"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-19 13:06:15"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-19 13:06:15"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-19 14:15:11"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-19 14:15:11"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-19 14:15:12"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 14:15:24"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-19 14:15:59"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-19 14:15:59"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-19 14:16:01"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-19 14:16:42"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-19 14:30:31"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 19:26:43"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 22:26:49"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-19 22:26:49"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-19 22:26:49"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-19 22:26:49"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-19 22:26:50"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-20 01:31:05"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-20 01:31:05"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-20 01:31:06"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-20 01:31:21"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-20 01:31:58"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-20 01:32:29"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-20 01:32:29"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-20 01:32:30"}
+{"level":"error","message":"Error sending email: Invalid login: 535 5.7.0 Invalid credentials","timestamp":"2026-08-20 01:32:39"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-20 01:32:50"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-20 01:32:50"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-20 01:32:51"}
+{"level":"info","message":"HTTP Server & WebSockets listening on port 5000","timestamp":"2026-08-20 01:34:39"}
+{"level":"info","message":"Attempting MongoDB Atlas connection...","timestamp":"2026-08-20 01:34:39"}
+{"level":"info","message":"MongoDB Connected successfully: ac-b0kggdf-shard-00-00.ngtohnb.mongodb.net","timestamp":"2026-08-20 01:34:40"}
+{"level":"error","message":"Uncaught Exception: listen EADDRINUSE: address already in use :::5000","timestamp":"2026-08-20 02:05:01"}

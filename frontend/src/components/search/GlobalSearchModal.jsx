@@ -114,16 +114,16 @@ export const GlobalSearchModal = ({ isOpen, onClose }) => {
 
     switch (type) {
       case 'programs':
-        navigate(`/programs/${item._id || item.slug}`);
+        navigate(`/programs/${item.slug || item._id}`);
         break;
       case 'courses':
-        navigate(`/courses/${item._id}`);
+        navigate(`/programs`);
         break;
       case 'blogs':
         navigate(`/insights/${item.slug || item._id}`);
         break;
       case 'events':
-        navigate(`/events/${item._id}`);
+        navigate(`/events`);
         break;
       case 'faculty':
       case 'mentors':

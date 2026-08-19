@@ -50,7 +50,6 @@ export const seedEnterpriseCMS = async () => {
               { label: 'Programs', path: '/programs' },
               { label: 'Events', path: '/events' },
               { label: 'Insights', path: '/insights' },
-              { label: 'Mentors', path: '/mentors' },
               { label: 'Gallery', path: '/gallery' },
               { label: 'Contact', path: '/contact' }
             ],
@@ -138,7 +137,7 @@ export const seedEnterpriseCMS = async () => {
           level: 'Intermediate',
           shortDescription: 'Architect resilient multi-cloud infrastructure, Kubernetes orchestration, CI/CD pipelines, and enterprise DevSecOps.',
           description: 'Hands-on Cloud Systems Engineering program focused on AWS, Google Cloud, Terraform, and automated deployment pipelines.',
-          highlights: ['AWS & GCP Certified Curriculum', 'Live Cloud Infrastructure Labs', '100% Placement Support'],
+          highlights: ['AWS & GCP Certified Curriculum', 'Live Cloud Infrastructure Labs', 'Career Readiness & Industry Mentorship'],
           isFeatured: true,
           status: 'published'
         }

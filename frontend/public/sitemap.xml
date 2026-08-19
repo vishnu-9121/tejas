@@ -1,75 +1,197 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset 
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://unlocktejas.com/</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://unlocktejas.com/logo.png</image:loc>
+      <image:title>Tejas Academy of Excellence Official Emblem</image:title>
+      <image:caption>Tejas Academy of Excellence institutional branding and leadership emblem</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&amp;fit=crop&amp;q=80&amp;w=1600</image:loc>
+      <image:title>Tejas Academy Campus Life and Innovation Center</image:title>
+      <image:caption>Undergraduate and postgraduate students collaborating at Tejas Academy</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/career-readiness</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Career Readiness Programs and Workplace Skills</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/employability-skills</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Employability Skills Training and Professional Development</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/ai-literacy</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>AI Literacy and Generative AI Skills</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/future-skills</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Future Skills Training and 21st Century Competence</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/business-entrepreneurship</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Business and Entrepreneurship Programs</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/leadership-development</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Leadership Development and Strategic Thinking</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/financial-literacy</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Financial Literacy and Wealth Creation Education</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/human-excellence</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Human Excellence and Personal Development</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/student-development</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Student Development and Applied Capability Programs</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/professional-development</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&amp;fit=crop&amp;q=80&amp;w=1200</image:loc>
+      <image:title>Professional Development for Modern Practitioners</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://unlocktejas.com/programs</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&amp;fit=crop&amp;q=80&amp;w=800</image:loc>
+      <image:title>B.Tech in Artificial Intelligence and Data Science</image:title>
+      <image:caption>Flagship 4-year engineering program covering Machine Learning and Cloud AI</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://unlocktejas.com/admissions</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://unlocktejas.com/about</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&amp;q=80</image:loc>
+      <image:title>Tejas Academy Institutional Campus and Heritage</image:title>
+      <image:caption>Academic architecture and research wings in Gannavaram</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/about/vision-mission</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://unlocktejas.com/about/campus</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://unlocktejas.com/free-programs</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://unlocktejas.com/for-institutions</loc>
-    <lastmod>2026-07-24</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://unlocktejas.com/recognitions</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://unlocktejas.com/mentors</loc>
-    <lastmod>2026-07-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://unlocktejas.com/about</loc>
-    <lastmod>2026-07-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unlocktejas.com/insights</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://unlocktejas.com/events</loc>
-    <lastmod>2026-07-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://unlocktejas.com/resources</loc>
+    <lastmod>2026-08-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unlocktejas.com/contact</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-19</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://unlocktejas.com/placements</loc>
-    <lastmod>2026-07-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
 </urlset>

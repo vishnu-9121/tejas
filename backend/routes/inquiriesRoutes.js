@@ -15,5 +15,7 @@ router.post('/contact', createInquiry);
 // Protected admin routes
 router.get('/', protect, authorize('super_admin', 'admin', 'operations_manager'), getInquiries);
 router.put('/:id', protect, authorize('super_admin', 'admin', 'operations_manager'), updateInquiry);
+router.put('/:id/status', protect, authorize('super_admin', 'admin', 'operations_manager'), updateInquiry);
 
 export { router as inquiriesRoutes };
+

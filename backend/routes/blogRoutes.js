@@ -14,6 +14,8 @@ const router = express.Router();
 // Public routes
 router.get('/', getBlogs);
 router.get('/slug/:slug', getBlogBySlug);
+router.get('/:slug', getBlogBySlug);
+
 
 // Admin only routes
 router.get('/admin/all', protect, authorize('admin', 'super_admin'), getBlogs);

@@ -2,11 +2,39 @@ import api from '../utils/api';
 import { sanityService } from './sanityService';
 
 export const cmsService = {
-  // Complete delegation to Sanity GROQ query fetchers with Express MongoDB fallback
+  /**
+   * Fetch CMS Content by Key
+   * @param {string} key - e.g. 'homepage', 'about', 'global_faqs', 'site_settings'
+   * @param {string} status - 'PUBLISHED' or 'DRAFT'
+   */
   getCmsData: async (key, status = 'PUBLISHED') => {
-    try {
-      const lowerKey = String(key).toLowerCase();
+    const lowerKey = String(key).toLowerCase().trim();
 
+    // In DRAFT mode (Admin Panel), always fetch the editable database record directly
+    if (status === 'DRAFT') {
+      const response = await api.get(`/cms/${lowerKey}?status=DRAFT`);
+      return response.data;
+    }
+
+    // In PUBLISHED mode (Public Website), fetch from MongoDB CMS with Sanity integration
+    try {
+      const response = await api.get(`/cms/${lowerKey}?status=PUBLISHED`);
+      if (response.data?.success && response.data?.data) {
+        const entry = response.data.data;
+        const liveData = (entry.publishedData && Object.keys(entry.publishedData).length > 0)
+          ? entry.publishedData 
+          : entry.data;
+
+        if (liveData && Object.keys(liveData).length > 0) {
+          return { success: true, data: { data: liveData, entry } };
+        }
+      }
+    } catch (apiErr) {
+      console.warn(`[cmsService] Express CMS API query for '${lowerKey}' failed, checking Sanity:`, apiErr.message);
+    }
+
+    // Sanity fallback for static content models
+    try {
       if (lowerKey === 'about') {
         const data = await sanityService.getAboutPage();
         if (data) return { success: true, data: { data: { overview: data, timeline: data.timeline || [] } } };
@@ -22,7 +50,7 @@ export const cmsService = {
       } else if (lowerKey === 'footer') {
         const data = await sanityService.getFooter();
         if (data) return { success: true, data: { data } };
-      } else if (lowerKey === 'site_settings') {
+      } else if (lowerKey === 'site_settings' || lowerKey === 'settings') {
         const data = await sanityService.getSiteSettings();
         if (data) return { success: true, data: { data } };
       } else if (lowerKey === 'global_faqs' || lowerKey === 'faqs' || lowerKey === 'faq') {
@@ -59,35 +87,42 @@ export const cmsService = {
         const data = await sanityService.getFreePrograms();
         if (data) return { success: true, data: { data } };
       }
-    } catch (err) {
-      console.warn('[cmsService] Sanity resolution failed, trying Express DB:', err.message);
+    } catch (sanityErr) {
+      console.warn(`[cmsService] Sanity fetch error for '${lowerKey}':`, sanityErr.message);
     }
 
-    const response = await api.get(`/cms/${key}?status=${status}`);
-    return response.data;
+    // Final fallback to relative Express endpoint
+    const finalRes = await api.get(`/cms/${lowerKey}?status=${status}`);
+    return finalRes.data;
   },
 
   updateCmsData: async (key, data) => {
-    const response = await api.put(`/cms/${key}`, { data });
+    const lowerKey = String(key).toLowerCase().trim();
+    const response = await api.put(`/cms/${lowerKey}`, { data });
     return response.data;
   },
 
-  publishCmsData: async (key, commitMessage = "Published changes") => {
-    const response = await api.post(`/cms/${key}/publish`, { commitMessage });
+  publishCmsData: async (key, commitMessage = "Published live update") => {
+    const lowerKey = String(key).toLowerCase().trim();
+    const response = await api.post(`/cms/${lowerKey}/publish`, { commitMessage });
     return response.data;
   },
 
   getVersionHistory: async (key) => {
-    const response = await api.get(`/cms/${key}/versions`);
+    const lowerKey = String(key).toLowerCase().trim();
+    const response = await api.get(`/cms/${lowerKey}/versions`);
     return response.data;
   },
 
   rollbackCmsData: async (key, versionNumber) => {
-    const response = await api.post(`/cms/${key}/rollback`, { versionNumber });
+    const lowerKey = String(key).toLowerCase().trim();
+    const response = await api.post(`/cms/${lowerKey}/rollback`, { versionNumber });
     return response.data;
   },
 
-  // Aliases for components that use capitalized CMS
+  // Aliases for uppercase CMS naming
   getCMSData: async function(key, status = 'PUBLISHED') { return this.getCmsData(key, status); },
   updateCMSData: async function(key, data) { return this.updateCmsData(key, data); }
 };
+
+export default cmsService;

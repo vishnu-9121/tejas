@@ -36,8 +36,23 @@ export const testimonialService = {
     }
   },
 
+  getAdminTestimonials: async (params) => {
+    const response = await api.get('/testimonials/admin', { params });
+    return response.data;
+  },
+
   getTestimonialById: async (id) => {
     const response = await api.get(`/testimonials/${id}`);
+    return response.data;
+  },
+
+  submitReview: async (data) => {
+    const response = await api.post('/testimonials/submit', data);
+    return response.data;
+  },
+
+  updateStatus: async (id, status) => {
+    const response = await api.patch(`/testimonials/${id}/status`, { status });
     return response.data;
   },
 

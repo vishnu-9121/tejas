@@ -6,6 +6,7 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useQuery } from '@tanstack/react-query';
 import { blogService } from '@/services/blogService';
 import { FinalCTA } from '@/components/home/FinalCTA';
+import { SEO } from '@/components/ui/SEO';
 
 const DUMMY_BLOGS = [
   { _id: "1", title: "The Future of AI in Education", excerpt: "How artificial intelligence is reshaping the learning landscape.", coverImage: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", slug: "future-of-ai", author: { firstName: "Dr.", lastName: "Smith" }, publishedAt: new Date().toISOString(), readTime: 5, category: "Technology" },
@@ -28,6 +29,11 @@ export const Blog = () => {
 
   return (
     <div className="py-20 max-w-7xl mx-auto px-4">
+      <SEO 
+        title="Tejas Insights & Articles" 
+        description="Perspectives on artificial intelligence, executive leadership, technological transformation, and higher education excellence."
+        url="https://unlocktejas.com/insights"
+      />
       <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
         <SectionHeader title="Tejas Insights" description="Latest news, insights, and stories from our community." />
         <div className="relative w-full md:w-96">

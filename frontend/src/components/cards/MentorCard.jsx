@@ -8,8 +8,12 @@ export const MentorCard = ({ name, title, company, bio, image, slug, socialLinks
       <div className="relative aspect-[4/5] bg-neutral-100 overflow-hidden">
         {image ? (
           <img
-            src={image}
-            alt={name}
+            src={image.includes('?') ? image : `${image}?auto=format&w=600&h=750&fit=crop&q=80`}
+            alt={`${name} - ${title || 'Faculty Mentor'} at Tejas Academy of Excellence`}
+            width="320"
+            height="400"
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
@@ -43,10 +47,10 @@ export const MentorCard = ({ name, title, company, bio, image, slug, socialLinks
           {bio}
         </p>
         <Link
-          to={`/mentors/${slug}`}
+          to="/mentors"
           className="text-sm font-semibold text-primary-600 hover:text-primary-800 flex items-center group-hover:underline"
         >
-          View Profile <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+          View Mentors <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
         </Link>
       </div>
     </div>

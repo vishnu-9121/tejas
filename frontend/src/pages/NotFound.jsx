@@ -2,10 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { Home, BookOpen, Search, Mail } from 'lucide-react';
+import { SEO } from '@/components/ui/SEO';
 
 export const NotFound = () => {
   return (
     <div className="py-20 flex flex-col items-center justify-center text-center px-4 min-h-[70vh]">
+      <SEO 
+        title="404 - Page Not Found" 
+        description="The page you requested could not be found. Explore our academic programs, admissions, or return to the homepage."
+        url="https://unlocktejas.com/404"
+      />
       <div className="relative">
         <h1 className="text-9xl md:text-[150px] font-black text-primary-50 select-none">404</h1>
         <div className="absolute inset-0 flex items-center justify-center">

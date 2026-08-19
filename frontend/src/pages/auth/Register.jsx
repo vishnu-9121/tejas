@@ -6,10 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuthStore } from '../../store/useAuthStore';
 import { api } from '../../utils/api';
+import { getDashboardRoute } from '@/utils/navigation';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { User, Mail, Phone, Lock, Eye, EyeOff, Shield, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SEO } from '@/components/ui/SEO';
 
 const schema = z.object({
   name: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -31,8 +33,16 @@ export default function Register() {
   const navigate = useNavigate();
   const setCredentials = useAuthStore((state) => state.setCredentials);
 
-  // Determine return URL or original destination
-  const returnUrl = searchParams.get('returnUrl') || searchParams.get('redirect') || location.state?.from || '';
+  // Determine return URL or original destination safely
+  const getFromPath = () => {
+    if (typeof location.state?.from === 'string') return location.state.from;
+    if (location.state?.from?.pathname) {
+      return `${location.state.from.pathname}${location.state.from.search || ''}`;
+    }
+    return '';
+  };
+  const rawReturn = searchParams.get('returnUrl') || searchParams.get('redirect') || getFromPath();
+  const returnUrl = (typeof rawReturn === 'string' && rawReturn !== '[object Object]') ? rawReturn : '';
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema)
@@ -43,12 +53,7 @@ export default function Register() {
       navigate(returnUrl);
       return;
     }
-    const redirectPath = (user?.role === 'admin' || user?.role === 'super_admin') 
-      ? '/admin' 
-      : (user?.role === 'faculty' || user?.role === 'mentor') 
-        ? '/faculty' 
-        : '/dashboard';
-    navigate(redirectPath);
+    navigate(getDashboardRoute(user?.role));
   };
 
   const onSubmit = async (data) => {
@@ -89,8 +94,28 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-inter selection:bg-primary-100 selection:text-primary-900">
+      <SEO 
+        title="Create Account & Register" 
+        description="Create your student or learner account to apply for programmes and access learning materials at Tejas Academy."
+        url="https://unlocktejas.com/register"
+      />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center mb-3">
+        <div className="flex flex-col items-center justify-center mb-4">
+          <Link to="/" className="flex items-center gap-3 mb-3 group select-none">
+            <div className="w-12 h-12 rounded-full bg-white p-1.5 shadow-md ring-2 ring-amber-400/80 flex items-center justify-center shrink-0">
+              <img 
+                src="/logo.png" 
+                alt="Tejas Academy Official Logo" 
+                width="48"
+                height="48"
+                className="w-full h-full object-contain transition-transform group-hover:scale-105" 
+              />
+            </div>
+            <div className="flex flex-col leading-tight text-left">
+              <span className="text-xl font-serif font-extrabold tracking-tight text-neutral-900">Tejas Academy</span>
+              <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest -mt-0.5">of Excellence</span>
+            </div>
+          </Link>
           <span className="inline-flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-bold uppercase tracking-wider border border-primary-100">
             <Shield className="w-3.5 h-3.5 text-primary-600" />
             Tejas Academy Admissions
@@ -114,6 +139,22 @@ export default function Register() {
         <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-3xl sm:px-10 border border-gray-100 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500" />
           
+          {/* Segmented Auth Mode Switcher */}
+          <div className="grid grid-cols-2 p-1 bg-gray-100 rounded-2xl mb-6 border border-gray-200/60 select-none">
+            <Link
+              to={returnUrl ? `/login?returnUrl=${encodeURIComponent(returnUrl)}` : '/login'}
+              className="py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-gray-600 hover:text-gray-900 transition-all text-center"
+            >
+              Sign In
+            </Link>
+            <button
+              type="button"
+              className="py-2.5 text-xs sm:text-sm font-bold rounded-xl bg-white text-gray-900 shadow-xs transition-all text-center cursor-default"
+            >
+              Create Account
+            </button>
+          </div>
+
           <AnimatePresence>
             {error && (
               <motion.div 

@@ -4,56 +4,78 @@ import { Button } from '@/components/ui/Button';
 import { ArrowRight, BookOpen, Clock, Layers, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { cmsService } from '@/services/cmsService';
 import { sanityService } from '@/services/sanityService';
 import { SEO } from '@/components/ui/SEO';
 
+const fallbackPrograms = [
+  {
+    _id: 'fp-1',
+    id: 'fp-1',
+    title: 'Foundations of Generative AI & Prompt Engineering',
+    category: 'AI & Data',
+    duration: '3 Hours Live',
+    shortDescription: 'Learn to leverage Large Language Models, prompt patterns, and AI tools for engineering productivity.',
+    modulesCount: 4,
+    enrollLink: '/contact'
+  },
+  {
+    _id: 'fp-2',
+    id: 'fp-2',
+    title: 'Executive Leadership & Strategic Decision Making',
+    category: 'Leadership',
+    duration: '5 Hours',
+    shortDescription: 'Frameworks for executive decision making, negotiation, and high-performance team culture.',
+    modulesCount: 6,
+    enrollLink: '/contact'
+  },
+  {
+    _id: 'fp-3',
+    id: 'fp-3',
+    title: 'Full-Stack Web Architecture Bootcamp',
+    category: 'Software Tech',
+    duration: '4 Hours',
+    shortDescription: 'Build scalable modern web applications using React, Node.js, and cloud data APIs.',
+    modulesCount: 5,
+    enrollLink: '/contact'
+  }
+];
+
 export default function FreePrograms() {
+  const { data: cmsResponse } = useQuery({
+    queryKey: ['cms', 'free_programs'],
+    queryFn: async () => {
+      const res = await cmsService.getCmsData('free_programs');
+      if (res?.data?.publishedData || res?.data?.data) return res;
+      return await cmsService.getCmsData('free-programs');
+    },
+    staleTime: 60 * 1000,
+  });
+
   const { data: programsData, isLoading } = useQuery({
     queryKey: ['sanity', 'free-programs'],
     queryFn: () => sanityService.getFreePrograms(),
     staleTime: 5 * 60 * 1000,
   });
 
-  const programs = programsData && programsData.length > 0 ? programsData : [
-    {
-      _id: 'fp-1',
-      title: 'Foundations of Generative AI & Prompt Engineering',
-      category: 'AI & Data',
-      duration: '3 Hours',
-      shortDescription: 'Learn to leverage Large Language Models, prompt patterns, and AI tools for engineering productivity.',
-      modulesCount: 4,
-      enrollLink: '/admissions'
-    },
-    {
-      _id: 'fp-2',
-      title: 'Executive Leadership & Strategic Decision Making',
-      category: 'Leadership',
-      duration: '5 Hours',
-      shortDescription: 'Frameworks for executive decision making, negotiation, and high-performance team culture.',
-      modulesCount: 6,
-      enrollLink: '/admissions'
-    },
-    {
-      _id: 'fp-3',
-      title: 'Full-Stack Web Architecture Bootcamp',
-      category: 'Software Tech',
-      duration: '4 Hours',
-      shortDescription: 'Build scalable modern web applications using React, Node.js, and cloud data APIs.',
-      modulesCount: 5,
-      enrollLink: '/admissions'
-    }
-  ];
+  const cmsData = cmsResponse?.data?.publishedData || cmsResponse?.data?.data || cmsResponse?.data;
+  const pageTitle = cmsData?.title || "Open Academic Masterclasses & Knowledge Modules";
+  const pageSubtitle = cmsData?.subtitle || "Complimentary learning modules in ethical AI, strategic leadership, and technological innovation to ignite the spark of brilliance across our community.";
+
+  const programs = (cmsData?.programs && cmsData.programs.length > 0)
+    ? cmsData.programs
+    : (programsData && programsData.length > 0 ? programsData : fallbackPrograms);
 
   return (
-    <div className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 select-none">
+    <div className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <SEO 
         title="Free Learning Programs & Open Resources" 
         description="Access complimentary masterclasses, open modules, and skill certifications curated by Tejas Academy faculty." 
-        canonical="https://unlocktejas.com/free-programs"
+        url="https://unlocktejas.com/free-programs"
       />
       <SectionHeader 
-        title="Free Learning Programs & Open Resources" 
-        description="Access complimentary masterclasses, open modules, and skill certifications curated by Tejas Academy faculty." 
+        title={pageTitle} 
+        description={pageSubtitle} 
       />
 
       {/* Grid of Free Programs */}

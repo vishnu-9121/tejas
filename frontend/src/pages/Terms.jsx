@@ -2,6 +2,7 @@ import React from 'react';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useQuery } from '@tanstack/react-query';
 import { cmsService } from '@/services/cmsService';
+import { SEO } from '@/components/ui/SEO';
 
 export const Terms = () => {
   const { data: cmsData, isLoading } = useQuery({
@@ -20,6 +21,11 @@ export const Terms = () => {
 
   return (
     <div className="py-20 max-w-4xl mx-auto px-4">
+      <SEO 
+        title="Terms of Service" 
+        description="Official Terms of Service, academic enrollment conditions, and user agreement of Tejas Academy of Excellence."
+        url="https://unlocktejas.com/terms"
+      />
       <SectionHeader title="Terms of Service" align="left" />
       {isLoading ? (
         <div className="flex justify-start py-10 w-full">

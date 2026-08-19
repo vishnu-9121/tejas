@@ -4,23 +4,23 @@ import { Compass, BookOpen, Users, Trophy } from "lucide-react";
 const STEPS = [
   {
     icon: <Compass />,
-    title: "Discover",
-    description: "Explore programs that map perfectly to your career objectives and personal aspirations.",
+    title: "Intellectual Awakening",
+    description: "Engage with foundational knowledge, rigorous inquiry, and critical perspectives across disciplines.",
   },
   {
     icon: <BookOpen />,
-    title: "Learn Immersive",
-    description: "Master practical capabilities and leadership skills through project-first simulations.",
+    title: "Experiential Execution",
+    description: "Immerse in live project challenges, simulation clinics, and prototype sprints to convert theory into capability.",
   },
   {
     icon: <Users />,
-    title: "Collaborate",
-    description: "Work alongside highly ambitious peers and industry mentors on real-world proposals.",
+    title: "Mentored Iteration",
+    description: "Receive continuous 1-on-1 feedback from seasoned leaders to refine decision-making and build resilience.",
   },
   {
     icon: <Trophy />,
-    title: "Achieve Readiness",
-    description: "Graduate with absolute confidence, career portfolios, and a respected institutional brand.",
+    title: "Mastery & Leadership",
+    description: "Graduate with character, professional competence, and the courage to create lasting societal value.",
   },
 ];
 
@@ -30,10 +30,10 @@ export function Journey() {
       <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-20 flex flex-col items-center">
         <div className="h-0.5 w-12 bg-accent-500 mb-4" />
         <span className="text-xs font-semibold uppercase tracking-widest text-accent-700 mb-2 select-none">
-          Your Learning Journey
+          Knowledge → Practice → Feedback → Iteration → Mastery
         </span>
         <h2 className="text-3xl md:text-4xl font-semibold font-serif leading-tight text-neutral-900 mb-16 text-center">
-          A Structured Path to Excellence
+          The Tejas Path to Human Excellence
         </h2>
 
         <div className="relative w-full">
@@ -51,7 +51,7 @@ export function Journey() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-bold text-primary-600 font-sans uppercase tracking-wider select-none">
-                    Step {index + 1}
+                    Phase {index + 1}
                   </span>
                   <h3 className="text-lg font-semibold text-neutral-900 leading-none">
                     {step.title}

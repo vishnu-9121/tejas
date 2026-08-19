@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, googleLogin, refresh, logout, forgotPassword, resetPassword } from '../controllers/authController.js';
+import { register, login, googleLogin, refresh, logout, forgotPassword, resetPassword, getMe } from '../controllers/authController.js';
 import { protect } from '../middlewares/auth.js';
 import { authLimiter } from '../middlewares/security.js';
 import { registerValidator, loginValidator } from '../validators/authValidator.js';
@@ -16,6 +16,7 @@ router.post('/reset-password/:token', authLimiter, resetPassword);
 router.post('/refresh', refresh);
 
 // Protected Auth Routes
+router.get('/me', protect, getMe);
 router.post('/logout', protect, logout);
 
 export { router as authRoutes };

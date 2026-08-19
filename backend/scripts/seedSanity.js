@@ -22,11 +22,11 @@ const SEED_DOCUMENTS = [
     _id: 'siteSettings',
     _type: 'siteSettings',
     siteName: 'Tejas Academy of Excellence',
-    siteTagline: 'Unlocking Leadership & Academic Excellence',
+    siteTagline: 'Born from the Spark of Brilliance',
     contactEmail: 'support@unlocktejas.com',
     contactPhone: '+91 83310 51327',
     whatsappNumber: '+91 83310 51327',
-    physicalAddress: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
+    physicalAddress: 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101',
     googleMapsUrl: 'https://maps.google.com',
     googleAnalyticsId: 'G-TEJAS2026',
     socialLinks: [
@@ -58,26 +58,26 @@ const SEED_DOCUMENTS = [
       secondaryCtaLink: '/programs'
     },
     stats: [
-      { _type: 'statItem', label: 'Placement Success Rate', value: '98.4%', icon: 'Award' },
-      { _type: 'statItem', label: 'Highest Salary Package', value: '₹42.5 LPA', icon: 'TrendingUp' },
-      { _type: 'statItem', label: 'Enterprise Hiring Partners', value: '250+', icon: 'Building' },
+      { _type: 'statItem', label: 'Career Readiness Rate', value: '98.4%', icon: 'Award' },
+      { _type: 'statItem', label: 'Highest Package Potential', value: '₹42.5 LPA', icon: 'TrendingUp' },
+      { _type: 'statItem', label: 'Enterprise Network & Alliances', value: '250+', icon: 'Building' },
       { _type: 'statItem', label: 'Global Active Learners', value: '12,000+', icon: 'Users' }
     ],
     whyChooseUs: {
       _type: 'whyChooseUsBlock',
-      title: 'Why Tejas Academy Leads Higher Education',
+      title: 'Redefining Professional Education',
       subtitle: 'Built on rigour, industry mentorship, and cutting-edge practical infrastructure.',
       features: [
         { _type: 'featureItem', title: 'Practical Case-Based Learning', description: 'Acquire real skills via live corporate challenges, simulations, and tech clinics.', icon: 'BookOpen' },
         { _type: 'featureItem', title: '1-on-1 Executive Mentorship', description: 'Get weekly coaching from engineering and product leaders at Fortune 500 firms.', icon: 'Users' },
-        { _type: 'featureItem', title: 'Career Placement Track', description: 'Continuous readiness validation securing smooth graduate job transitions.', icon: 'TrendingUp' },
-        { _type: 'featureItem', title: 'Ethics & Integrity Core', description: 'Ground yourself in human excellence values defining long-term leaders.', icon: 'Shield' }
+        { _type: 'featureItem', title: 'Career Readiness Track', description: 'Continuous readiness validation securing smooth professional transitions.', icon: 'TrendingUp' },
+        { _type: 'featureItem', title: 'Human Excellence Core', description: 'Ground yourself in human excellence values defining long-term leaders.', icon: 'Shield' }
       ]
     },
     impactMetrics: [
-      { _type: 'statItem', label: 'Placement Success Rate', value: '98%' },
-      { _type: 'statItem', label: 'Average Starting Package', value: '₹18.5 LPA' },
-      { _type: 'statItem', label: 'Hiring Partners & Corporate MoUs', value: '500+' }
+      { _type: 'statItem', label: 'Career Readiness Rate', value: '98%' },
+      { _type: 'statItem', label: 'Average Starting Potential', value: '₹18.5 LPA' },
+      { _type: 'statItem', label: 'Corporate Partners & Alliances', value: '500+' }
     ],
     finalCta: {
       _type: 'finalCtaBlock',
@@ -126,8 +126,8 @@ const SEED_DOCUMENTS = [
     phone: '+91 83310 51327',
     helplinePhone: '+91 83310 51327',
     whatsappSupport: '+91 83310 51327',
-    address: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
-    campusAddress: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
+    address: 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101',
+    campusAddress: 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101',
     workingHours: 'Monday - Saturday: 9:00 AM - 6:00 PM IST',
     googleMapsEmbedUrl: 'https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Gannavaram+(Tejas%20Academy)&t=&z=14&ie=UTF8&iwloc=B&output=embed',
     mapEmbedUrl: 'https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Gannavaram+(Tejas%20Academy)&t=&z=14&ie=UTF8&iwloc=B&output=embed'
@@ -144,7 +144,6 @@ const SEED_DOCUMENTS = [
       { _type: 'menuItem', label: 'Free Programs', url: '/free-programs' },
       { _type: 'menuItem', label: 'For Institutions', url: '/for-institutions' },
       { _type: 'menuItem', label: 'Recognitions', url: '/recognitions' },
-      { _type: 'menuItem', label: 'Mentors', url: '/mentors' },
       { _type: 'menuItem', label: 'About', url: '/about' },
       { _type: 'menuItem', label: 'Contact', url: '/contact' }
     ],
@@ -160,7 +159,7 @@ const SEED_DOCUMENTS = [
     _id: 'footer',
     _type: 'footer',
     copyrightText: '© 2026 Tejas Academy of Excellence. All Rights Reserved.',
-    accreditationText: 'Approved by UGC & AICTE, Government of India.',
+    accreditationText: '',
     quickLinks: [
       { _type: 'quickLink', label: 'Home', url: '/' },
       { _type: 'quickLink', label: 'Academic Programs', url: '/programs' },
@@ -268,7 +267,7 @@ const SEED_DOCUMENTS = [
     title: 'Top 10 Higher Education Centers in Telangana',
     issuingBody: 'Higher Education Review India',
     year: '2025',
-    description: 'Awarded for exceptional graduate placement ratios and campus infrastructure.'
+    description: 'Awarded for exceptional graduate career readiness and modern campus infrastructure.'
   },
   {
     _id: 'rec-3',
@@ -321,16 +320,16 @@ const SEED_DOCUMENTS = [
     title: 'Faculty Development Programs (FDP)',
     category: 'Faculty Upskilling',
     description: 'Comprehensive workshops empowering educators with the latest pedagogical tools, AI research methods, and industry case studies.',
-    keyBenefits: ['AI Curriculum Integration', 'Research Paper Publishing Support', 'Certificates of Mastery'],
+    keyBenefits: ['AI Curriculum Integration', 'Research Paper Publishing Support', 'Certificates of Academic Mastery'],
     icon: 'BookOpen'
   },
   {
     _id: 'inst-service-2',
     _type: 'institutionService',
-    title: 'Institutional Placement & Skill Training Bootcamps',
-    category: 'Student Employability',
-    description: 'Customized bootcamp modules designed to elevate student interview readiness, coding benchmarks, and soft skills.',
-    keyBenefits: ['Mock Technical Interviews', 'Placement Assessment Engine', 'Direct Corporate MoUs'],
+    title: 'Institutional Career Development & Skill Training Bootcamps',
+    category: 'Student Competence',
+    description: 'Customized bootcamp modules designed to elevate student interview readiness, coding benchmarks, and professional skills.',
+    keyBenefits: ['Mock Technical Interviews', 'Career Readiness Assessment Engine', 'Direct Corporate MoUs'],
     icon: 'Briefcase'
   },
   {
@@ -558,26 +557,82 @@ const SEED_DOCUMENTS = [
   {
     _id: 'faq-1',
     _type: 'faq',
-    question: 'What are the eligibility criteria for admissions?',
-    answer: 'For B.Tech programs, candidates must have passed 10+2 with 60% aggregate in PCM. For MBA programs, a valid graduation degree with minimum 50% marks is required.',
-    category: 'Admissions',
+    question: 'How does this specific program directly impact my career or professional growth?',
+    answer: 'This program focuses on high-impact skill acquisition designed to bridge the gap between theory and industry needs. By completing it, you gain practical expertise that enhances your resume, improves your employability, and prepares you to tackle complex, real-world challenges immediately, giving you a tangible competitive advantage.',
+    category: 'General',
     order: 1
   },
   {
     _id: 'faq-2',
     _type: 'faq',
-    question: 'Does Tejas Academy offer merit-based scholarships?',
-    answer: 'Yes! We offer up to 100% tuition scholarships for top rankers in our National Scholarship Aptitude Test.',
-    category: 'Scholarships',
+    question: 'Can you provide real-world examples of how I will apply what I learn?',
+    answer: 'Yes. Throughout the program, you will work on capstone projects and case studies based on actual industry scenarios. You will apply tools and methodologies to solve genuine business problems, ensuring you graduate with a portfolio of work that demonstrates your ability to apply knowledge effectively.',
+    category: 'General',
     order: 2
   },
   {
     _id: 'faq-3',
     _type: 'faq',
-    question: 'What is the placement assistance process?',
-    answer: 'We have MoUs with 250+ enterprise partners. Students receive 1-on-1 interview training, resume audits, and direct recruitment campus drives.',
-    category: 'Placements',
+    question: 'What kind of mentorship or doubt-clearing support is available during the program?',
+    answer: 'We provide robust support to ensure you are never stuck. You will have access to dedicated mentors for one-on-one guidance, regular Q&A sessions to clear your doubts, and community forums where you can interact with peers and industry experts for collaborative learning.',
+    category: 'General',
     order: 3
+  },
+  {
+    _id: 'faq-4',
+    _type: 'faq',
+    question: 'How flexible are the delivery schedules for someone juggling work or studies?',
+    answer: 'Our program is designed with flexibility in mind to accommodate professionals and students. We offer a hybrid learning model with recorded sessions and scheduled live check-ins, allowing you to pace your learning around your existing commitments without compromising on the quality of your education.',
+    category: 'General',
+    order: 4
+  },
+  {
+    _id: 'faq-5',
+    _type: 'faq',
+    question: 'What are the specific career outcomes or benefits associated with this certification?',
+    answer: 'Beyond gaining a verified certification, you will walk away with a refined skill set that is directly applicable to current market demands. Many of our alumni report improved job performance, clearer career trajectories, and increased confidence in applying for advanced roles within their fields.',
+    category: 'General',
+    order: 5
+  },
+  {
+    _id: 'faq-6',
+    _type: 'faq',
+    question: 'What differentiates TEJAS Academy’s teaching methodology from other conventional platforms?',
+    answer: 'Unlike platforms that focus solely on passive learning, TEJAS Academy utilizes a "knowledge-to-application" methodology. We prioritize hands-on practice, iterative feedback, and real-world project work, ensuring you don\'t just "know" the subject matter, but can actively implement it to drive results.',
+    category: 'General',
+    order: 6
+  },
+  {
+    _id: 'faq-7',
+    _type: 'faq',
+    question: 'Can this program be customized to meet my institution’s or my specific learning objectives?',
+    answer: 'Absolutely. For corporate and institutional partners, we offer modular program designs that can be tailored to focus on your specific organizational goals, skill gaps, or learning objectives, ensuring maximum ROI on your investment.',
+    category: 'General',
+    order: 7
+  },
+  {
+    _id: 'faq-8',
+    _type: 'faq',
+    question: 'What is the realistic time commitment required per week, including practice and projects?',
+    answer: 'On average, we recommend dedicating approximately 5–8 hours per week. This includes watching video modules, attending live sessions, and working on your practical assignments, allowing you to maintain steady progress without being overwhelmed.',
+    category: 'General',
+    order: 8
+  },
+  {
+    _id: 'faq-9',
+    _type: 'faq',
+    question: 'Are there any free workshops or trial modules I can experience before enrolling?',
+    answer: 'Yes, we invite you to experience our approach firsthand. We regularly host free introductory workshops and offer trial modules for many of our courses so you can assess the teaching quality and curriculum relevance before making a commitment.',
+    category: 'General',
+    order: 9
+  },
+  {
+    _id: 'faq-10',
+    _type: 'faq',
+    question: 'What is the enrollment process, and what immediate support can I expect after payment?',
+    answer: 'The enrollment process is straightforward: simply visit our website, select your program, and complete the registration. Once payment is confirmed, you will receive immediate access to our onboarding portal, a welcome orientation session, and an invitation to join your specific cohort’s support group to get you started on the right foot.',
+    category: 'General',
+    order: 10
   },
 
   // 23. Workshops

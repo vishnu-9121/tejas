@@ -1,0 +1,22 @@
+﻿{
+  "name": "Tejas Academy of Excellence",
+  "short_name": "Tejas Academy",
+  "description": "Cultivating Human Potential, Real-World Skills, and Leadership.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1A5632",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

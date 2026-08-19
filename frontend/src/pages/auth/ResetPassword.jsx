@@ -9,6 +9,7 @@ import { Input } from "../../components/ui/Input";
 import api from "../../utils/api";
 import { Lock, Eye, EyeOff, KeyRound, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SEO } from "@/components/ui/SEO";
 
 const resetSchema = z.object({
   password: z.string().min(6, { message: "New password must be at least 6 characters." }),
@@ -21,7 +22,7 @@ const resetSchema = z.object({
 export const ResetPassword = () => {
   const { token } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(!token ? "Invalid or missing password reset token. Please request a new link." : null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -30,6 +31,10 @@ export const ResetPassword = () => {
   });
 
   const onSubmit = async (data) => {
+    if (!token) {
+      setError("Cannot reset password without a valid reset token. Please request a new link.");
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -50,6 +55,11 @@ export const ResetPassword = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-inter">
+      <SEO 
+        title="Reset Password" 
+        description="Set a new secure password for your Tejas Academy account."
+        url="https://unlocktejas.com/reset-password"
+      />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center mb-3">
           <span className="inline-flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-bold uppercase tracking-wider border border-primary-100">

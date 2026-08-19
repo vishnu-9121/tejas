@@ -15,6 +15,8 @@ const router = express.Router();
 // Public routes
 router.get('/', getEvents);
 router.get('/slug/:slug', getEventBySlug);
+router.get('/:slug', getEventBySlug);
+
 
 // Admin only routes
 router.post('/', protect, authorize('admin', 'super_admin'), createEvent);

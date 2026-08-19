@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail, ArrowRight } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Youtube, MessageCircle, MapPin, Phone, Mail, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { cmsService } from '@/services/cmsService';
 import { Button } from '@/components/ui/Button';
@@ -34,7 +34,7 @@ export const Footer = () => {
   const liveFooter = footerData?.data?.data || footerData?.data || footerData || {};
 
   const contactInfo = {
-    address: liveSettings.physicalAddress || 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
+    address: liveSettings.physicalAddress || 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101',
     phone: liveSettings.contactPhone || '+91 83310 51327',
     email: liveSettings.contactEmail || 'support@unlocktejas.com'
   };
@@ -45,10 +45,18 @@ export const Footer = () => {
     { label: 'Terms of Service', url: '/terms' },
   ];
   const copyrightText = liveFooter.copyrightText || `© ${new Date().getFullYear()} Tejas Academy of Excellence. All rights reserved.`;
-  const accreditationText = liveFooter.accreditationText || 'Approved by UGC & AICTE, Govt. of India.';
+  const accreditationText = (liveFooter.accreditationText && !liveFooter.accreditationText.includes('UGC') && !liveFooter.accreditationText.includes('AICTE')) 
+    ? liveFooter.accreditationText 
+    : '';
+  const socialLinks = liveSettings.socialLinks || {
+    facebook: 'https://facebook.com/unlocktejas',
+    twitter: 'https://twitter.com/unlocktejas',
+    instagram: 'https://instagram.com/unlocktejas',
+    linkedin: 'https://linkedin.com/company/unlocktejas'
+  };
 
   return (
-    <footer className="bg-[#1b2a1c] text-emerald-100 font-sans border-t border-emerald-900/60 select-none">
+    <footer className="bg-[#1b2a1c] text-emerald-100 font-sans border-t border-emerald-900/60">
       {/* Top Pre-Footer Call to Action Banner */}
       <div className="border-b border-emerald-800/40 bg-gradient-to-r from-[#172418] via-[#1f3120] to-[#172418]">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -60,23 +68,38 @@ export const Footer = () => {
               Join a community of ambitious leaders, innovators, and entrepreneurs building the world of tomorrow.
             </p>
           </div>
-          <div className="flex shrink-0 gap-4 w-full md:w-auto">
-            <Button variant="gold" size="lg" as={Link} to="/admissions" rightIcon={<ArrowRight size={18} />} className="w-full md:w-auto text-sm font-bold shadow-xl shadow-amber-500/20">
-              Apply for Admissions
-            </Button>
+          <div className="flex flex-wrap gap-4 items-center">
+            <Link to="/admissions">
+              <Button size="lg" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-8 shadow-lg shadow-amber-500/20 border-0 rounded-full flex items-center gap-2">
+                Apply for Admission <ArrowRight size={18} />
+              </Button>
+            </Link>
+            <Link to="/programs">
+              <Button size="lg" variant="outline" className="border-emerald-600 text-emerald-100 hover:bg-emerald-800/60 hover:text-white rounded-full">
+                Explore Programs
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Main Footer Content */}
+      {/* Main Multi-Column Footer Grid */}
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12">
           
           {/* Column 1: Brand & Bio */}
           <div className="lg:col-span-4">
-            <Link to="/" className="flex items-center gap-3 mb-5 group inline-flex">
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white p-1 shadow-md ring-2 ring-amber-400/80 flex items-center justify-center shrink-0">
-                <img src="/logo.png" alt="Tejas Academy Logo" className="w-full h-full object-contain transition-transform group-hover:scale-105" />
+            <Link to="/" className="flex items-center gap-3 mb-6 group select-none">
+              <div className="w-10 h-10 rounded-full bg-white p-1 shadow-md ring-2 ring-amber-400/80 flex items-center justify-center shrink-0">
+                <img 
+                  src="/logo.png" 
+                  alt="Tejas Academy of Excellence Official Logo" 
+                  width="40"
+                  height="40"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-contain transition-transform group-hover:scale-105" 
+                />
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="text-white text-xl font-serif font-extrabold tracking-tight">Tejas Academy</span>
@@ -88,11 +111,37 @@ export const Footer = () => {
             </p>
             
             {/* Social Media Links */}
-            <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300"><Facebook size={18} /></a>
-              <a href="#" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300"><Twitter size={18} /></a>
-              <a href="#" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300"><Instagram size={18} /></a>
-              <a href="#" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300"><Linkedin size={18} /></a>
+            <div className="flex flex-wrap gap-3">
+              {socialLinks.facebook && (
+                <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300">
+                  <Facebook size={18} />
+                </a>
+              )}
+              {socialLinks.twitter && (
+                <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300">
+                  <Twitter size={18} />
+                </a>
+              )}
+              {socialLinks.instagram && (
+                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300">
+                  <Instagram size={18} />
+                </a>
+              )}
+              {socialLinks.linkedin && (
+                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300">
+                  <Linkedin size={18} />
+                </a>
+              )}
+              {socialLinks.youtube && (
+                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300">
+                  <Youtube size={18} />
+                </a>
+              )}
+              {socialLinks.whatsapp && (
+                <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-700/50 flex items-center justify-center text-emerald-200 hover:bg-amber-500 hover:text-white hover:border-amber-400 transition-all duration-300">
+                  <MessageCircle size={18} />
+                </a>
+              )}
             </div>
           </div>
 
@@ -164,13 +213,13 @@ export const Footer = () => {
       <div className="border-t border-emerald-900/80 bg-[#121c13]">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-emerald-400/80 text-xs">
-            {copyrightText} {accreditationText}
+            {copyrightText}{accreditationText ? ` ${accreditationText}` : ''}
           </p>
           <div className="flex items-center gap-6 text-xs text-emerald-400/80 font-medium">
             {legalLinks.map((link, idx) => (
               <Link key={idx} to={link.url} className="hover:text-white transition-colors">{link.label}</Link>
             ))}
-            <Link to="/sitemap.xml" className="hover:text-white transition-colors">Sitemap</Link>
+            <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Sitemap</a>
           </div>
         </div>
       </div>

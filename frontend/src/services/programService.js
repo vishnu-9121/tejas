@@ -105,6 +105,32 @@ export const programService = {
   toggleFeature: async (id) => {
     const response = await api.patch(`/programs/${id}/feature`);
     return response.data;
+  },
+
+  downloadBrochure: async ({ programId, slug, programTitle, downloadType = 'brochure' } = {}) => {
+    const target = slug || programId || 'default';
+    const response = await api.get(`/programs/${target}/download-${downloadType}`, {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/pdf'
+      }
+    });
+
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const safeTitle = (programTitle || 'Program').replace(/[^a-zA-Z0-9]/g, '_');
+    link.download = `${safeTitle}_${downloadType === 'curriculum' ? 'Curriculum' : 'Brochure'}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    return {
+      success: true,
+      downloaded: true
+    };
   }
 };
 

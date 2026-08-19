@@ -1,12 +1,13 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutTemplate, Settings, Image, History, ArrowLeft } from 'lucide-react';
+import { LayoutTemplate, Settings, Image, History, ArrowLeft, Share2 } from 'lucide-react';
 
 export const CMSLayout = () => {
   const location = useLocation();
 
   const navItems = [
     { name: 'Pages', path: '/admin/cms/pages', icon: LayoutTemplate },
+    { name: 'Social Media Links', path: '/admin/cms/social-links', icon: Share2 },
     { name: 'Global Settings', path: '/admin/cms/settings', icon: Settings },
     { name: 'Media Library', path: '/admin/cms/media', icon: Image },
     { name: 'Audit History', path: '/admin/cms/history', icon: History }

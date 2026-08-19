@@ -14,21 +14,27 @@ export function MissionVision() {
 
   const mission = cmsData?.data?.data?.missionPreview || {
     title: 'Our Mission',
-    content: 'To nurture ethically grounded, globally competitive leaders who drive positive change in society through excellence in education, research, and innovation.'
+    content: 'To advance human excellence through transformative education, applied research, responsible entrepreneurship, ethical technology, and principled leadership development that creates enduring societal value.'
   };
 
   const vision = cmsData?.data?.data?.visionPreview || {
     title: 'Our Vision',
-    content: 'To be a premier global institution recognized for creating holistic leaders who harmonize human excellence with technological advancement.'
+    content: 'To develop visionary individuals who embody intellectual innovation, emotional balance, ethical responsibility, courageous leadership, and meaningful contribution to the nation and the world.'
   };
 
   return (
     <section className="bg-warm-50 py-16 md:py-24 border-b border-neutral-100">
       <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-20 flex flex-col items-center text-center">
         <div className="h-0.5 w-12 bg-accent-500 mb-4" />
-        <span className="text-xs font-semibold uppercase tracking-widest text-accent-700 mb-12 select-none">
-          Our Purpose
+        <span className="text-xs font-semibold uppercase tracking-widest text-accent-700 mb-2 select-none">
+          Institutional Purpose
         </span>
+        <h2 className="text-2xl md:text-3xl font-serif font-bold text-neutral-900 mb-2 tracking-tight">
+          "Born from the Spark of Brilliance"
+        </h2>
+        <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-amber-700 mb-12 select-none">
+          Valour in Heart &bull; Discipline in Habit &bull; Vigilance in Mind &bull; Resilience in Spirit
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start w-full text-left">
           {/* Mission */}

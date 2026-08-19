@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Save, Plus, Trash2, LayoutTemplate, History, Globe, Send, RotateCcw } from 'lucide-react';
+import { 
+  Save, Plus, Trash2, LayoutTemplate, History, Globe, 
+  Send, RotateCcw, TrendingUp, Compass, Building2, 
+  Layers, CheckCircle2, ArrowUp, ArrowDown, Eye, Sparkles 
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { cmsService } from '@/services/cmsService';
@@ -10,13 +14,44 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 
 const defaultHomepageData = {
-  hero: { title: '', subtitle: '', backgroundImage: '', videoUrl: '', primaryCta: { text: '', link: '' }, secondaryCta: { text: '', link: '' } },
-  stats: [], missionPreview: { title: '', content: '' }, visionPreview: { title: '', content: '' }, partners: [], footerCta: { title: '', subtitle: '', buttonText: '', buttonLink: '' }
+  hero: { 
+    title: 'Cultivating Human Excellence, Character & Competence', 
+    subtitle: 'Developing visionary individuals who harmonize intellectual innovation, emotional resilience, and ethical leadership.', 
+    backgroundImage: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80', 
+    videoUrl: '', 
+    primaryCta: { text: 'Explore Programs', link: '/programs' }, 
+    secondaryCta: { text: 'Apply for Admission', link: '/admissions' } 
+  },
+  stats: [
+    { label: 'Active Programmes', value: '7+', enabled: true },
+    { label: 'Corporate Partners', value: '250+', enabled: true },
+    { label: 'Distinguished Mentors', value: '150+', enabled: true },
+    { label: 'Practical Work Ratio', value: '70%', enabled: true }
+  ],
+  missionPreview: { 
+    title: 'Our Purpose', 
+    content: 'To empower learners with practical skills, future-ready capabilities, and leadership mindsets through hands-on learning.' 
+  },
+  visionPreview: { 
+    title: 'Our Vision', 
+    content: 'To build a global centre of excellence for transformative technology, business innovation, and responsible leadership.' 
+  },
+  partners: [
+    { name: 'Google Cloud Partner', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg' },
+    { name: 'Microsoft Enterprise', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg' },
+    { name: 'Amazon Web Services', logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg' }
+  ],
+  footerCta: { 
+    title: 'Begin Your Learning Journey with Tejas Academy', 
+    subtitle: 'Enrolment for our upcoming certificate and professional batches is currently active.', 
+    buttonText: 'Submit Application', 
+    buttonLink: '/admissions' 
+  }
 };
 
 export default function ManageHomepage() {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('hero');
+  const [activeTab, setActiveTab] = useState('stats');
   const [showHistory, setShowHistory] = useState(false);
 
   // Fetch Draft Data
@@ -36,18 +71,33 @@ export default function ManageHomepage() {
   const isDraft = entry?.status === 'DRAFT';
   const liveVersion = entry?.publishedVersionNumber || 0;
 
-  const { register, control, handleSubmit, reset, formState: { isSubmitting } } = useForm({
+  const { register, control, handleSubmit, reset, watch, formState: { isSubmitting } } = useForm({
     defaultValues: defaultHomepageData
   });
 
-  const { fields: statFields, append: appendStat, remove: removeStat } = useFieldArray({ control, name: 'stats' });
-  const { fields: partnerFields, append: appendPartner, remove: removePartner } = useFieldArray({ control, name: 'partners' });
+  const { fields: statFields, append: appendStat, remove: removeStat, move: moveStat } = useFieldArray({ 
+    control, 
+    name: 'stats' 
+  });
+  
+  const { fields: partnerFields, append: appendPartner, remove: removePartner } = useFieldArray({ 
+    control, 
+    name: 'partners' 
+  });
 
   useEffect(() => {
     if (entry?.data && Object.keys(entry.data).length > 0) {
-      reset(entry.data);
+      const merged = { ...defaultHomepageData, ...entry.data };
+      if (!merged.stats || merged.stats.length === 0) {
+        merged.stats = defaultHomepageData.stats;
+      }
+      reset(merged);
     } else if (entry?.publishedData && Object.keys(entry.publishedData).length > 0) {
-      reset(entry.publishedData);
+      const merged = { ...defaultHomepageData, ...entry.publishedData };
+      if (!merged.stats || merged.stats.length === 0) {
+        merged.stats = defaultHomepageData.stats;
+      }
+      reset(merged);
     }
   }, [entry, reset]);
 
@@ -55,120 +105,362 @@ export default function ManageHomepage() {
   const saveDraftMutation = useMutation({
     mutationFn: (data) => cmsService.updateCmsData('homepage', data),
     onSuccess: () => {
-      toast.success('Draft saved successfully');
+      toast.success('Draft saved successfully to database');
       queryClient.invalidateQueries(['cms', 'homepage']);
     },
-    onError: () => toast.error('Failed to save draft')
+    onError: (err) => toast.error(err.response?.data?.message || 'Failed to save draft')
   });
 
   const publishMutation = useMutation({
-    mutationFn: () => cmsService.publishCmsData('homepage', `Published version ${liveVersion + 1}`),
+    mutationFn: async () => {
+      const currentValues = watch();
+      await cmsService.updateCmsData('homepage', currentValues);
+      return cmsService.publishCmsData('homepage', `Published version ${liveVersion + 1}`);
+    },
     onSuccess: () => {
-      toast.success('Content published to live site!');
+      toast.success('Homepage content published live to https://unlocktejas.com !');
       queryClient.invalidateQueries(['cms', 'homepage']);
     },
-    onError: () => toast.error('Failed to publish')
+    onError: (err) => toast.error(err.response?.data?.message || 'Failed to publish live')
   });
 
   const rollbackMutation = useMutation({
     mutationFn: (versionNumber) => cmsService.rollbackCmsData('homepage', versionNumber),
     onSuccess: (data, variables) => {
-      toast.success(`Rolled back to v${variables}`);
+      toast.success(`Rolled back to version ${variables}`);
       setShowHistory(false);
       queryClient.invalidateQueries(['cms', 'homepage']);
     },
-    onError: () => toast.error('Failed to rollback')
+    onError: (err) => toast.error(err.response?.data?.message || 'Failed to rollback')
   });
 
   const onSubmitDraft = (data) => saveDraftMutation.mutate(data);
   const onPublish = () => publishMutation.mutate();
 
   const tabs = [
-    { id: 'hero', label: 'Hero Section' },
-    { id: 'stats', label: 'Statistics' },
-    { id: 'content', label: 'Mission & Vision' },
-    { id: 'partners', label: 'Partners' },
-    { id: 'cta', label: 'Footer CTA' }
+    { id: 'stats', label: 'Homepage Metrics', icon: TrendingUp },
+    { id: 'hero', label: 'Hero Banner', icon: Sparkles },
+    { id: 'content', label: 'Mission & Vision', icon: Compass },
+    { id: 'partners', label: 'Corporate Partners', icon: Building2 },
+    { id: 'cta', label: 'Footer CTA', icon: Layers }
   ];
 
-  if (isLoading) return <div className="p-12 text-center">Loading Enterprise CMS...</div>;
+  const watchedStats = watch('stats') || [];
+
+  if (isLoading) return <div className="p-12 text-center text-neutral-500 font-medium">Loading Homepage CMS Content...</div>;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-24 flex relative">
       <div className="flex-1 space-y-6 transition-all">
-        <div className="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        {/* Header Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-6 rounded-2xl shadow-xs border border-neutral-200/80 gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <Globe className="w-6 h-6 text-primary-600" /> Homepage Editor
+              <h1 className="text-2xl font-serif font-extrabold text-neutral-900 flex items-center gap-2">
+                <Globe className="w-6 h-6 text-primary-700" /> Homepage CMS Editor
               </h1>
               {isDraft ? (
-                <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Unpublished Changes</span>
+                <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  Draft (Unpublished Changes)
+                </span>
               ) : (
-                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Live (v{liveVersion})</span>
+                <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  Live (v{liveVersion})
+                </span>
               )}
             </div>
-            <p className="text-sm text-gray-500 mt-1">Manage content, media, and SEO for the landing page.</p>
+            <p className="text-xs sm:text-sm text-neutral-500 mt-1">
+              Changes saved and published here immediately update the live public website at unlocktejas.com.
+            </p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={() => setShowHistory(!showHistory)} className="flex items-center gap-2">
-              <History className="w-4 h-4" /> History
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={() => setShowHistory(!showHistory)} 
+              className="flex items-center gap-2 text-xs font-semibold"
+            >
+              <History className="w-4 h-4" /> Version History ({entry?.versions?.length || 0})
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleSubmit(onSubmitDraft)}
+              disabled={saveDraftMutation.isPending || isSubmitting}
+              className="text-xs font-semibold"
+            >
+              <Save className="w-4 h-4 mr-1.5" /> Save Draft
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={onPublish}
+              disabled={publishMutation.isPending || isSubmitting}
+              className="text-xs font-bold shadow-sm"
+            >
+              <Send className="w-4 h-4 mr-1.5" /> Publish Live
             </Button>
           </div>
         </div>
 
         <div className="flex gap-6 items-start flex-col md:flex-row">
-          {/* Sidebar Tabs */}
-          <div className="w-full md:w-64 shrink-0 space-y-1 bg-white p-2 rounded-xl border border-gray-100 shadow-sm">
-            {tabs.map(tab => (
+          {/* Navigation Sidebar */}
+          <div className="w-full md:w-64 bg-white rounded-2xl shadow-xs border border-neutral-200/80 p-2 space-y-1 shrink-0">
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === tab.id ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-gray-50'
+                className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+                  activeTab === tab.id
+                    ? 'bg-primary-50 text-primary-700 shadow-xs'
+                    : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
                 }`}
               >
-                {tab.label}
+                <span className="flex items-center gap-2.5">
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </span>
+                {activeTab === tab.id && <span className="w-1.5 h-1.5 rounded-full bg-primary-600"></span>}
               </button>
             ))}
           </div>
 
-          {/* Content Area */}
+          {/* Form Content Area */}
           <div className="flex-1 w-full">
             <form id="cms-form" onSubmit={handleSubmit(onSubmitDraft)} className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 min-h-[500px]">
-                {/* HERO TAB */}
+              <div className="bg-white rounded-2xl shadow-xs border border-neutral-200/80 p-6 min-h-[500px]">
+                
+                {/* 1. HOMEPAGE METRICS & STATS TAB */}
+                {activeTab === 'stats' && (
+                  <div className="space-y-6 animate-in fade-in">
+                    <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+                      <div>
+                        <h2 className="text-lg font-bold text-neutral-900">Homepage Metrics & Statistics</h2>
+                        <p className="text-xs text-neutral-500">Edit values (e.g. 7+, 250+, 150+, 70%), labels, visibility, and display order.</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => appendStat({ value: '10+', label: 'New Metric', enabled: true })}
+                        className="text-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5 mr-1" /> Add Metric Card
+                      </Button>
+                    </div>
+
+                    {/* Live Preview Bar */}
+                    <div className="p-5 bg-neutral-900 text-white rounded-2xl">
+                      <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-widest mb-3">
+                        <Eye className="w-3.5 h-3.5" /> Live Homepage Preview
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        {watchedStats.filter(s => s.enabled !== false).map((st, i) => (
+                          <div key={i} className="p-3 bg-neutral-800/80 rounded-xl border border-neutral-700">
+                            <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-sans">{st.value || '0'}</div>
+                            <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-300 mt-1">{st.label || 'Label'}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Metric Cards Editor */}
+                    <div className="space-y-4">
+                      {statFields.map((field, index) => (
+                        <div 
+                          key={field.id} 
+                          className="p-4 rounded-xl border border-neutral-200/80 bg-neutral-50/50 hover:bg-neutral-50 transition-colors flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between"
+                        >
+                          <div className="flex items-center gap-3 w-full sm:w-auto">
+                            <span className="w-6 h-6 rounded-full bg-neutral-200 text-neutral-700 text-xs font-bold flex items-center justify-center shrink-0">
+                              {index + 1}
+                            </span>
+                            <div className="space-y-1 flex-1 sm:w-32">
+                              <label className="text-[11px] font-bold text-neutral-600 uppercase">Value</label>
+                              <Input 
+                                {...register(`stats.${index}.value`, { required: true })} 
+                                placeholder="e.g. 7+ or 250+" 
+                                className="font-bold text-base"
+                              />
+                            </div>
+                            <div className="space-y-1 flex-2 sm:w-64">
+                              <label className="text-[11px] font-bold text-neutral-600 uppercase">Label</label>
+                              <Input 
+                                {...register(`stats.${index}.label`, { required: true })} 
+                                placeholder="e.g. ACTIVE PROGRAMMES" 
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-neutral-200">
+                            <label className="flex items-center gap-2 text-xs font-medium text-neutral-700 cursor-pointer">
+                              <input 
+                                type="checkbox" 
+                                {...register(`stats.${index}.enabled`)} 
+                                defaultChecked={field.enabled !== false}
+                                className="rounded text-primary-600 w-4 h-4"
+                              />
+                              Visible
+                            </label>
+
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                disabled={index === 0}
+                                onClick={() => moveStat(index, index - 1)}
+                                className="p-1.5 rounded hover:bg-neutral-200 text-neutral-600 disabled:opacity-30"
+                                title="Move Up"
+                              >
+                                <ArrowUp className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={index === statFields.length - 1}
+                                onClick={() => moveStat(index, index + 1)}
+                                className="p-1.5 rounded hover:bg-neutral-200 text-neutral-600 disabled:opacity-30"
+                                title="Move Down"
+                              >
+                                <ArrowDown className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeStat(index)}
+                              className="text-rose-600 hover:bg-rose-50 hover:text-rose-700 p-1.5"
+                              title="Delete Metric"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. HERO TAB */}
                 {activeTab === 'hero' && (
                   <div className="space-y-6 animate-in fade-in">
-                    <h2 className="text-lg font-bold border-b pb-2">Hero Section</h2>
+                    <h2 className="text-lg font-bold text-neutral-900 border-b border-neutral-100 pb-2">Hero Banner Content</h2>
                     <div className="space-y-4">
                       <div className="space-y-1">
-                        <label className="text-sm font-medium">Main Title</label>
-                        <Input {...register('hero.title')} className="font-bold text-lg" />
+                        <label className="text-xs font-bold text-neutral-700">Main Title</label>
+                        <Input {...register('hero.title')} className="font-bold text-base" />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-sm font-medium">Subtitle</label>
+                        <label className="text-xs font-bold text-neutral-700">Subtitle / Description</label>
                         <Textarea {...register('hero.subtitle')} rows={3} />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-sm font-medium text-gray-700">Background Image URL (Media Library)</label>
-                          <div className="flex gap-2">
-                            <Input {...register('hero.backgroundImage')} type="url" />
-                            <Button type="button" variant="outline">Browse</Button>
-                          </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-neutral-700">Background Image URL</label>
+                        <Input {...register('hero.backgroundImage')} type="url" placeholder="https://..." />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <div className="p-4 bg-neutral-50 rounded-xl space-y-2 border border-neutral-200/80">
+                          <span className="text-xs font-bold uppercase text-neutral-700">Primary Button</span>
+                          <Input {...register('hero.primaryCta.text')} placeholder="Button Text (e.g. Explore Programs)" />
+                          <Input {...register('hero.primaryCta.link')} placeholder="Button URL (e.g. /programs)" />
+                        </div>
+                        <div className="p-4 bg-neutral-50 rounded-xl space-y-2 border border-neutral-200/80">
+                          <span className="text-xs font-bold uppercase text-neutral-700">Secondary Button</span>
+                          <Input {...register('hero.secondaryCta.text')} placeholder="Button Text (e.g. Apply for Admission)" />
+                          <Input {...register('hero.secondaryCta.link')} placeholder="Button URL (e.g. /admissions)" />
                         </div>
                       </div>
                     </div>
                   </div>
                 )}
-                {/* OTHER TABS HIDDEN FOR BREVITY BUT FULLY FUNCTIONAL */}
-                {activeTab !== 'hero' && (
-                  <div className="p-12 text-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                    <LayoutTemplate className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                    Switch to Hero tab for this demo or map other fields similarly.
+
+                {/* 3. MISSION & VISION TAB */}
+                {activeTab === 'content' && (
+                  <div className="space-y-6 animate-in fade-in">
+                    <h2 className="text-lg font-bold text-neutral-900 border-b border-neutral-100 pb-2">Mission & Vision Preview</h2>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-neutral-50 rounded-xl space-y-2 border border-neutral-200/80">
+                        <label className="text-xs font-bold text-neutral-700">Mission Title</label>
+                        <Input {...register('missionPreview.title')} />
+                        <label className="text-xs font-bold text-neutral-700">Mission Statement</label>
+                        <Textarea {...register('missionPreview.content')} rows={3} />
+                      </div>
+                      <div className="p-4 bg-neutral-50 rounded-xl space-y-2 border border-neutral-200/80">
+                        <label className="text-xs font-bold text-neutral-700">Vision Title</label>
+                        <Input {...register('visionPreview.title')} />
+                        <label className="text-xs font-bold text-neutral-700">Vision Statement</label>
+                        <Textarea {...register('visionPreview.content')} rows={3} />
+                      </div>
+                    </div>
                   </div>
                 )}
+
+                {/* 4. CORPORATE PARTNERS TAB */}
+                {activeTab === 'partners' && (
+                  <div className="space-y-6 animate-in fade-in">
+                    <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+                      <div>
+                        <h2 className="text-lg font-bold text-neutral-900">Corporate & Industry Partners</h2>
+                        <p className="text-xs text-neutral-500">Logos shown on the homepage collaboration marquee.</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => appendPartner({ name: 'New Partner', logo: 'https://...' })}
+                      >
+                        <Plus className="w-3.5 h-3.5 mr-1" /> Add Partner
+                      </Button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {partnerFields.map((field, idx) => (
+                        <div key={field.id} className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl border border-neutral-200/80">
+                          <Input {...register(`partners.${idx}.name`)} placeholder="Company Name" className="flex-1" />
+                          <Input {...register(`partners.${idx}.logo`)} placeholder="Logo URL" className="flex-1" />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removePartner(idx)}
+                            className="text-rose-600 hover:bg-rose-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. FOOTER CTA TAB */}
+                {activeTab === 'cta' && (
+                  <div className="space-y-6 animate-in fade-in">
+                    <h2 className="text-lg font-bold text-neutral-900 border-b border-neutral-100 pb-2">Homepage Bottom Call to Action</h2>
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-neutral-700">Headline Title</label>
+                        <Input {...register('footerCta.title')} className="font-bold" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-neutral-700">Subtitle / Call to Action Copy</label>
+                        <Textarea {...register('footerCta.subtitle')} rows={3} />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-neutral-700">Button Text</label>
+                          <Input {...register('footerCta.buttonText')} />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-xs font-bold text-neutral-700">Button Target URL</label>
+                          <Input {...register('footerCta.buttonLink')} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             </form>
           </div>
@@ -177,50 +469,46 @@ export default function ManageHomepage() {
 
       {/* Version History Sidebar */}
       {showHistory && (
-        <div className="w-80 ml-6 shrink-0 bg-white border border-gray-200 shadow-lg rounded-2xl p-4 animate-in slide-in-from-right-8 h-[calc(100vh-120px)] sticky top-24 overflow-y-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-lg flex items-center gap-2"><History className="w-5 h-5"/> Versions</h3>
-            <button onClick={() => setShowHistory(false)} className="text-gray-400 hover:text-gray-900">&times;</button>
+        <div className="w-80 ml-6 shrink-0 bg-white border border-neutral-200 shadow-xl rounded-2xl p-5 animate-in slide-in-from-right-8 h-[calc(100vh-120px)] sticky top-24 overflow-y-auto">
+          <div className="flex items-center justify-between border-b border-neutral-100 pb-3 mb-4">
+            <h3 className="font-bold text-neutral-900 flex items-center gap-2 text-sm">
+              <History className="w-4 h-4 text-primary-700" /> Version History
+            </h3>
+            <button 
+              onClick={() => setShowHistory(false)} 
+              className="text-neutral-400 hover:text-neutral-600 text-xs font-bold cursor-pointer"
+            >
+              ✕
+            </button>
           </div>
-          <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
-            {versionHistory?.data?.map((version, i) => (
-              <div key={version._id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-300 group-[.is-active]:bg-primary-600 text-slate-500 group-[.is-active]:text-emerald-50 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
-                  <span className="text-xs font-bold">v{version.versionNumber}</span>
-                </div>
-                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded border border-slate-200 bg-white shadow-sm">
-                  <div className="flex items-center justify-between space-x-2 mb-1">
-                    <div className="font-bold text-slate-900 text-sm">Published</div>
-                    <time className="text-xs font-medium text-slate-500">{new Date(version.createdAt).toLocaleDateString()}</time>
+
+          <div className="space-y-3">
+            {entry?.versions && entry.versions.length > 0 ? (
+              [...entry.versions].reverse().map((ver, idx) => (
+                <div key={idx} className="p-3.5 bg-neutral-50 rounded-xl border border-neutral-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-neutral-800">Version {ver.versionNumber}</span>
+                    <span className="text-[10px] text-neutral-500">{new Date(ver.publishedAt || Date.now()).toLocaleDateString()}</span>
                   </div>
-                  <div className="text-slate-500 text-xs mb-3">{version.commitMessage}</div>
-                  <Button 
-                    onClick={() => rollbackMutation.mutate(version.versionNumber)}
-                    variant="outline" size="sm" className="w-full text-xs flex items-center justify-center gap-2"
+                  <p className="text-xs text-neutral-600 italic">"{ver.commitMessage || 'Snapshot'}"</p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => rollbackMutation.mutate(ver.versionNumber)}
+                    disabled={rollbackMutation.isPending}
+                    className="w-full text-xs font-semibold mt-1"
                   >
-                    <RotateCcw className="w-3 h-3"/> Rollback to this
+                    <RotateCcw className="w-3 h-3 mr-1" /> Restore This Version
                   </Button>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-xs text-neutral-500 text-center py-6">No previous versions found.</p>
+            )}
           </div>
         </div>
       )}
-
-      {/* Floating Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:pl-64 flex justify-between items-center z-50">
-        <p className="text-sm text-gray-500 hidden md:block">
-          {isDraft ? "You have unsaved changes." : "All changes are live."}
-        </p>
-        <div className="flex gap-3 w-full md:w-auto justify-end">
-          <Button type="submit" form="cms-form" variant="outline" disabled={saveDraftMutation.isPending} className="bg-white hover:bg-gray-50">
-            {saveDraftMutation.isPending ? 'Saving...' : <><Save className="w-4 h-4 mr-2" /> Save Draft</>}
-          </Button>
-          <Button onClick={onPublish} variant="primary" disabled={publishMutation.isPending || !isDraft} className="shadow-lg shadow-primary-500/30">
-            {publishMutation.isPending ? 'Publishing...' : <><Send className="w-4 h-4 mr-2" /> Publish Live</>}
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }

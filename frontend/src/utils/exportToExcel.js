@@ -1,17 +1,16 @@
-import * as XLSX from 'xlsx';
-
 /**
- * Export JSON data to Excel (.xlsx) file
+ * Export JSON data to Excel (.xlsx) file (Lazy-loaded on demand)
  * @param {Array<Object>} data - Array of plain objects
  * @param {string} fileName - Destination filename without extension
  * @param {string} sheetName - Sheet name (default: 'Data')
  */
-export const exportToExcel = (data, fileName = 'export', sheetName = 'Data') => {
+export const exportToExcel = async (data, fileName = 'export', sheetName = 'Data') => {
   if (!Array.isArray(data) || data.length === 0) {
     console.warn('No data available to export to Excel.');
     return;
   }
 
+  const XLSX = await import('xlsx');
   const worksheet = XLSX.utils.json_to_sheet(data);
 
   // Calculate dynamic column widths based on contents

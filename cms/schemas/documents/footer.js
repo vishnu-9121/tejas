@@ -4,7 +4,7 @@ export const footer = {
   type: 'document',
   fields: [
     { name: 'copyrightText', title: 'Copyright Line', type: 'string', initialValue: '© 2026 Tejas Academy of Excellence. All Rights Reserved.' },
-    { name: 'accreditationText', title: 'Accreditation Disclaimer', type: 'text', initialValue: 'Approved by UGC & AICTE, Government of India.' },
+    { name: 'accreditationText', title: 'Accreditation Disclaimer', type: 'text', initialValue: '' },
     {
       name: 'quickLinks',
       title: 'Quick Navigation Links',

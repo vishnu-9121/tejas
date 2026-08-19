@@ -5,6 +5,7 @@ import { Search, Filter, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { programService } from '@/services/programService';
 import { CareerCounselor } from '@/components/academics/CareerCounselor';
+import { SEO } from '@/components/ui/SEO';
 
 const DUMMY_PROGRAMS = [
   { 
@@ -66,18 +67,23 @@ export const Programs = () => {
 
   return (
     <div className="py-16 md:py-24 bg-gray-50/50 min-h-screen">
+      <SEO 
+        title="Academic Programmes & Degrees" 
+        description="Discover comprehensive undergraduate, postgraduate, and executive programmes at Tejas Academy of Excellence."
+        url="https://unlocktejas.com/programs"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className="text-xs font-bold uppercase tracking-wider text-primary-600 bg-primary-50 px-3.5 py-1.5 rounded-full inline-block mb-3">
-            Academic Excellence 2026
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary-50 text-primary-700 border border-primary-100 uppercase tracking-widest mb-3">
+            Knowledge → Practice → Feedback → Iteration → Mastery
           </span>
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
-            Academic <span className="text-primary-600">Programs</span>
+            Academic <span className="text-primary-600">Programmes</span>
           </h1>
           <p className="text-base text-gray-600 leading-relaxed">
-            Discover our comprehensive range of undergraduate, postgraduate, and executive degrees engineered to forge visionary leaders.
+            Rigorous degree programmes designed around active, reflective, and purposefully practical learning to forge ethical leaders and creative masters.
           </p>
         </div>
 
@@ -89,7 +95,7 @@ export const Programs = () => {
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   activeCategory === category
                     ? 'bg-primary-600 text-white shadow-md shadow-primary-600/20'
                     : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
@@ -104,6 +110,7 @@ export const Programs = () => {
           <div className="relative w-full md:w-80">
             <input
               type="text"
+              aria-label="Search academic programs"
               placeholder="Search programs by name, topic..."
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
               value={searchQuery}

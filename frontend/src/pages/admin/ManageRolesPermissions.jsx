@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Shield, Plus, Check, Lock, Key, Info } from 'lucide-react';
 import { toast } from 'sonner';
-import api from '@/utils/api';
+import { api } from '@/utils/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';

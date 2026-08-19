@@ -46,11 +46,33 @@ export const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "res.cloudinary.com", "https://images.unsplash.com"],
-      connectSrc: ["'self'", "https://api.cloudinary.com", "http://localhost:*", "http://127.0.0.1:*"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "blob:",
+        "https://cdn.sanity.io",
+        "https://res.cloudinary.com",
+        "https://images.unsplash.com",
+        "https://upload.wikimedia.org",
+        "https://unlocktejas.com",
+        "https://www.unlocktejas.com"
+      ],
+      connectSrc: [
+        "'self'",
+        "https://api.cloudinary.com",
+        "https://cdn.sanity.io",
+        "https://*.api.sanity.io",
+        "https://unlocktejas.com",
+        "https://www.unlocktejas.com",
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "ws://localhost:*",
+        "wss://unlocktejas.com"
+      ],
+      frameSrc: ["'self'", "https://accounts.google.com", "https://maps.google.com", "https://www.google.com"],
     },
   },
   crossOriginEmbedderPolicy: false,
@@ -82,7 +104,7 @@ export const corsOptions = cors({
 
     const allowedOrigins = Array.from(new Set([...defaultProductionOrigins, ...configuredOrigins]));
 
-    if (allowedOrigins.includes(origin) || allowedOrigins.some(ao => origin.startsWith(ao))) {
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
@@ -91,7 +113,7 @@ export const corsOptions = cors({
       return callback(null, true);
     }
 
-    callback(null, true);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

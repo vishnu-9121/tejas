@@ -99,7 +99,7 @@ export const INITIAL_SANITY_DATASET = {
 
   faqs: [
     { _id: 'faq-1', _type: 'faq', question: 'What are the eligibility criteria for admissions?', answer: 'For B.Tech programs, candidates must have passed 10+2 with 60% aggregate in PCM. For MBA programs, a valid graduation degree with minimum 50% marks is required.', category: 'Admissions', order: 1 },
-    { _id: 'faq-2', _type: 'faq', question: 'Does Tejas Academy offer placement guarantees?', answer: 'We offer 100% placement support with over 250+ corporate recruiting partners visiting our Hyderabad campus every year.', category: 'Placements', order: 2 },
+    { _id: 'faq-2', _type: 'faq', question: 'Does Tejas Academy offer placement guarantees?', answer: 'Tejas Academy does not offer placement guarantees. We focus on rigorous career development, real-world case challenges, industry mentorship, and continuous readiness validation to equip scholars for successful professional journeys.', category: 'Career Readiness', order: 2 },
     { _id: 'faq-3', _type: 'faq', question: 'Are merit-based scholarships available?', answer: 'Yes, merit scholarships up to 50% tuition waiver are awarded based on entrance score percentile and academic history.', category: 'Scholarships', order: 3 }
   ],
 

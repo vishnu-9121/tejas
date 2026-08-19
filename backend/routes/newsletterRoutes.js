@@ -6,6 +6,7 @@ import { globalLimiter } from '../middlewares/security.js';
 const router = express.Router();
 
 // Public routes
+router.post('/', globalLimiter, subscribe);
 router.post('/subscribe', globalLimiter, subscribe);
 router.post('/unsubscribe', globalLimiter, unsubscribe);
 

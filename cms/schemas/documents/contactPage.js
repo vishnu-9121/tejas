@@ -14,8 +14,8 @@ export const contactPage = {
     { name: 'phone', title: 'Primary Phone', type: 'string', initialValue: '+91 83310 51327' },
     { name: 'helplinePhone', title: 'Helpline & Support Phone', type: 'string', initialValue: '+91 83310 51327' },
     { name: 'whatsappSupport', title: 'WhatsApp Direct Chat Number', type: 'string', initialValue: '+91 83310 51327' },
-    { name: 'address', title: 'Primary Address', type: 'text', initialValue: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101' },
-    { name: 'campusAddress', title: 'Campus Address', type: 'text', initialValue: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101' },
+    { name: 'address', title: 'Primary Address', type: 'text', initialValue: 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101' },
+    { name: 'campusAddress', title: 'Campus Address', type: 'text', initialValue: 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101' },
     { name: 'workingHours', title: 'Working Hours', type: 'string', initialValue: 'Monday - Saturday: 9:00 AM - 6:00 PM IST' },
     { name: 'googleMapsEmbedUrl', title: 'Google Maps iFrame Link', type: 'url', initialValue: 'https://maps.google.com' },
     { name: 'mapEmbedUrl', title: 'Map Embed URL', type: 'url', initialValue: 'https://maps.google.com' }

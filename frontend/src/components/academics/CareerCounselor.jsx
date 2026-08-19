@@ -33,7 +33,7 @@ export function CareerCounselor() {
           </h3>
 
           <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
-            Unsure which degree or specialization best matches your career goals? Speak directly with our admissions counselors for personalized guidance on course structures, scholarships, and placement outcomes.
+            Unsure which degree or specialization best matches your career goals? Speak directly with our academic counselors for personalized guidance on curriculum pathways, scholarships, and career development roadmaps.
           </p>
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">

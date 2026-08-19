@@ -29,6 +29,18 @@ export const register = async (req, res, next) => {
   }
 };
 
+export const getMe = async (req, res, next) => {
+  try {
+    const user = await import('../models/User.js').then(m => m.User.findById(req.user.id));
+    if (!user) {
+      return sendResponse(res, HTTP_STATUS.NOT_FOUND, 'User not found', null);
+    }
+    sendResponse(res, HTTP_STATUS.OK, 'User profile retrieved', user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -99,7 +111,7 @@ export const forgotPassword = async (req, res, next) => {
     }
 
     const result = await authService.forgotPasswordService(email);
-    sendResponse(res, HTTP_STATUS.OK, 'Password reset OTP sent to email', { otp: result?.otp });
+    sendResponse(res, HTTP_STATUS.OK, 'Password reset OTP sent to your email', null);
   } catch (error) {
     next(error);
   }

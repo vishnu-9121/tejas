@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Briefcase, MapPin, Clock, X, Upload } from 'lucide-react';
 import { toast } from 'sonner';
-
+import { SEO } from '@/components/ui/SEO';
+import { api } from '@/utils/api';
 import { useQuery } from '@tanstack/react-query';
 import { cmsService } from '@/services/cmsService';
 
 const DEFAULT_JOBS = [
-  { id: 1, title: 'Senior Professor - AI', dept: 'Academics', type: 'Full-time', location: 'On-campus', exp: '10+ Years' },
-  { id: 2, title: 'Student Counselor', dept: 'Support', type: 'Part-time', location: 'On-campus', exp: '3+ Years' }
+  { id: 1, title: 'Senior Professor - AI & Robotics', dept: 'Academics', type: 'Full-time', location: 'On-campus', exp: '10+ Years' },
+  { id: 2, title: 'Student Counselor & Career Guide', dept: 'Support', type: 'Full-time', location: 'On-campus', exp: '3+ Years' },
+  { id: 3, title: 'Industry Relations & Corporate Liaison', dept: 'Corporate', type: 'Full-time', location: 'On-campus', exp: '5+ Years' }
 ];
 
 export const Career = () => {
@@ -20,35 +22,59 @@ export const Career = () => {
   });
 
   const jobsData = cmsData?.data?.data?.jobs || DEFAULT_JOBS;
-  // Dynamic departments based on current jobs
   const dynamicDepts = ['All', ...new Set(jobsData.map(job => job.dept))];
 
   const [activeDept, setActiveDept] = useState('All');
   const [selectedJob, setSelectedJob] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    resumeUrl: '',
+    coverLetter: ''
+  });
 
   const filteredJobs = activeDept === 'All' ? jobsData : jobsData.filter(j => j.dept === activeDept);
 
   const handleApply = (job) => {
     setSelectedJob(job);
+    setFormData({ firstName: '', lastName: '', email: '', phone: '', resumeUrl: '', coverLetter: '' });
     setModalOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await api.post('/inquiries', {
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        subject: `Job Application: ${selectedJob?.title} (${selectedJob?.dept})`,
+        message: `Role: ${selectedJob?.title}\nDepartment: ${selectedJob?.dept}\nResume/Portfolio: ${formData.resumeUrl}\n\nCover Letter:\n${formData.coverLetter || 'None provided'}`
+      });
+      toast.success(`Application submitted successfully for ${selectedJob?.title}! Our HR team will reach out.`);
       setModalOpen(false);
-      toast.success(`Application submitted successfully for ${selectedJob?.title}!`);
       setSelectedJob(null);
-    }, 1500);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit application. Please try again or email us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="py-20 bg-gray-50 min-h-screen">
+      <SEO 
+        title="Careers & Faculty Opportunities" 
+        description="Join Tejas Academy of Excellence. Explore faculty, academic leadership, and administrative opportunities."
+        url="https://unlocktejas.com/career"
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <SectionHeader 
           title="Careers at Tejas" 
@@ -130,29 +156,29 @@ export const Career = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">First Name <span className="text-red-500">*</span></label>
-                    <Input required placeholder="e.g. John" />
+                    <Input required placeholder="e.g. John" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Last Name <span className="text-red-500">*</span></label>
-                    <Input required placeholder="e.g. Doe" />
+                    <Input required placeholder="e.g. Doe" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} />
                   </div>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Email Address <span className="text-red-500">*</span></label>
-                  <Input type="email" required placeholder="john.doe@example.com" />
+                  <Input type="email" required placeholder="john.doe@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number <span className="text-red-500">*</span></label>
-                  <Input type="tel" required placeholder="+91 83310 51327" />
+                  <Input type="tel" required placeholder="+91 83310 51327" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Resume / CV Link <span className="text-red-500">*</span></label>
                   <div className="relative">
                     <Upload className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
-                    <Input type="url" required className="pl-10" placeholder="https://drive.google.com/... or https://linkedin.com/in/..." />
+                    <Input type="url" required className="pl-10" placeholder="https://drive.google.com/... or https://linkedin.com/in/..." value={formData.resumeUrl} onChange={(e) => setFormData({ ...formData, resumeUrl: e.target.value })} />
                   </div>
                   <p className="text-xs text-gray-500 mt-2">Please provide a link to your hosted resume or LinkedIn profile.</p>
                 </div>
@@ -163,6 +189,8 @@ export const Career = () => {
                     className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                     rows="4"
                     placeholder="Tell us why you are a great fit for this role..."
+                    value={formData.coverLetter}
+                    onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}
                   ></textarea>
                 </div>
 

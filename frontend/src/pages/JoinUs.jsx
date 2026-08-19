@@ -1,51 +1,69 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { MessageCircle, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { cmsService } from '@/services/cmsService';
+import { SEO } from '@/components/ui/SEO';
 
 export const JoinUs = () => {
+  const { data: settingsData } = useQuery({
+    queryKey: ['cms', 'site_settings'],
+    queryFn: () => cmsService.getCMSData('site_settings'),
+    staleTime: 60 * 1000,
+  });
+
+  const liveSettings = settingsData?.data?.data || {};
+  const socialLinks = liveSettings.socialLinks || {};
+
   const communities = [
     {
       name: 'WhatsApp Community',
       icon: <MessageCircle className="w-8 h-8 text-green-500" />,
-      description: 'Join our active WhatsApp group for daily updates, scholarship alerts, and direct interaction with counselors.',
-      link: '#',
+      description: 'Join our active WhatsApp channel for daily updates, program alerts, and direct interaction with counselors.',
+      link: socialLinks.whatsapp || 'https://wa.me/918331051327?text=Hello%20Tejas%20Academy%2C%20I%20would%20like%20to%20learn%20more.',
       color: 'hover:border-green-500'
     },
     {
       name: 'LinkedIn Network',
       icon: <Linkedin className="w-8 h-8 text-blue-600" />,
-      description: 'Connect with alumni, industry mentors, and follow our professional achievements.',
-      link: '#',
+      description: 'Connect with faculty, industry mentors, and follow our executive insights and scholar achievements.',
+      link: socialLinks.linkedin || 'https://linkedin.com/company/unlocktejas',
       color: 'hover:border-blue-600'
     },
     {
       name: 'Instagram Campus Life',
       icon: <Instagram className="w-8 h-8 text-pink-600" />,
-      description: 'Experience daily campus life, events, and student takeovers.',
-      link: '#',
+      description: 'Experience campus life, student achievements, masterclasses, and events.',
+      link: socialLinks.instagram || 'https://instagram.com/unlocktejas',
       color: 'hover:border-pink-600'
     },
     {
       name: 'YouTube Masterclasses',
       icon: <Youtube className="w-8 h-8 text-red-600" />,
-      description: 'Watch free masterclasses from our global faculty and guest speakers.',
-      link: '#',
+      description: 'Watch recorded masterclasses and lectures from global faculty and industry leaders.',
+      link: socialLinks.youtube || 'https://youtube.com/@unlocktejas',
       color: 'hover:border-red-600'
     },
     {
       name: 'Twitter / X Updates',
       icon: <Twitter className="w-8 h-8 text-blue-400" />,
-      description: 'Follow us for quick announcements, thought leadership, and live event coverage.',
-      link: '#',
+      description: 'Follow us for announcements, institutional updates, and live event coverage.',
+      link: socialLinks.twitter || 'https://twitter.com/unlocktejas',
       color: 'hover:border-blue-400'
     }
   ];
 
   return (
     <div className="py-20 max-w-5xl mx-auto px-4">
-      <SectionHeader 
+      <SEO 
         title="Join Our Community" 
-        description="Become a part of the Tejas ecosystem even before you apply. Connect, learn, and grow with our vibrant network of future leaders." 
+        description="Connect with the Tejas Academy ecosystem across WhatsApp, LinkedIn, Instagram, and YouTube."
+        url="https://unlocktejas.com/join-us"
+      />
+      <SectionHeader 
+        title="Join Our Community of Excellence" 
+        description="Become part of the Tejas Academy community. Connect with ambitious scholars, faculty mentors, and leaders dedicated to human excellence and character building." 
       />
       
       <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -53,6 +71,8 @@ export const JoinUs = () => {
           <a 
             key={idx}
             href={comm.link}
+            target="_blank"
+            rel="noopener noreferrer"
             className={`block bg-white border border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${comm.color}`}
           >
             <div className="bg-gray-50 w-16 h-16 rounded-xl flex items-center justify-center mb-6">
@@ -67,14 +87,14 @@ export const JoinUs = () => {
       <div className="mt-20 bg-primary-900 text-white rounded-3xl p-10 md:p-14 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to take the next step?</h2>
         <p className="text-lg text-primary-100 max-w-2xl mx-auto mb-8">
-          If you have explored our communities and are ready to apply for our programs or the scholarship test, head over to the Admissions portal.
+          Explore our degree and certificate programmes and start your application journey today.
         </p>
-        <a 
-          href="/admissions" 
+        <Link 
+          to="/admissions" 
           className="inline-block bg-accent-500 hover:bg-accent-600 text-primary-900 font-bold px-8 py-4 rounded-full transition-colors"
         >
           Go to Admissions
-        </a>
+        </Link>
       </div>
     </div>
   );

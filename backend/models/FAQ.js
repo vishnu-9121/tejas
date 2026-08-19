@@ -14,8 +14,7 @@ const faqSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['general', 'admissions', 'programs', 'financial_aid', 'technical', 'campus_life'],
-      default: 'general',
+      default: 'General Information',
       index: true
     },
     order: {

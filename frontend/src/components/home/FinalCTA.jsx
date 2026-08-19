@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "../ui/Button";
 import { NewsletterForm } from "../forms/NewsletterForm";
@@ -13,9 +14,9 @@ export function FinalCTA() {
   });
 
   const cta = cmsData?.data?.data?.footerCta || {
-    title: 'Begin Your Journey of Excellence',
-    subtitle: 'Apply to our upcoming batch and join a community of highly ambitious leaders, innovators, and entrepreneurs.',
-    buttonText: 'Apply for Admissions',
+    title: 'Ignite Your Spark of Brilliance',
+    subtitle: 'Join a community dedicated to character, competence, and responsible leadership. Applications for Academic Batch 2026 are now open.',
+    buttonText: 'Apply for Admission',
     buttonLink: '/admissions'
   };
   return (
@@ -32,7 +33,8 @@ export function FinalCTA() {
           <Button
             variant="gold"
             size="lg"
-            onClick={() => window.location.href = cta.buttonLink}
+            as={Link}
+            to={cta.buttonLink || '/admissions'}
             rightIcon={<ArrowRight />}
             className="font-semibold shadow-md"
           >
@@ -41,10 +43,11 @@ export function FinalCTA() {
           <Button
             variant="secondary"
             size="lg"
-            onClick={() => window.location.href = "/contact"}
+            as={Link}
+            to="/contact"
             className="font-semibold"
           >
-            Talk to an Advisor
+            Connect with Academic Advisors
           </Button>
         </div>
       </div>
@@ -56,7 +59,7 @@ export function FinalCTA() {
             Subscribe to Tejas Insights
           </h3>
           <p className="text-sm text-primary-100/70 leading-relaxed">
-            Receive monthly perspectives on leadership, career ready skills, and entrepreneurship research directly in your inbox.
+            Receive curated perspectives on human excellence, deep-tech innovation, ethical leadership, and applied research.
           </p>
         </div>
         <div className="w-full max-w-[480px]">

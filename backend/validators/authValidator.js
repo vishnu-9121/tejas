@@ -13,11 +13,16 @@ export const validateResult = (req, res, next) => {
 
 export const registerValidator = [
   body('name')
-    .trim()
-    .notEmpty()
-    .withMessage('Name is required')
-    .isLength({ min: 2, max: 100 })
-    .withMessage('Name must be between 2 and 100 characters'),
+    .custom((val, { req }) => {
+      const nameVal = val || req.body.fullName;
+      if (!nameVal || typeof nameVal !== 'string' || nameVal.trim().length < 2) {
+        throw new Error('Name is required (at least 2 characters)');
+      }
+      if (!req.body.name && req.body.fullName) {
+        req.body.name = req.body.fullName;
+      }
+      return true;
+    }),
   body('email')
     .trim()
     .notEmpty()

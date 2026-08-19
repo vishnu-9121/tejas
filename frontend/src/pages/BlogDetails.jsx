@@ -4,6 +4,7 @@ import { Calendar, User, ArrowLeft, Tag, Share2 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { useQuery } from '@tanstack/react-query';
 import { blogService } from '@/services/blogService';
+import { SEO } from '@/components/ui/SEO';
 
 const DUMMY_BLOGS = [
   { _id: "1", title: "The Future of AI in Education", content: "Artificial intelligence is reshaping the learning landscape by providing personalized learning experiences. In this article, we explore how machine learning models can predict student performance and adapt curriculums in real time.\n\nFurthermore, AI-driven tools are empowering educators to automate administrative tasks, allowing them to focus more on mentoring and guiding students. The future of education is not just about technology; it's about leveraging technology to make education more human-centric.", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200", slug: "future-of-ai", author: { firstName: "Dr.", lastName: "Smith" }, publishedAt: new Date().toISOString(), readTime: 5, category: "Technology", tags: ["AI", "EdTech", "Future"] },
@@ -37,15 +38,61 @@ export const BlogDetails = () => {
     return (
       <div className="py-24 text-center">
         <h2 className="text-2xl font-bold mb-4">Article Not Found</h2>
-        <Link to="/blog" className="text-primary-600 hover:underline">Back to Insights</Link>
+        <Link to="/insights" className="text-primary-600 hover:underline">Back to Insights</Link>
       </div>
     );
   }
 
+  const authorName = blog.author?.firstName ? `${blog.author.firstName} ${blog.author.lastName || ''}`.trim() : (blog.author?.name || 'Tejas Academic Faculty');
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "headline": blog.title,
+        "description": blog.excerpt || blog.seo?.metaDescription || blog.title,
+        "image": blog.coverImage || blog.image || 'https://unlocktejas.com/logo.png',
+        "datePublished": blog.publishedAt || new Date().toISOString(),
+        "dateModified": blog.updatedAt || blog.publishedAt || new Date().toISOString(),
+        "author": {
+          "@type": "Person",
+          "name": authorName
+        },
+        "publisher": {
+          "@type": "EducationalOrganization",
+          "name": "Tejas Academy of Excellence",
+          "url": "https://unlocktejas.com",
+          "logo": "https://unlocktejas.com/logo.png"
+        },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": `https://unlocktejas.com/insights/${slug}`
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://unlocktejas.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Tejas Insights", "item": "https://unlocktejas.com/insights" },
+          { "@type": "ListItem", "position": 3, "name": blog.title, "item": `https://unlocktejas.com/insights/${slug}` }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="py-16 md:py-24 bg-white min-h-screen">
+      <SEO 
+        title={blog.seo?.metaTitle || `${blog.title} | Tejas Insights`} 
+        description={blog.excerpt || blog.seo?.metaDescription || blog.title}
+        image={blog.coverImage || blog.image || 'https://unlocktejas.com/logo.png'}
+        canonical={`https://unlocktejas.com/insights/${slug}`}
+        type="article"
+        schema={articleSchema}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <button onClick={() => navigate('/blog')} className="flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-8">
+        <button onClick={() => navigate('/insights')} className="flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-8 cursor-pointer">
           <ArrowLeft size={16} className="mr-2" /> Back to all insights
         </button>
 
@@ -69,13 +116,26 @@ export const BlogDetails = () => {
 
         {blog.image && (
           <div className="w-full h-64 md:h-[400px] rounded-2xl overflow-hidden mb-12">
-            <img src={blog.image} alt={blog.title} className="w-full h-full object-cover" />
+            <img 
+              src={blog.image.includes('?') ? blog.image : `${blog.image}?auto=format&w=1200&q=80`} 
+              alt={`${blog.title} - Tejas Insights Editorial Banner`} 
+              width="1200"
+              height="400"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-cover" 
+            />
           </div>
         )}
 
         <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed font-inter">
           {/* If HTML was stored, use dangerouslySetInnerHTML, otherwise render simple text */}
-          <div dangerouslySetInnerHTML={{ __html: blog.content.replace(/\n/g, '<br />') }} />
+          {typeof blog.content === 'string' ? (
+            <div dangerouslySetInnerHTML={{ __html: blog.content.replace(/\n/g, '<br />') }} />
+          ) : (
+            <p>{blog.excerpt || 'Content is being prepared.'}</p>
+          )}
         </div>
 
         <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">

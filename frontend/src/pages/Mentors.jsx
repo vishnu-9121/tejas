@@ -45,11 +45,11 @@ export const Mentors = () => {
   const mentorList = mentorsData && mentorsData.length > 0 ? mentorsData : fallbackMentors;
 
   return (
-    <div className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 select-none">
+    <div className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <SEO 
         title="Faculty & Industry Mentors" 
         description="Learn directly from veteran researchers, tech directors, and corporate leaders guiding your academic trajectory." 
-        canonical="https://unlocktejas.com/mentors"
+        url="https://unlocktejas.com/mentors"
       />
       <SectionHeader 
         title="Faculty & Industry Mentors" 

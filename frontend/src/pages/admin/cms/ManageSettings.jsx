@@ -21,12 +21,14 @@ export default function ManageSettings() {
     defaultValues: {
       contactEmail: 'support@unlocktejas.com',
       contactPhone: '+91 83310 51327',
-      physicalAddress: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101',
+      physicalAddress: 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101',
       socialLinks: {
         linkedin: '',
         twitter: '',
         instagram: '',
-        youtube: ''
+        youtube: '',
+        facebook: '',
+        whatsapp: ''
       },
       branding: {
         logoUrl: '',
@@ -42,10 +44,14 @@ export default function ManageSettings() {
   }, [cmsData, reset]);
 
   const mutation = useMutation({
-    mutationFn: (data) => cmsService.updateCMSData('site_settings', data),
+    mutationFn: async (data) => {
+      await cmsService.updateCMSData('site_settings', data);
+      return await cmsService.publishCmsData('site_settings', 'Updated site settings & social links');
+    },
     onSuccess: () => {
-      toast.success('Website settings saved successfully');
+      toast.success('Website settings & social links saved and published live!');
       queryClient.invalidateQueries(['cms', 'site_settings']);
+      queryClient.invalidateQueries(['cms', 'footer']);
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || 'Failed to save settings');
@@ -152,6 +158,14 @@ export default function ManageSettings() {
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">YouTube Channel URL</label>
               <Input type="url" {...register('socialLinks.youtube')} placeholder="https://youtube.com/..." />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Facebook Page URL</label>
+              <Input type="url" {...register('socialLinks.facebook')} placeholder="https://facebook.com/..." />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">WhatsApp Community / Chat Link</label>
+              <Input type="url" {...register('socialLinks.whatsapp')} placeholder="https://wa.me/918331051327?text=..." />
             </div>
           </div>
         </div>

@@ -29,9 +29,12 @@ export const ProgramCard = React.memo(({
       {/* Poster Image Container */}
       <div className="relative h-52 overflow-hidden bg-gray-100">
         <img 
-          src={displayImage} 
-          alt={title} 
+          src={displayImage.includes('?') ? displayImage : `${displayImage}?auto=format&w=800&q=80`} 
+          alt={`${title} - Tejas Academy Degree Program`} 
+          width="400"
+          height="208"
           loading="lazy" 
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

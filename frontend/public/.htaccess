@@ -1,5 +1,7 @@
-# cPanel Single Page Application (SPA) Apache Rewrite Rules
-# Tejas Academy React Frontend
+# ------------------------------------------------------------------------------
+# cPanel Single Page Application (SPA) Apache Configuration
+# Tejas Academy React Frontend (https://unlocktejas.com)
+# ------------------------------------------------------------------------------
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -7,6 +9,19 @@
 
   # Allow direct access to backend API requests
   RewriteRule ^api/ - [L]
+
+  # Serve pre-compressed Brotli files if supported by client
+  RewriteCond %{HTTP:Accept-Encoding} br
+  RewriteCond %{REQUEST_FILENAME}\.br -f
+  RewriteRule ^(.*)$ $1\.br [L]
+  <FilesMatch "\.js\.br$">
+    ForceType application/javascript
+    Header set Content-Encoding br
+  </FilesMatch>
+  <FilesMatch "\.css\.br$">
+    ForceType text/css
+    Header set Content-Encoding br
+  </FilesMatch>
 
   # Direct access to actual existing static files & folders
   RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -17,7 +32,81 @@
   RewriteRule ^ index.html [L]
 </IfModule>
 
-# Browser Caching & Gzip Compression
+# ------------------------------------------------------------------------------
+# Security Headers
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# Browser Caching Rules
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # 1. Never cache HTML files (ensures instant SPA deployment updates)
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+
+  # 2. Immutable 1-Year Cache for Vite Hashed Assets
+  <FilesMatch "\.(js|mjs|css|woff|woff2|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp|avif|ico)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+
+  # 3. Short Cache for robots.txt, sitemap.xml, manifest
+  <FilesMatch "\.(xml|txt|json)$">
+    Header set Cache-Control "max-age=86400, public, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType application/x-javascript "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType application/xml "access plus 1 day"
+  ExpiresByType text/xml "access plus 1 day"
+  ExpiresByType application/json "access plus 1 day"
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# Compression (Gzip / DEFLATE)
+# ------------------------------------------------------------------------------
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+  AddOutputFilterByType DEFLATE text/html \
+                                text/plain \
+                                text/xml \
+                                text/css \
+                                text/javascript \
+                                application/javascript \
+                                application/x-javascript \
+                                application/json \
+                                application/xml \
+                                application/xhtml+xml \
+                                application/rss+xml \
+                                application/ld+json \
+                                application/manifest+json \
+                                image/svg+xml \
+                                image/x-icon \
+                                font/ttf \
+                                font/otf \
+                                font/woff \
+                                font/woff2
 </IfModule>

@@ -22,7 +22,7 @@ export default function ManageQuickConnect() {
       whatsappNumber: '918331051327',
       whatsappMessage: 'Hello, I would like to know more about Tejas Academy.',
       contactUrl: '/contact',
-      brochureUrl: '/brochure.pdf',
+      brochureUrl: '/programs',
     }
   });
 

@@ -9,6 +9,7 @@ import { Input } from "../../components/ui/Input";
 import api from "../../utils/api";
 import { Mail, Lock, ShieldCheck, KeyRound, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SEO } from "@/components/ui/SEO";
 
 const emailSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -17,15 +18,17 @@ const emailSchema = z.object({
 const resetSchema = z.object({
   otp: z.string().min(6, { message: "OTP code must be 6 digits." }),
   password: z.string().min(6, { message: "New password must be at least 6 characters." }),
+  confirmPassword: z.string().min(6, { message: "Please confirm your password." })
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"]
 });
 
 export const ForgotPassword = () => {
   const [step, setStep] = useState(1); // 1 = Request OTP, 2 = Verify OTP & Reset
   const [isLoading, setIsLoading] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
-  const [serverOtp, setServerOtp] = useState(null);
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const emailForm = useForm({
@@ -41,12 +44,8 @@ export const ForgotPassword = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.post("/auth/forgot-password", { email: data.email });
+      await api.post("/auth/forgot-password", { email: data.email.trim().toLowerCase() });
       setSubmittedEmail(data.email);
-      const receivedOtp = response.data?.data?.otp;
-      if (receivedOtp) {
-        setServerOtp(receivedOtp);
-      }
       setIsLoading(false);
       setStep(2);
       toast.success("Password reset OTP sent to your email!");
@@ -64,7 +63,7 @@ export const ForgotPassword = () => {
     setError(null);
     try {
       await api.post("/auth/reset-password", {
-        otp: data.otp,
+        otp: data.otp.trim(),
         password: data.password,
       });
       setIsLoading(false);
@@ -117,19 +116,6 @@ export const ForgotPassword = () => {
             )}
           </AnimatePresence>
 
-          {/* Development OTP Banner */}
-          {serverOtp && step === 2 && (
-            <div className="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl text-xs flex items-center justify-between shadow-sm">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Verification OTP Code:</span>
-              </div>
-              <span className="font-mono font-bold text-sm bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-lg border border-emerald-300">
-                {serverOtp}
-              </span>
-            </div>
-          )}
-
           {step === 1 ? (
             /* STEP 1: SEND RESET EMAIL FORM */
             <form onSubmit={emailForm.handleSubmit(handleSendResetEmail)} className="space-y-6">
@@ -164,11 +150,21 @@ export const ForgotPassword = () => {
               <Input
                 label="New Password"
                 id="password"
-                type={showPassword ? "text" : "password"}
+                type="password"
                 placeholder="••••••••"
                 leftIcon={<Lock className="w-4 h-4" />}
                 {...resetForm.register("password")}
                 error={resetForm.formState.errors.password?.message}
+              />
+
+              <Input
+                label="Confirm New Password"
+                id="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                leftIcon={<Lock className="w-4 h-4" />}
+                {...resetForm.register("confirmPassword")}
+                error={resetForm.formState.errors.confirmPassword?.message}
               />
 
               <Button type="submit" variant="primary" className="w-full h-11 text-sm font-bold shadow-lg shadow-primary-600/25 rounded-2xl flex items-center justify-center gap-2" isLoading={isLoading}>

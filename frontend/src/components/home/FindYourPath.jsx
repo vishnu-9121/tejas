@@ -40,9 +40,9 @@ export function FindYourPath() {
   };
 
   const getRecommendation = () => {
-    if (answers[1] === 'tech') return { title: 'B.Tech in AI & Data Science', link: '/programs/btech-ai' };
-    if (answers[1] === 'biz') return { title: 'Global MBA Program', link: '/programs/mba' };
-    if (answers[1] === 'ent') return { title: 'BBA in Entrepreneurship', link: '/programs/bba-ent' };
+    if (answers[1] === 'tech') return { title: 'Autonomous Systems & AI', link: '/programs' };
+    if (answers[1] === 'biz') return { title: 'Financial Management & Wealth Creation', link: '/programs' };
+    if (answers[1] === 'ent') return { title: 'Executive Leadership & Innovation', link: '/programs' };
     return { title: 'Explore All Programs', link: '/programs' };
   };
 

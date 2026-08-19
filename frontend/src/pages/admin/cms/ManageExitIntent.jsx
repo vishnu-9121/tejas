@@ -21,7 +21,7 @@ export default function ManageExitIntent() {
       isActive: true,
       headline: 'Wait! Before you go...',
       subtext: "Don't leave without our exclusive 2026 Future of Tech & Leadership Report.",
-      description: 'Discover the skills top employers are looking for this year and how our programs guarantee your placement in leading MNCs.',
+      description: 'Discover practical capabilities, industry curricula, and future-ready frameworks to accelerate your career.',
       buttonText: 'Download Free Report',
     }
   });

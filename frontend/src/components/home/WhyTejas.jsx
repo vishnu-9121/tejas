@@ -6,7 +6,7 @@ import { sanityService } from '@/services/sanityService';
 
 const fallbackHighlights = [
   {
-    title: "Practical Learning",
+    title: "Experiential Implementation",
     description: "Learn by implementing. Acquire skills via live case challenges, simulations, and startup clinics.",
   },
   {
@@ -14,11 +14,11 @@ const fallbackHighlights = [
     description: "Get weekly coaching slots from leaders working at premium global corporations.",
   },
   {
-    title: "Career Milestones Track",
-    description: "Continuous placements readiness validation to secure placement transitions smoothly.",
+    title: "Continuous Mastery & Reflection",
+    description: "Develop real-world capability through practice, mentorship, reflection, and continuous mastery.",
   },
   {
-    title: "Ethics & Integrity Core",
+    title: "Human Excellence & Ethics",
     description: "Ground yourself in human excellence values that define respected long-term leaders.",
   },
 ];
@@ -51,17 +51,26 @@ export function WhyTejas() {
           viewport={{ once: true }}
           className="text-xs font-semibold uppercase tracking-widest text-amber-700 mb-2 select-none"
         >
-          Why Tejas Academy of Excellence
+          Institutional Paradigm
         </motion.span>
         <motion.h2 
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ delay: 0.1 }}
-          className="text-3xl md:text-4xl font-semibold font-serif leading-tight text-neutral-900 mb-16 text-center"
+          className="text-3xl md:text-4xl font-semibold font-serif leading-tight text-neutral-900 mb-4 text-center"
         >
           Redefining Professional Education
         </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15 }}
+          className="text-base md:text-lg text-neutral-600 text-center max-w-2xl mb-16 leading-relaxed"
+        >
+          Learn by implementing. Acquire skills via live case challenges, simulations, and startup clinics.
+        </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 w-full">
           {highlights.map((item, idx) => (

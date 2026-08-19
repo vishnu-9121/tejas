@@ -60,8 +60,9 @@ export const NotificationService = {
       });
 
       // Stream it to the Admin Command Center instantly
+      const io = getIO();
       if (io) {
-        io.to('admin_room').emit('NEW_ACTIVITY_LOG', log);
+        io.to('admin_channel').to('admin_room').emit('NEW_ACTIVITY_LOG', log);
       }
     } catch (error) {
       console.error('[NotificationService] Failed to record activity:', error);

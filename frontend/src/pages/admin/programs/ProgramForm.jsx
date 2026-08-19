@@ -78,7 +78,7 @@ export default function ProgramForm() {
         { semester: 'Semester 1', courses: 'Applied Mathematics, Python Programming, Digital Systems' },
         { semester: 'Semester 2', courses: 'Data Structures & Algorithms, Discrete Math, Database Systems' }
       ],
-      highlights: '100% Placement Assistance\nIndustry Mentorship from Fortune 500 Leaders\nState-of-the-Art AI Research Labs',
+      highlights: 'Career Readiness & Industry Mentorship\nExecutive Guidance from Global Leaders\nState-of-the-Art Applied Research Labs',
       learningOutcomes: 'Master full-stack and modern software engineering\nBuild production-ready machine learning models\nGain real-world internship and capstone project experience',
       careerOpportunities: 'AI Engineer\nSoftware Architect\nData Scientist\nProduct Specialist',
       faqs: [
@@ -779,7 +779,7 @@ export default function ProgramForm() {
                     <Textarea 
                       {...register('highlights')} 
                       rows={5} 
-                      placeholder="100% Placement Support&#10;Industry-Recognized Global Certification&#10;Hands-On Live Capstone Projects" 
+                      placeholder="Career Readiness & Industry Mentorship&#10;Industry-Recognized Global Certification&#10;Hands-On Live Capstone Projects" 
                     />
                   </div>
 

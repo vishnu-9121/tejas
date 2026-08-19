@@ -5,11 +5,30 @@ import { useQuery } from '@tanstack/react-query';
 import { cmsService } from '@/services/cmsService';
 
 const fallbackFaqs = [
-  { question: "What makes Tejas Academy of Excellence different from other institutions?", answer: "We focus entirely on human excellence, real-world skills, and leadership, avoiding traditional exam-based rote learning methods." },
-  { question: "Who can apply for the programs?", answer: "Our programs are designed for ambitious students, working professionals, and entrepreneurs seeking to accelerate their real-world capabilities." },
-  { question: "What is the admission selection process?", answer: "Admission is selective, involving an online application screening followed by a personal interview to evaluate motivations and aspirations." },
-  { question: "Are scholarships available for students?", answer: "Yes, we offer merit-based and need-based scholarships covering up to 50% of the program enrollment fees." },
-  { question: "Are these programs available online or hybrid?", answer: "We offer hybrid models, combining structural online modules with immersive weekend campus sessions to support working individuals." },
+  {
+    question: "How does the Tejas academic model cultivate both character and competence?",
+    answer: "At Tejas Academy of Excellence, education is built around five dimensions: Intellectual, Character, Emotional, Professional, and Societal Excellence. Beyond technical proficiency, our pedagogy develops critical thinking, emotional fortitude, ethical leadership, and long-term professional capability, preparing graduates to create enduring value."
+  },
+  {
+    question: "What is the Tejas learning methodology and how is practical mastery achieved?",
+    answer: "We employ the proven cycle: Knowledge → Practice → Feedback → Iteration → Mastery. Learners engage in active, reflective, and purposefully practical learning through live case challenges, startup clinics, and prototype sprints guided by continuous 1-on-1 executive mentorship."
+  },
+  {
+    question: "How does Tejas integrate Artificial Intelligence into its programs?",
+    answer: "Tejas champions a human-centered AI philosophy. We harness AI to accelerate inquiry, simulation, and rapid prototyping, while firmly grounding learners in critical thinking, ethical governance, creativity, and human judgment."
+  },
+  {
+    question: "What kind of mentorship and coaching support do students receive?",
+    answer: "Students receive weekly one-on-one coaching from senior leaders and faculty who actively shape thinking, model discipline, provide strategic guidance, and strengthen character alongside professional capability."
+  },
+  {
+    question: "What defines the Tejas graduate identity?",
+    answer: "A Tejas graduate is a strategic thinker, data-driven builder, ethical decision-maker, and resilient leader possessing analytical depth, emotional balance, financial literacy, and the courage to serve societal progress."
+  },
+  {
+    question: "What is the admissions process for upcoming academic cohorts?",
+    answer: "Admissions are merit-based and evaluate both intellectual capability and leadership potential. Prospective scholars submit an application, participate in an academic and leadership assessment, and complete an interview with our admissions panel."
+  }
 ];
 
 export function FAQSection() {
@@ -21,7 +40,7 @@ export function FAQSection() {
 
   const categories = faqData?.data?.data?.categories || [];
   
-  // Extract all FAQs from all categories and take top 5
+  // Extract all FAQs from all categories
   let allFaqs = [];
   categories.forEach(cat => {
     if (cat.faqs && cat.faqs.length > 0) {
@@ -29,9 +48,30 @@ export function FAQSection() {
     }
   });
 
-  const displayFaqs = allFaqs.length > 0 ? allFaqs.slice(0, 5) : fallbackFaqs;
+  const displayFaqs = allFaqs.length > 0 ? allFaqs : fallbackFaqs;
+
+  // Generate valid SEO FAQ Schema Markup
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": displayFaqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
   return (
-    <section className="bg-neutral-0 py-16 md:py-24 border-b border-neutral-100">
+    <section className="bg-neutral-0 py-16 md:py-24 border-b border-neutral-100" id="homepage-faqs">
+      {/* Dynamic SEO FAQ Schema Markup */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-20 flex flex-col items-center">
         <div className="h-0.5 w-12 bg-accent-500 mb-4" />
         <span className="text-xs font-semibold uppercase tracking-widest text-accent-700 mb-2 select-none">

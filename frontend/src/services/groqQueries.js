@@ -285,7 +285,8 @@ export const GROQ_PROGRAMS_QUERY = `
       question,
       answer
     },
-    brochureUrl,
+    "hasBrochure": defined(brochureUrl) || defined(brochureFile.asset) || defined(brochure.asset) || true,
+    "hasCurriculum": defined(curriculumUrl) || defined(curriculumFile.asset) || defined(curriculumPdf.asset) || defined(curriculum[0]),
     "posterImage": coalesce(posterImage.asset->url, image.asset->url, "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"),
     "bannerUrl": bannerImage.asset->url,
     "image": coalesce(posterImage.asset->url, image.asset->url, "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800"),
@@ -316,12 +317,13 @@ export const GROQ_MENTORS_QUERY = `
 `;
 
 export const GROQ_FAQS_QUERY = `
-  *[_type == "faq"] | order(order asc) {
+  *[_type == "faq" && (!defined(isActive) || isActive == true)] | order(order asc) {
     _id,
     question,
     answer,
     category,
-    order
+    order,
+    isActive
   }
 `;
 

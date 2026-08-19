@@ -2,6 +2,7 @@ import React from 'react';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useQuery } from '@tanstack/react-query';
 import { cmsService } from '@/services/cmsService';
+import { SEO } from '@/components/ui/SEO';
 
 export const Privacy = () => {
   const { data: cmsData, isLoading } = useQuery({
@@ -20,6 +21,11 @@ export const Privacy = () => {
 
   return (
     <div className="py-20 max-w-4xl mx-auto px-4">
+      <SEO 
+        title="Privacy Policy" 
+        description="Official Privacy Policy and student data governance principles of Tejas Academy of Excellence."
+        url="https://unlocktejas.com/privacy"
+      />
       <SectionHeader title="Privacy Policy" align="left" />
       {isLoading ? (
         <div className="flex justify-start py-10 w-full">

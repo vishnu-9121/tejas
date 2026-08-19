@@ -56,6 +56,9 @@ export const program = {
       options: { hotspot: true }
     },
     { name: 'brochureUrl', title: 'Brochure PDF / Download URL', type: 'url' },
+    { name: 'brochureFile', title: 'Brochure PDF File Upload', type: 'file', options: { accept: '.pdf' } },
+    { name: 'curriculumUrl', title: 'Curriculum PDF / Download URL', type: 'url' },
+    { name: 'curriculumFile', title: 'Curriculum PDF File Upload', type: 'file', options: { accept: '.pdf' } },
     {
       name: 'highlights',
       title: 'Key Program Highlights',

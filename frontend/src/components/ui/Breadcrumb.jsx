@@ -5,6 +5,12 @@ import { cn } from '@/utils/cn';
 
 export const Breadcrumb = ({ className }) => {
   const location = useLocation();
+  
+  const hiddenRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/dashboard', '/faculty'];
+  if (hiddenRoutes.some(route => location.pathname === route || location.pathname.startsWith('/reset-password/'))) {
+    return null;
+  }
+
   const pathnames = location.pathname.split('/').filter(x => x);
 
   if (pathnames.length === 0) return null;

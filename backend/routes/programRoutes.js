@@ -7,7 +7,8 @@ import {
   updateProgram,
   deleteProgram,
   toggleArchiveProgram,
-  toggleFeatureProgram
+  toggleFeatureProgram,
+  trackProgramDownload
 } from '../controllers/programController.js';
 import { protect, authorize } from '../middlewares/auth.js';
 import { cacheMiddleware, clearCache } from '../middlewares/cache.js';
@@ -16,11 +17,22 @@ const router = express.Router();
 
 // Public routes
 router.get('/', cacheMiddleware(300), getPrograms);
+
+// Strictly Protected Lead Capture & Document Stream routes
+router.get('/:id/download-brochure', protect, trackProgramDownload);
+router.get('/:id/download-curriculum', protect, trackProgramDownload);
+router.get('/:id/brochure', protect, trackProgramDownload);
+router.get('/:id/curriculum', protect, trackProgramDownload);
+router.post('/download-brochure', protect, trackProgramDownload);
+router.post('/:id/download-brochure', protect, trackProgramDownload);
+
 router.route('/id/:id')
   .get(protect, authorize('super_admin', 'admin', 'operations_manager'), getProgramById);
 
+router.get('/slug/:slug', cacheMiddleware(300), getProgramBySlug);
 router.route('/:slug')
   .get(cacheMiddleware(300), getProgramBySlug);
+
 
 // Helper to clear program cache
 const clearProgramCache = (req, res, next) => {

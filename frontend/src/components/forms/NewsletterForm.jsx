@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import api from '@/utils/api';
+import { newsletterService } from '@/services/newsletterService';
 
 const schema = z.object({
   email: z.string().email('Invalid email address')
@@ -18,7 +18,7 @@ export const NewsletterForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      await api.post('/newsletter', data);
+      await newsletterService.subscribe(data.email);
       toast.success('Subscribed successfully!');
       reset();
     } catch (err) {

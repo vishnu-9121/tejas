@@ -1,5 +1,11 @@
+import fs from 'fs';
+import path from 'path';
+import mongoose from 'mongoose';
 import slugify from 'slugify';
 import { Program } from '../models/Program.js';
+import { Lead } from '../models/Lead.js';
+import { Download } from '../models/Download.js';
+import { AnalyticsEvent } from '../models/AnalyticsEvent.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { eventBus } from '../utils/eventBus.js';
 
@@ -150,10 +156,20 @@ export const getPrograms = async (req, res, next) => {
 
     const total = await Program.countDocuments(match);
 
+    const sanitizedPrograms = programs.map(prog => {
+      const p = { ...prog };
+      p.hasBrochure = Boolean(p.brochureUrl || p.brochure);
+      p.hasCurriculum = Boolean(p.curriculumUrl || p.brochureUrl || (Array.isArray(p.curriculum) && p.curriculum.length > 0));
+      delete p.brochureUrl;
+      delete p.brochure;
+      delete p.curriculumUrl;
+      return p;
+    });
+
     res.status(200).json({
       success: true,
       data: {
-        programs,
+        programs: sanitizedPrograms,
         pagination: {
           total,
           page,
@@ -194,9 +210,16 @@ export const getProgramBySlug = async (req, res, next) => {
       return next(new AppError('Program not found', 404));
     }
 
+    const sanitizedProgram = { ...program };
+    sanitizedProgram.hasBrochure = Boolean(sanitizedProgram.brochureUrl || sanitizedProgram.brochure);
+    sanitizedProgram.hasCurriculum = Boolean(sanitizedProgram.curriculumUrl || sanitizedProgram.brochureUrl || (Array.isArray(sanitizedProgram.curriculum) && sanitizedProgram.curriculum.length > 0));
+    delete sanitizedProgram.brochureUrl;
+    delete sanitizedProgram.brochure;
+    delete sanitizedProgram.curriculumUrl;
+
     res.status(200).json({
       success: true,
-      data: program,
+      data: sanitizedProgram,
     });
   } catch (error) {
     next(error);
@@ -347,3 +370,144 @@ export const deleteProgram = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Track and retrieve authenticated program brochure/curriculum download or stream
+// @route   GET /api/v1/programs/:id/download-brochure OR POST /api/v1/programs/download-brochure
+// @access  Private (Authenticated Users Only)
+export const trackProgramDownload = async (req, res, next) => {
+  try {
+    const programIdOrSlug = req.params?.id || req.params?.slug || req.body?.programId || req.body?.slug;
+    const downloadType = (req.path && req.path.includes('curriculum')) || req.body?.downloadType === 'curriculum' || req.query?.type === 'curriculum' 
+      ? 'curriculum' 
+      : 'brochure';
+
+    let program = null;
+    if (programIdOrSlug && programIdOrSlug !== 'download-brochure' && programIdOrSlug !== 'download-curriculum') {
+      if (mongoose.Types.ObjectId.isValid(programIdOrSlug)) {
+        program = await Program.findById(programIdOrSlug);
+      }
+      if (!program) {
+        program = await Program.findOne({ slug: programIdOrSlug });
+      }
+    }
+    if (!program && req.body?.programTitle) {
+      program = await Program.findOne({ title: new RegExp(`^${req.body.programTitle}$`, 'i') });
+    }
+
+    const title = program?.title || req.body?.programTitle || 'Academic Program';
+    const rawFileUrl = downloadType === 'curriculum' 
+      ? (program?.curriculumUrl || program?.brochureUrl || program?.brochure)
+      : (program?.brochureUrl || program?.brochure);
+
+    // Capture Lead in MongoDB for the authenticated user
+    if (req.user) {
+      try {
+        await Lead.findOneAndUpdate(
+          { email: req.user.email, program: title },
+          {
+            name: req.user.name,
+            fullName: req.user.name,
+            email: req.user.email,
+            phone: req.user.phone || '',
+            program: title,
+            interestedProgram: title,
+            source: `Brochure Download (${downloadType})`,
+            status: 'new',
+            $push: {
+              timeline: {
+                action: 'Downloaded Brochure',
+                description: `Downloaded ${downloadType} for ${title}`,
+                timestamp: new Date()
+              }
+            }
+          },
+          { upsert: true, new: true }
+        );
+
+        // Record in Download collection
+        await Download.findOneAndUpdate(
+          { title: `${title} Brochure` },
+          {
+            title: `${title} Brochure`,
+            description: `Official brochure file for ${title}`,
+            fileUrl: rawFileUrl || '/api/v1/programs/default/brochure',
+            category: downloadType === 'curriculum' ? 'syllabus' : 'brochure',
+            $inc: { downloadCount: 1 }
+          },
+          { upsert: true, new: true }
+        );
+
+        // Track Analytics Event
+        await AnalyticsEvent.create({
+          event: 'download',
+          userId: req.user._id,
+          page: `/programs/${program?.slug || ''}`,
+          metadata: {
+            programTitle: title,
+            programId: program?._id,
+            downloadType,
+            email: req.user.email
+          }
+        });
+
+        // Emit real-time event for admin dashboard
+        eventBus.emit('BROCHURE_DOWNLOADED', {
+          user: { name: req.user.name, email: req.user.email, phone: req.user.phone },
+          program: title,
+          downloadType,
+          timestamp: new Date()
+        });
+      } catch (logErr) {
+        console.warn('[trackProgramDownload] Error logging lead/analytics:', logErr.message);
+      }
+    }
+
+    const safeFileName = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_${downloadType === 'curriculum' ? 'Curriculum' : 'Brochure'}.pdf`;
+    const defaultStoragePath = path.resolve('./storage/brochures/default_brochure.pdf');
+
+    // If request is a browser GET download request: Stream PDF binary with secure headers
+    if (req.method === 'GET') {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${safeFileName}"`);
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+
+      if (rawFileUrl && (rawFileUrl.startsWith('http://') || rawFileUrl.startsWith('https://'))) {
+        try {
+          const remoteRes = await fetch(rawFileUrl);
+          if (remoteRes.ok) {
+            const buffer = await remoteRes.arrayBuffer();
+            return res.send(Buffer.from(buffer));
+          }
+        } catch (fetchErr) {
+          console.warn('[trackProgramDownload] Remote fetch failed, using secured fallback:', fetchErr.message);
+        }
+      }
+
+      if (fs.existsSync(defaultStoragePath)) {
+        if (typeof res.download === 'function') {
+          return res.download(defaultStoragePath, safeFileName);
+        }
+        if (typeof res.sendFile === 'function') {
+          return res.sendFile(defaultStoragePath);
+        }
+        const fileData = fs.readFileSync(defaultStoragePath);
+        return res.send(fileData);
+      }
+    }
+
+    // Return authenticated download payload for frontend client
+    return res.status(200).json({
+      success: true,
+      isAvailable: true,
+      downloadUrl: `/api/v1/programs/${program?.slug || programIdOrSlug || 'default'}/download-${downloadType}`,
+      fileUrl: `/api/v1/programs/${program?.slug || programIdOrSlug || 'default'}/download-${downloadType}`,
+      programTitle: title,
+      fileName: safeFileName
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const streamProgramDocument = trackProgramDownload;
+

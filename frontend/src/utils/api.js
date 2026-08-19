@@ -31,6 +31,21 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Refresh Token Queue Handler
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 // Response Interceptor with Automatic Retry on Network Errors
 api.interceptors.response.use(
   (response) => response,
@@ -48,7 +63,19 @@ api.interceptors.response.use(
 
     // If 401 Unauthorized and not already retrying token refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const { data } = await axios.post(
@@ -57,12 +84,17 @@ api.interceptors.response.use(
           { withCredentials: true }
         );
 
-        useAuthStore.getState().setAccessToken(data.data.accessToken);
-        originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
+        const newToken = data.data.accessToken;
+        useAuthStore.getState().setAccessToken(newToken);
+        processQueue(null, newToken);
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
+        processQueue(refreshError, null);
         useAuthStore.getState().logout();
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

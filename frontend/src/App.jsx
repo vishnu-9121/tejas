@@ -41,10 +41,22 @@ const ForInstitutions = React.lazy(() => import('./pages/ForInstitutions').then(
 const Recognitions = React.lazy(() => import('./pages/Recognitions').then(module => ({ default: module.default || module.Recognitions })));
 const Contact = React.lazy(() => import('./pages/Contact').then(module => ({ default: module.default || module.Contact })));
 const Career = React.lazy(() => import('./pages/Career').then(module => ({ default: module.default || module.Career })));
-const Support = React.lazy(() => import('./pages/Support').then(module => ({ default: module.Support })));
+const Support = React.lazy(() => import('./pages/Support').then(module => ({ default: module.default || module.Support })));
 const Privacy = React.lazy(() => import('./pages/Privacy').then(module => ({ default: module.Privacy })));
 const Terms = React.lazy(() => import('./pages/Terms').then(module => ({ default: module.Terms })));
 const NotFound = React.lazy(() => import('./pages/NotFound').then(module => ({ default: module.NotFound })));
+
+// Lazy Loaded Topic Cluster SEO Pages
+const BusinessEntrepreneurship = React.lazy(() => import('./pages/topic-clusters/BusinessEntrepreneurship'));
+const LeadershipDevelopment = React.lazy(() => import('./pages/topic-clusters/LeadershipDevelopment'));
+const AILiteracy = React.lazy(() => import('./pages/topic-clusters/AILiteracy'));
+const FutureSkills = React.lazy(() => import('./pages/topic-clusters/FutureSkills'));
+const CareerReadiness = React.lazy(() => import('./pages/topic-clusters/CareerReadiness'));
+const EmployabilitySkills = React.lazy(() => import('./pages/topic-clusters/EmployabilitySkills'));
+const FinancialLiteracy = React.lazy(() => import('./pages/topic-clusters/FinancialLiteracy'));
+const HumanExcellence = React.lazy(() => import('./pages/topic-clusters/HumanExcellence'));
+const StudentDevelopment = React.lazy(() => import('./pages/topic-clusters/StudentDevelopment'));
+const ProfessionalDevelopment = React.lazy(() => import('./pages/topic-clusters/ProfessionalDevelopment'));
 
 const JoinUs = React.lazy(() => import('./pages/JoinUs').then(module => ({ default: module.JoinUs })));
 
@@ -79,6 +91,12 @@ const InsightForm = React.lazy(() => import('./pages/admin/blogs/BlogForm'));
 const ManageGallery = React.lazy(() => import('./pages/admin/ManageGallery'));
 const ManageHomepage = React.lazy(() => import('./pages/admin/cms/ManageHomepage'));
 const ManageAbout = React.lazy(() => import('./pages/admin/cms/ManageAbout'));
+const ManageForInstitutions = React.lazy(() => import('./pages/admin/cms/ManageForInstitutions'));
+const ManageRecognitions = React.lazy(() => import('./pages/admin/cms/ManageRecognitions'));
+const ManageFreePrograms = React.lazy(() => import('./pages/admin/cms/ManageFreePrograms'));
+const ManageVisionMission = React.lazy(() => import('./pages/admin/cms/ManageVisionMission'));
+const ManageResources = React.lazy(() => import('./pages/admin/cms/ManageResources'));
+const ManageContact = React.lazy(() => import('./pages/admin/cms/ManageContact'));
 const ManageSEO = React.lazy(() => import('./pages/admin/cms/ManageSEO'));
 const ManageSettings = React.lazy(() => import('./pages/admin/cms/ManageSettings'));
 const ManageNotifications = React.lazy(() => import('./pages/admin/cms/ManageNotifications'));
@@ -89,6 +107,7 @@ const ManageCareers = React.lazy(() => import('./pages/admin/cms/ManageCareers')
 const ManageLegal = React.lazy(() => import('./pages/admin/cms/ManageLegal'));
 const ManageExitIntent = React.lazy(() => import('./pages/admin/cms/ManageExitIntent'));
 const ManageSocialProof = React.lazy(() => import('./pages/admin/cms/ManageSocialProof'));
+const ManageSocialLinks = React.lazy(() => import('./pages/admin/cms/ManageSocialLinks'));
 const ManageQuickConnect = React.lazy(() => import('./pages/admin/cms/ManageQuickConnect'));
 const ManageTestimonials = React.lazy(() => import('./pages/admin/ManageTestimonials'));
 const ManageNewsletter = React.lazy(() => import('./pages/admin/ManageNewsletter'));
@@ -149,58 +168,110 @@ function App() {
         }
       >
         <Route index element={<DashboardHome />} />
+        <Route path="dashboard" element={<DashboardHome />} />
         
         {/* Analytics Routes */}
         <Route path="analytics" element={<AnalyticsDashboard />} />
         <Route path="analytics/faculty" element={<FacultyAnalytics />} />
         <Route path="analytics/management" element={<ManagementAnalytics />} />
         <Route path="audit-logs" element={<AuditLogConsole />} />
+        <Route path="history" element={<AuditLogConsole />} />
         
         {/* CMS Engine Routes */}
         <Route path="cms" element={<CMSLayout />}>
           <Route index element={<ManageCMSPages />} />
           <Route path="pages" element={<ManageCMSPages />} />
           <Route path="pages/:slug" element={<PageEditor />} />
+          <Route path="social-links" element={<ManageSocialLinks />} />
           <Route path="settings" element={<ManageSettings />} />
           <Route path="media" element={<ManageMediaLibrary />} />
           <Route path="history" element={<AuditLogConsole />} />
         </Route>
 
+        {/* Direct Route Aliases */}
+        <Route path="pages" element={<ManageCMSPages />} />
+        <Route path="pages/:slug" element={<PageEditor />} />
+        <Route path="media" element={<ManageMediaLibrary />} />
+        <Route path="settings" element={<ManageSettings />} />
+        <Route path="faq" element={<ManageFAQ />} />
+        <Route path="faqs" element={<ManageFAQ />} />
+        <Route path="seo" element={<ManageSEO />} />
+        <Route path="campus" element={<ManageCampus />} />
+        <Route path="careers" element={<ManageCareers />} />
+        <Route path="legal" element={<ManageLegal />} />
+        <Route path="notifications" element={<ManageNotifications />} />
+        <Route path="navigation" element={<ManageNavigation />} />
+        <Route path="exit-intent" element={<ManageExitIntent />} />
+        <Route path="social-proof" element={<ManageSocialProof />} />
+        <Route path="quick-connect" element={<ManageQuickConnect />} />
+
         <Route path="roles" element={<ManageRolesPermissions />} />
+        <Route path="permissions" element={<ManageRolesPermissions />} />
         <Route path="leads" element={<ManageLeadsCRM />} />
         <Route path="campaigns" element={<ManageEmailCampaigns />} />
+        <Route path="broadcasts" element={<ManageEmailCampaigns />} />
         <Route path="backups" element={<ManageBackups />} />
 
         <Route path="students" element={<ManageStudents />} />
         <Route path="students/:id" element={<StudentProfile />} />
+        <Route path="users" element={<ManageStudents />} />
+        <Route path="users/:id" element={<StudentProfile />} />
+
         <Route path="admissions" element={<ManageAdmissions />} />
         <Route path="admissions/:id" element={<ApplicationDetails />} />
+        <Route path="applications" element={<ManageAdmissions />} />
+        <Route path="applications/:id" element={<ApplicationDetails />} />
+
         <Route path="inquiries" element={<ManageInquiries />} />
+        <Route path="inquiry" element={<ManageInquiries />} />
+
         <Route path="programs" element={<ManagePrograms />} />
         <Route path="programs/new" element={<ProgramForm />} />
         <Route path="programs/:id/edit" element={<ProgramForm />} />
+
         <Route path="mentors" element={<ManageMentors />} />
         <Route path="mentors/new" element={<MentorForm />} />
         <Route path="mentors/:id/edit" element={<MentorForm />} />
+
         <Route path="courses" element={<ManageCourses />} />
         <Route path="courses/new" element={<CourseForm />} />
         <Route path="courses/:id/edit" element={<CourseForm />} />
+
         <Route path="events" element={<ManageEvents />} />
         <Route path="events/new" element={<EventForm />} />
         <Route path="events/:id/edit" element={<EventForm />} />
+
         <Route path="workshops" element={<ManageWorkshops />} />
         <Route path="workshops/new" element={<WorkshopForm />} />
         <Route path="workshops/:id/edit" element={<WorkshopForm />} />
+
         <Route path="insights" element={<ManageInsights />} />
         <Route path="insights/new" element={<InsightForm />} />
         <Route path="insights/:id/edit" element={<InsightForm />} />
+
+        <Route path="blogs" element={<ManageInsights />} />
+        <Route path="blogs/new" element={<InsightForm />} />
+        <Route path="blogs/:id/edit" element={<InsightForm />} />
+
         <Route path="gallery" element={<ManageGallery />} />
         <Route path="testimonials" element={<ManageTestimonials />} />
         <Route path="newsletter" element={<ManageNewsletter />} />
         
-        {/* CMS Routes */}
+        {/* CMS Sub-routes */}
         <Route path="cms/homepage" element={<ManageHomepage />} />
         <Route path="cms/about" element={<ManageAbout />} />
+        <Route path="cms/for-institutions" element={<ManageForInstitutions />} />
+        <Route path="cms/pages/for-institutions" element={<ManageForInstitutions />} />
+        <Route path="cms/recognitions" element={<ManageRecognitions />} />
+        <Route path="cms/pages/recognitions" element={<ManageRecognitions />} />
+        <Route path="cms/free-programs" element={<ManageFreePrograms />} />
+        <Route path="cms/pages/free-programs" element={<ManageFreePrograms />} />
+        <Route path="cms/vision-mission" element={<ManageVisionMission />} />
+        <Route path="cms/pages/vision-mission" element={<ManageVisionMission />} />
+        <Route path="cms/resources" element={<ManageResources />} />
+        <Route path="cms/pages/resources" element={<ManageResources />} />
+        <Route path="cms/contact" element={<ManageContact />} />
+        <Route path="cms/pages/contact" element={<ManageContact />} />
         <Route path="cms/campus" element={<ManageCampus />} />
         <Route path="cms/careers" element={<ManageCareers />} />
         <Route path="cms/legal" element={<ManageLegal />} />
@@ -211,6 +282,7 @@ function App() {
         <Route path="cms/navigation" element={<ManageNavigation />} />
         <Route path="cms/exit-intent" element={<ManageExitIntent />} />
         <Route path="cms/social-proof" element={<ManageSocialProof />} />
+        <Route path="cms/social-links" element={<ManageSocialLinks />} />
         <Route path="cms/quick-connect" element={<ManageQuickConnect />} />
       </Route>
 
@@ -240,6 +312,27 @@ function App() {
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/insights" element={<TejasInsights />} />
         <Route path="/insights/:slug" element={<InsightDetails />} />
+        <Route path="/blog" element={<TejasInsights />} />
+        <Route path="/blog/:slug" element={<InsightDetails />} />
+        <Route path="/blogs" element={<TejasInsights />} />
+        <Route path="/blogs/:slug" element={<InsightDetails />} />
+
+        {/* Topic Cluster SEO Routes */}
+        <Route path="/business-entrepreneurship" element={<BusinessEntrepreneurship />} />
+        <Route path="/entrepreneurship-programs" element={<BusinessEntrepreneurship />} />
+        <Route path="/leadership-development" element={<LeadershipDevelopment />} />
+        <Route path="/ai-literacy" element={<AILiteracy />} />
+        <Route path="/future-skills" element={<FutureSkills />} />
+        <Route path="/career-readiness" element={<CareerReadiness />} />
+        <Route path="/employability-skills" element={<EmployabilitySkills />} />
+        <Route path="/financial-literacy" element={<FinancialLiteracy />} />
+        <Route path="/human-excellence" element={<HumanExcellence />} />
+        <Route path="/student-development" element={<StudentDevelopment />} />
+        <Route path="/professional-development" element={<ProfessionalDevelopment />} />
+        <Route path="/programs/students" element={<Programs />} />
+        <Route path="/programs/professionals" element={<Programs />} />
+        <Route path="/programs/entrepreneurs" element={<Programs />} />
+
         <Route path="/resources" element={<Resources />} />
         <Route path="/placements" element={<Placements />} />
         <Route path="/testimonials" element={<Testimonials />} />

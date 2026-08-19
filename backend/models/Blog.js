@@ -24,7 +24,7 @@ const blogSchema = new mongoose.Schema(
     },
     coverImage: {
       type: String,
-      required: true,
+      default: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=60',
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,

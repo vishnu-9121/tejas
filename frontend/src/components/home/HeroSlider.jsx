@@ -18,23 +18,23 @@ export function HeroSlider() {
   const slides = slidesData && slidesData.length > 0 ? slidesData : [
     {
       _id: 'slide-1',
-      title: 'Architect Your Career with Industry-Driven Excellence',
-      subtitle: '🎓 Admissions Open for Academic Year 2026-27',
-      description: 'Empowering future leaders with cutting-edge engineering, data science, and executive management degree programs.',
-      primaryCtaText: 'Apply for Admissions',
-      primaryCtaLink: '/admissions',
-      secondaryCtaText: 'Explore Programs',
-      secondaryCtaLink: '/programs',
+      title: 'Cultivating Human Excellence, Character & Competence',
+      subtitle: '⚡ Born from the Spark of Brilliance',
+      description: 'Developing visionary individuals who harmonize intellectual innovation, emotional resilience, ethical leadership, and purposeful societal value creation.',
+      primaryCtaText: 'Explore Programs',
+      primaryCtaLink: '/programs',
+      secondaryCtaText: 'Apply for Admission',
+      secondaryCtaLink: '/admissions',
       imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1600'
     },
     {
       _id: 'slide-2',
-      title: 'Master Artificial Intelligence & Data Leadership',
-      subtitle: '🚀 Flagship B.Tech & Postgraduate Degrees',
-      description: 'Hands-on neural network research, cloud architecture, and industrial projects guided by global corporate mentors.',
-      primaryCtaText: 'Explore AI Degree',
-      primaryCtaLink: '/programs',
-      secondaryCtaText: 'Talk to Advisor',
+      title: 'Practical Learning, Deep-Tech Mastery & Leadership',
+      subtitle: 'Valour • Discipline • Vigilance • Resilience',
+      description: 'Immerse in active case challenges, research simulations, and venture incubation guided by esteemed global faculty and industry leaders.',
+      primaryCtaText: 'Discover Our Philosophy',
+      primaryCtaLink: '/about/vision-mission',
+      secondaryCtaText: 'Admissions 2026',
       secondaryCtaLink: '/admissions',
       imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1600'
     }
@@ -68,14 +68,15 @@ export function HeroSlider() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: "easeInOut" }}
           className="absolute inset-0 bg-cover bg-center mix-blend-soft-light"
-          style={{ backgroundImage: `url(${slide.imageUrl || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1600'})` }}
+          style={{ backgroundImage: `url(${slide.imageUrl ? (slide.imageUrl.includes('?') ? slide.imageUrl : `${slide.imageUrl}?auto=format&w=1600&q=80`) : 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1600'})` }}
         />
       </AnimatePresence>
 
       {/* Deep Olive Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0b140c] via-[#18281a]/85 to-[#0d180e]/60 pointer-events-none" />
 
-      <div className="max-w-[1280px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+      {/* Main Grid Content Area */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         
         {/* Left Column: Hero Slide Content */}
         <div className="lg:col-span-7 flex flex-col items-start text-left gap-6">
@@ -87,7 +88,16 @@ export function HeroSlider() {
             className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-amber-400/60 bg-gradient-to-r from-[#122013]/90 via-[#1b2e1c]/90 to-[#122013]/90 backdrop-blur-xl shadow-2xl shadow-amber-500/20 ring-1 ring-amber-400/20"
           >
             <div className="w-7 h-7 rounded-full bg-white p-1 flex items-center justify-center shadow-lg ring-2 ring-amber-400/90 shrink-0">
-              <img src="/logo.png" alt="Tejas Academy Logo" className="w-full h-full object-contain" />
+              <img 
+                src="/logo.png" 
+                alt="Tejas Academy of Excellence Emblem" 
+                width="28" 
+                height="28" 
+                loading="eager" 
+                fetchPriority="high" 
+                decoding="async" 
+                className="w-full h-full object-contain" 
+              />
             </div>
             <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-amber-200 to-amber-400">
               Tejas Academy of Excellence
@@ -182,7 +192,7 @@ export function HeroSlider() {
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-3 text-sm font-semibold text-emerald-50">
                 <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
-                <span>100% Placement & Internship Assistance</span>
+                <span>Applied Industry Practice & Career Readiness</span>
               </div>
               <div className="flex items-center gap-3 text-sm font-semibold text-emerald-50">
                 <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />

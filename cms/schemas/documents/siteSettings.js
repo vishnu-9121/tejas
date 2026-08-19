@@ -4,13 +4,14 @@ export const siteSettings = {
   type: 'document',
   fields: [
     { name: 'siteName', title: 'Website Name', type: 'string', initialValue: 'Tejas Academy of Excellence' },
-    { name: 'siteTagline', title: 'Tagline', type: 'string', initialValue: 'Unlocking Leadership & Academic Excellence' },
+    { name: 'siteTagline', title: 'Tagline', type: 'string', initialValue: 'Born from the Spark of Brilliance' },
+    { name: 'siteMotto', title: 'Institutional Motto', type: 'string', initialValue: 'Valour in Heart. Discipline in Habit. Vigilance in Mind. Resilience in Spirit.' },
     { name: 'logo', title: 'Website Logo', type: 'image', options: { hotspot: true } },
     { name: 'favicon', title: 'Favicon Icon', type: 'image' },
     { name: 'contactEmail', title: 'Support Email', type: 'string', initialValue: 'support@unlocktejas.com' },
     { name: 'contactPhone', title: 'Phone Number', type: 'string', initialValue: '+91 83310 51327' },
     { name: 'whatsappNumber', title: 'WhatsApp Contact Number', type: 'string', initialValue: '+91 83310 51327' },
-    { name: 'physicalAddress', title: 'Campus Physical Address', type: 'text', initialValue: 'Beside L K Towers, Roy Nagar, Gannavaram - 521101' },
+    { name: 'physicalAddress', title: 'Campus Physical Address', type: 'text', initialValue: 'Beside L K Towers, Roy Nagar, Gannavaram, Vijayawada, Amaravathi - 521101' },
     { name: 'googleMapsUrl', title: 'Google Maps Embedded Link', type: 'url' },
     { name: 'googleAnalyticsId', title: 'Google Analytics Measurement ID', type: 'string' },
     {

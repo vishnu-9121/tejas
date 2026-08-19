@@ -3,6 +3,13 @@ import { EventCard } from '../components/cards/EventCard';
 import { Calendar, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { eventService } from '@/services/eventService';
+import { SEO } from '@/components/ui/SEO';
+
+const FALLBACK_EVENTS = [
+  { _id: 'e1', title: 'Global AI & Deep-Tech Summit 2026', description: 'Keynotes from international robotics researchers, panel discussions on autonomous systems, and student capstone exhibitions.', date: '2026-09-15', location: 'Main Amphitheatre, Campus', category: 'Conference', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800' },
+  { _id: 'e2', title: 'Executive Capability & Venture Masterclass', description: 'Interactive workshop with corporate CEOs covering strategic leadership, venture scaling, and capital allocation.', date: '2026-10-05', location: 'Seminar Hall B, Campus', category: 'Workshop', image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=800' },
+  { _id: 'e3', title: 'National Student Innovation Hackathon', description: '48-hour continuous coding and prototyping challenge addressing real-world enterprise problem statements.', date: '2026-11-20', location: 'Innovation Hub, Campus', category: 'Hackathon', image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800' }
+];
 
 export const Events = () => {
   const { data: eventsData, isLoading, error } = useQuery({
@@ -10,10 +17,16 @@ export const Events = () => {
     queryFn: () => eventService.getEvents({ sort: 'date' }),
   });
 
-  const events = eventsData?.data?.data || [];
+  const rawEvents = eventsData?.data?.data || eventsData?.data || [];
+  const events = Array.isArray(rawEvents) && rawEvents.length > 0 ? rawEvents : FALLBACK_EVENTS;
 
   return (
     <div className="py-16 md:py-24 bg-gray-50 min-h-screen">
+      <SEO 
+        title="Campus Events, Workshops & Masterclasses" 
+        description="Stay updated with upcoming academic seminars, AI workshops, corporate guest lectures, and cultural events at Tejas Academy of Excellence."
+        url="https://unlocktejas.com/events"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
